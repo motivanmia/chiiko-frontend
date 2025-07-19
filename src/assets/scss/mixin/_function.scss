@@ -1,0 +1,14 @@
+@use 'sass:math';
+
+@function px($px) {
+  @return math.div($px, 16) * 1rem;
+}
+
+// 文字大小像素轉 vw/vh
+@function pxTovw($px) {
+  @return math.div($px, 1920) * 100vw;
+}
+
+@function pxTovh($px) {
+  @return math.div($px, 1080) * 100vh;
+}
