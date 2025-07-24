@@ -1,13 +1,11 @@
-<script setup>
-  import { RouterLink, RouterView } from 'vue-router';
-</script>
+<script setup></script>
 
 <template>
   <header>
     <img
       alt="Vue logo"
       class="logo"
-      src="@/assets/img/image/logo.svg"
+      src="@/assets/image/logo.svg"
       width="125"
       height="125"
     />
