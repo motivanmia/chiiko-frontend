@@ -1,0 +1,12 @@
+@use './variable' as *;
+
+body {
+  font-family: $basic-font;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
