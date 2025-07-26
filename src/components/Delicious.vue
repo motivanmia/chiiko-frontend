@@ -34,7 +34,7 @@
 <style lang="scss" scoped>
   .marquee-wrapper {
     overflow: hidden;
-    width: 100vw;
+    width: 100%;
     white-space: nowrap;
   }
 
