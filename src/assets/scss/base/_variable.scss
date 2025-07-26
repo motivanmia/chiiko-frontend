@@ -1,1 +1,29 @@
 $basic-font: 'Noto Sans TC', sans-serif;
+
+$colors: (
+  text: (
+    dark: #3b3739,
+    light: #fef9ec,
+    green: #6b6e4f,
+  ),
+  background: (
+    recipe: #d6b59c,
+    beige: #fefbf1,
+    panel: #b5c5a8,
+    title: #cb8043,
+  ),
+  search: (
+    border: #898989,
+    placeholder: #828282,
+  ),
+  button: (
+    main: #d97c48,
+  ),
+  orange: (
+    base: #f4a259,
+    light: #fac89b,
+  ),
+  heart: (
+    bright: #ff6528,
+  ),
+);
