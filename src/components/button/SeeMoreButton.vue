@@ -66,19 +66,19 @@
   }
   .text {
     position: relative;
-    color: color(text, green);
+    color: color(text, base);
   }
   .text::after {
     position: absolute;
     content: '';
     width: 190px;
-    border-bottom: 1px solid color(text, green);
+    border-bottom: 1px solid color(text, base);
     bottom: 0;
     left: 0;
     margin-bottom: -10px;
   }
   .see-more__button:hover .icon {
     margin-left: 90px;
-    background-color: color(background, recipe);
+    background-color: color(backgroundColor, recipe);
   }
 </style>
