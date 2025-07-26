@@ -3,7 +3,7 @@
 
   import SeeMoreButton from '../components/button/SeeMoreButton.vue';
 
-  import delicious from '../components/delicious.vue';
+  import delicious from '../components/Delicious.vue';
 
   function ShareRecipe() {
     console.log('前往分享食譜');
