@@ -3,6 +3,8 @@
 
   import SeeMoreButton from '../components/button/SeeMoreButton.vue';
 
+  import delicious from '../components/delicious.vue';
+
   function ShareRecipe() {
     console.log('前往分享食譜');
   }
@@ -19,5 +21,9 @@
 
   <div>
     <SeeMoreButton @seeMoreButtonclick="SeeMore" />
+  </div>
+
+  <div>
+    <delicious />
   </div>
 </template>
