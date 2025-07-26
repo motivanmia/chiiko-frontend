@@ -2,7 +2,7 @@
 
 <template>
   <header>
-    <img
+    <!-- <img
       alt="Vue logo"
       class="logo"
       src="@/assets/image/logo.svg"
@@ -14,7 +14,7 @@
       <nav>
         <RouterLink to="/">Home</RouterLink>
       </nav>
-    </div>
+    </div> -->
   </header>
 
   <RouterView />

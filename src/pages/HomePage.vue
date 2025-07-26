@@ -1,5 +1,13 @@
-<script setup></script>
+<script setup>
+import ShareRecipeButton from '../components/button/ShareRecipeButton.vue'
+
+function ShareRecipe() {
+  alert('前往分享食譜')
+}</script>
 
 <template>
-  <h1>Home</h1>
+
+  <div>
+    <ShareRecipeButton @click="ShareRecipe" />
+  </div>
 </template>
