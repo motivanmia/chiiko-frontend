@@ -4,6 +4,10 @@
   import SeeMoreButton from '../components/button/SeeMoreButton.vue';
 
   import delicious from '../components/Delicious.vue';
+  
+  import section_title from '../components/SectionTitle.vue';
+
+  
 
   function ShareRecipe() {
     console.log('前往分享食譜');
@@ -25,5 +29,9 @@
 
   <div>
     <delicious />
+  </div>
+
+  <div>
+    <section_title />
   </div>
 </template>
