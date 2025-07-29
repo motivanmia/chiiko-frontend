@@ -1,10 +1,6 @@
 <script setup>
+  import ShareRecipeButton from '@/assets/image/ShareRecipeButton.png'
   // 傳入的 props
-  const props = defineProps({
-    label: {
-      default: '/src/assets/image/ShareRecipeButton.png',
-    },
-  });
 
   const emit = defineEmits(['ShareRecipeButtonclick']);
 
@@ -15,9 +11,9 @@
 
 <template>
   <button @click="handleClick">
-    <p>點我</p>
-    <img :src="label" />
-    <p>分享料理</p>
+    <p><slot name="click-me"></slot></p>
+    <img :src="ShareRecipeButton" />
+    <p><slot name="share"></slot></p>
   </button>
 </template>
 

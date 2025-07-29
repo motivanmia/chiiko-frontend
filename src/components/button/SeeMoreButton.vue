@@ -2,7 +2,7 @@
   import Icon from '../common/Icon.vue';
 
   const props = defineProps({
-    label: {
+    text: {
       type: String,
       default: '查看更多',
     },
@@ -21,7 +21,7 @@
     @click="handleClick"
   >
     <div class="text">
-      {{ label }}
+      {{ text }}
     </div>
 
     <div class="icon">

@@ -7,6 +7,7 @@
   
   import section_title from '../components/SectionTitle.vue';
 
+
   
 
   function ShareRecipe() {
@@ -20,7 +21,11 @@
 
 <template>
   <div>
-    <ShareRecipeButton @ShareRecipeButtonclick="ShareRecipe" />
+    <ShareRecipeButton @ShareRecipeButtonclick="ShareRecipe" >
+      <template #click-me>點我</template>
+      <template #share>分享食譜</template>
+      
+    </ShareRecipeButton>
   </div>
 
   <div>
