@@ -7,9 +7,8 @@
   
   import section_title from '../components/SectionTitle.vue';
 
-  import Category from '@/components/recipe/Category.vue';
 
-  import RecipeOverview from './RecipeOverview.vue';
+  
 
   function ShareRecipe() {
     console.log('前往分享食譜');
