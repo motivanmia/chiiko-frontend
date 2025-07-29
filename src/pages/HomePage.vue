@@ -7,7 +7,9 @@
   
   import section_title from '../components/SectionTitle.vue';
 
-  
+  import Category from '@/components/recipe/Category.vue';
+
+  import RecipeOverview from './RecipeOverview.vue';
 
   function ShareRecipe() {
     console.log('前往分享食譜');
@@ -16,10 +18,12 @@
   function SeeMore() {
     console.log('查看更多被點擊');
   }
+
+  
 </script>
 
 <template>
-  <div>
+  <!-- <div>
     <ShareRecipeButton @ShareRecipeButtonclick="ShareRecipe" />
   </div>
 
@@ -33,5 +37,10 @@
 
   <div>
     <section_title />
-  </div>
+  </div> -->
+
+  <!-- <Category></Category> -->
+
+  <RecipeOverview/>
+
 </template>

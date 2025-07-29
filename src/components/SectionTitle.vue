@@ -17,6 +17,7 @@
   .section-title {
     font-size: 40px;
     font-weight: bold;
+    text-align: center;
     color: color(text, dark);
     letter-spacing: .3em;
     text-shadow:0 4px 5px rgba(59, 55, 57, 0.4);
