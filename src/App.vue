@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+  import MainFooter from './components/common/MainFooter.vue';
+</script>
 
 <template>
   <header>
@@ -18,6 +20,7 @@
   </header>
 
   <RouterView />
+  <MainFooter />
 </template>
 
 <style scoped>
