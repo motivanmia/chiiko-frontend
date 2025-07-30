@@ -1,5 +1,5 @@
 <template>
-  <!-- <div class="input-wrapper"> -->
+  <div class="input-wrapper">
   <label
     :for="id"
     class="input-label"
@@ -14,7 +14,7 @@
     class="input-box"
     autocomplete=""
   />
-  <!-- </div> -->
+  </div>
 </template>
 
 <script setup>
@@ -50,18 +50,23 @@
   );
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .input-wrapper {
-    margin-bottom: 1rem;
+    letter-spacing: .1rem;
   }
   .input-label {
     display: block;
     margin-bottom: 0.5em;
+    margin-top: 25px;
   }
   .input-box {
     width: 100%;
-    padding: 10px;
+    padding-left: 1.5rem;
     border: 1px solid #ccc;
     border-radius: 20px;
+    font-size: 20px;
+    letter-spacing: .05rem;
+    height:4.0625rem;
+    color:color(search,placeholder)
   }
 </style>
