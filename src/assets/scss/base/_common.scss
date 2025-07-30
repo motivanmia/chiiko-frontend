@@ -1,7 +1,8 @@
-@use './variable' as *;
+@use './variable' as v;
+@use '../mixin/function' as f;
 
 body {
-  font-family: $basic-font;
+  font-family: v.$basic-font;
 }
 
 button,
@@ -9,4 +10,19 @@ input,
 select,
 textarea {
   font-family: inherit;
+}
+
+.container {
+  max-width: f.px(1200);
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.container-large {
+  max-width: f.px(1920);
+  margin: 0 auto;
+}
+
+.debugger * {
+  outline: 1px solid #f00;
 }
