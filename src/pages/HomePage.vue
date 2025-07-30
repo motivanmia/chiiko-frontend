@@ -7,23 +7,28 @@
   
   import section_title from '../components/SectionTitle.vue';
 
+  import login from '../components/user/Login.vue'
+
 
   
 
-  function ShareRecipe() {
-    console.log('前往分享食譜');
-  }
+  // function ShareRecipe() {
+  //   console.log('前往分享食譜');
+  // }
 
-  function SeeMore() {
-    console.log('查看更多被點擊');
-  }
+  // function SeeMore() {
+  //   console.log('查看更多被點擊');
+  // }
 
   
 </script>
 
 <template>
   <!-- <div>
-    <ShareRecipeButton @ShareRecipeButtonclick="ShareRecipe" />
+    <ShareRecipeButton @ShareRecipeButtonclick="ShareRecipe">
+      <template #click-me>點我</template>
+      <template #share>分享食譜</template>
+    </ShareRecipeButton>
   </div>
 
   <div>
@@ -39,7 +44,8 @@
   </div> -->
 
   <!-- <Category></Category> -->
+  <!-- <login/> -->
 
-  <RecipeOverview/>
+  <!-- <RecipeOverview/> -->
 
 </template>
