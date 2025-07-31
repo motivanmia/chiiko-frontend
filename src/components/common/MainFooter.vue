@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+  import Icon from './Icon.vue';
+</script>
 
 <template>
   <footer class="main-footer container-large">
@@ -15,7 +17,12 @@
             href="#"
             class="main-footer__recipe-title"
           >
-            靈感 X 食譜
+            靈感
+            <Icon
+              icon-name="close"
+              class="main-footer__recipe-icon"
+            />
+            食譜
           </a>
           <ul class="main-footer__recipe-list">
             <li class="main-footer__recipe-item">
@@ -179,6 +186,10 @@
       </div>
     </div>
 
+    <div class="main-footer__back-to-top">
+      <button class="main-footer__back-to-top-btn">回到上方</button>
+    </div>
+
     <div class="main-footer__vegetables">
       <ul class="main-footer__vegetables-list">
         <li class="main-footer__vegetables-item">
@@ -298,17 +309,17 @@
   .main-footer {
     position: relative;
     padding: 60px 0 40px;
-    background: url('../../assets/image/footer/footer-banner.svg') no-repeat center center / cover;
+    background: url('@/assets/image/footer/footer-banner.svg') no-repeat top center / cover;
 
     &__header {
-      margin-bottom: px(50);
+      margin-bottom: px(100);
       @include rwdmax(768) {
         margin-bottom: px(45);
       }
     }
 
     &__title {
-      @include fontSet($basic-font, 600, px(28), 1.2, color(text, light), normal);
+      @include fontSet($basic-font, 600, px(40), 1.2, color(text, light), 0.1em);
 
       @include rwdmax(768) {
         @include fontSet($basic-font, 600, px(16), 1.2, color(text, light), normal);
@@ -322,8 +333,9 @@
 
     &__wrapper {
       @include flex(flex, wrap, row, space-between, start);
-      column-gap: px(60);
+      column-gap: px(40);
       row-gap: px(40);
+      padding-right: px(40);
     }
 
     &__recipe {
@@ -332,16 +344,33 @@
       }
 
       &-title {
+        position: relative;
         display: block;
-        @include fontSet($basic-font, normal, px(20), 1.2, color(text, dark));
+        width: fit-content;
+        text-decoration: none;
+        @include fontSet($basic-font, normal, px(24), 1.2, color(text, dark), 0.2em);
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: px(-2);
+          left: 0;
+          width: 100%;
+          height: px(2);
+          background-color: color(text, dark);
+        }
+      }
+
+      &-icon {
+        font-size: px(24);
       }
 
       &-list {
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(2, auto);
+        grid-template-rows: repeat(4, auto);
+        grid-auto-flow: column;
         gap: px(20) px(40);
-        height: px(150);
         margin-top: px(35);
       }
 
@@ -349,7 +378,11 @@
         display: block;
         width: fit-content;
         text-decoration: none;
-        color: color(text, base);
+        @include fontSet($basic-font, normal, px(20), 1.2, color(text, base), 0.2em);
+
+        @include rwdmax(768) {
+          @include fontSet($basic-font, normal, px(12), 1.2, color(text, base), 0.2em);
+        }
       }
     }
 
@@ -359,8 +392,21 @@
       }
 
       &-title {
+        position: relative;
         display: block;
-        @include fontSet($basic-font, normal, px(20), 1.2, color(text, dark));
+        width: fit-content;
+        text-decoration: none;
+        @include fontSet($basic-font, normal, px(24), 1.2, color(text, dark), 0.2em);
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: px(-2);
+          left: 0;
+          width: 100%;
+          height: px(2);
+          background-color: color(text, dark);
+        }
       }
 
       &-list {
@@ -374,8 +420,12 @@
       &-link {
         display: block;
         width: fit-content;
-        color: color(text, base);
         text-decoration: none;
+        @include fontSet($basic-font, normal, px(20), 1.2, color(text, base), 0.2em);
+
+        @include rwdmax(768) {
+          @include fontSet($basic-font, normal, px(12), 1.2, color(text, base), 0.2em);
+        }
       }
     }
 
@@ -385,8 +435,21 @@
       }
 
       &-title {
+        position: relative;
         display: block;
-        @include fontSet($basic-font, normal, px(20), 1.2, color(text, dark));
+        width: fit-content;
+        text-decoration: none;
+        @include fontSet($basic-font, normal, px(24), 1.2, color(text, dark), 0.2em);
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: px(-2);
+          left: 0;
+          width: 100%;
+          height: px(2);
+          background-color: color(text, dark);
+        }
       }
 
       &-list {
@@ -400,18 +463,22 @@
       &-link {
         display: block;
         width: fit-content;
-        color: color(text, base);
         text-decoration: none;
+        @include fontSet($basic-font, normal, px(20), 1.2, color(text, base), 0.2em);
+
+        @include rwdmax(768) {
+          @include fontSet($basic-font, normal, px(12), 1.2, color(text, base), 0.2em);
+        }
       }
     }
 
     &__contact {
-      @include rwdmax(860) {
+      @include rwdmax(1170) {
         margin: 0 auto;
       }
 
       &-title {
-        @include fontSet($basic-font, normal, px(20), 1.2, color(text, dark));
+        @include fontSet($basic-font, normal, px(24), 1.2, color(text, dark), 0.2em);
         @include rwdmax(768) {
           display: none;
         }
@@ -424,7 +491,7 @@
         }
       }
 
-      &-item {
+      &-item + &-item {
         margin-top: px(20);
       }
 
@@ -433,16 +500,53 @@
         width: fit-content;
         color: color(text, base);
         text-decoration: none;
+        @include fontSet($basic-font, normal, px(20), 1.2, color(text, base), 0.1em);
 
         @include rwdmax(768) {
-          @include fontSet($basic-font, normal, px(12), 1.2, color(text, dark));
+          @include fontSet($basic-font, normal, px(12), 1.2, color(text, dark), 0.1em);
         }
+      }
+    }
+
+    &__back-to-top {
+      position: absolute;
+      right: 10px;
+      top: 0;
+      bottom: 0;
+      margin: auto 0;
+      height: fit-content;
+
+      @include rwdmax(768) {
+        display: none;
+      }
+
+      &::before {
+        content: '';
+        width: px(1);
+        height: px(100);
+        background-color: color(text, error);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        margin: px(-100) auto;
+        transform-origin: bottom center;
+        animation: scroll-to-top-line 2s ease-in-out infinite;
+      }
+
+      &-btn {
+        background-color: transparent;
+        @include fontSet($basic-font, normal, px(20), 1.2, color(text, error));
+        border: unset;
+        writing-mode: vertical-lr;
+        cursor: pointer;
       }
     }
 
     &__vegetables {
       width: 100%;
       overflow: hidden;
+      margin-top: px(60);
 
       &-list {
         display: flex;
