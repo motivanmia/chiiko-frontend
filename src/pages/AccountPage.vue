@@ -1,13 +1,23 @@
 <script setup>
+  import MemberDashboard from '@/components/member/MemberDashboard.vue';
   import MemberSidebar from '@/components/member/MemberSidebar.vue';
 </script>
 
 <template>
-  <main>
+  <div class="member__control">
     <div>
       <MemberSidebar />
     </div>
-  </main>
+    <div>
+      <MemberDashboard />
+    </div>
+  </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+  .member__control {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+</style>
