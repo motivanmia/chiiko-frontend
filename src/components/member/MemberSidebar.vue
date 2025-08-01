@@ -76,6 +76,10 @@
       }
     }
   };
+
+  const changeAvatar = () => {
+    console.log('更換頭像');
+  };
 </script>
 
 <template>
@@ -85,7 +89,10 @@
         :src="profile.avatar"
         alt="會員頭像"
       />
-      <button class="upload__btn">
+      <button
+        class="upload__btn"
+        @click="changeAvatar"
+      >
         <Icon icon-name="upload" />
       </button>
     </div>
@@ -194,6 +201,10 @@
     align-items: center;
     justify-content: center;
   }
+  .upload__btn:hover {
+    background-color: color(orangeColor, base);
+    transition: 0.2s ease;
+  }
   .sidebar {
     display: flex;
     flex-direction: column;
@@ -240,6 +251,9 @@
         background-color 0.2s ease,
         color 0.2s ease;
     }
+    li a:hover {
+      color: color(button, main);
+    }
     span {
       padding-left: 10px;
       position: relative;
@@ -258,6 +272,9 @@
         $ls: 2.4px
       );
       background-color: color(button, main);
+    }
+    .active:hover {
+      color: color(text, light);
     }
   }
   .sidebar__collapsible {
