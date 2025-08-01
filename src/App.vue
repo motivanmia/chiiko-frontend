@@ -27,9 +27,9 @@
 </template>
 
 <style scoped>
-  main {
+  /* main {
     margin-top: 215px;
-  }
+  } */
   /* header {
     line-height: 1.5;
     max-height: 100vh;
