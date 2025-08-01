@@ -1,8 +1,10 @@
-<script setup></script>
+<script setup>
+  import MainHeader from './components/common/MainHeader.vue';
+</script>
 
 <template>
-  <header>
-    <!-- <img
+  <!-- <header>
+    <img
       alt="Vue logo"
       class="logo"
       src="@/assets/image/logo.svg"
@@ -14,14 +16,22 @@
       <nav>
         <RouterLink to="/">Home</RouterLink>
       </nav>
-    </div> -->
+    </div>
+  </header> -->
+  <header>
+    <MainHeader />
   </header>
 
-  <RouterView />
+  <main>
+    <RouterView />
+  </main>
 </template>
 
 <style scoped>
-  header {
+  main {
+    margin-top: 215px;
+  }
+  /* header {
     line-height: 1.5;
     max-height: 100vh;
   }
@@ -81,5 +91,5 @@
       padding: 1rem 0;
       margin-top: 1rem;
     }
-  }
+  } */
 </style>
