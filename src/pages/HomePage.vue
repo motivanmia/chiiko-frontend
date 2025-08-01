@@ -55,7 +55,7 @@
   <div>
     <ProductPage />
   </div>
-  
+
   <div>
     <ProdutContent />
   </div>
