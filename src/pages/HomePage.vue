@@ -4,13 +4,16 @@
   import SeeMoreButton from '../components/button/SeeMoreButton.vue';
 
   import delicious from '../components/Delicious.vue';
-  
+
   import section_title from '../components/SectionTitle.vue';
 
   import login from '../components/user/Login.vue'
 
 
   
+  import ProductPage from '../pages/product/ProductPage.vue';
+
+  import ProdutContent from '../pages/product/ProductContent.vue';
 
   // function ShareRecipe() {
   //   console.log('前往分享食譜');
@@ -48,4 +51,12 @@
 
   <!-- <RecipeOverview/> -->
 
+  <!-- </div> -->
+  <div>
+    <ProductPage />
+  </div>
+  
+  <div>
+    <ProdutContent />
+  </div>
 </template>
