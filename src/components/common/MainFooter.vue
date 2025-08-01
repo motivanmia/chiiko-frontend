@@ -4,7 +4,7 @@
 
 <template>
   <footer class="main-footer container-large">
-    <div class="main-footer__container container">
+    <div class="main-footer__container">
       <div class="main-footer__header">
         <h2 class="main-footer__title">
           不是專業廚師也沒關係
@@ -184,10 +184,9 @@
           </ul>
         </div>
       </div>
-    </div>
-
-    <div class="main-footer__back-to-top">
-      <button class="main-footer__back-to-top-btn">回到上方</button>
+      <div class="main-footer__back-to-top">
+        <button class="main-footer__back-to-top-btn">回到上方</button>
+      </div>
     </div>
 
     <div class="main-footer__vegetables">
@@ -310,6 +309,15 @@
     position: relative;
     padding: 60px 0 40px;
     background: url('@/assets/image/footer/footer-banner.svg') no-repeat top center / cover;
+
+    &__container {
+      position: relative;
+      padding: px(200) px(200) 0 px(200);
+
+      @include rwdmax(1200) {
+        padding: px(70) px(10) 0 px(70);
+      }
+    }
 
     &__header {
       margin-bottom: px(100);
@@ -511,9 +519,8 @@
     &__back-to-top {
       position: absolute;
       right: 10px;
-      top: 0;
       bottom: 0;
-      margin: auto 0;
+      // margin: auto 0;
       height: fit-content;
 
       @include rwdmax(768) {
@@ -523,20 +530,20 @@
       &::before {
         content: '';
         width: px(1);
-        height: px(100);
+        height: px(50);
         background-color: color(text, error);
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
-        margin: px(-100) auto;
+        margin: px(-50) auto;
         transform-origin: bottom center;
         animation: scroll-to-top-line 2s ease-in-out infinite;
       }
 
       &-btn {
         background-color: transparent;
-        @include fontSet($basic-font, normal, px(20), 1.2, color(text, error));
+        @include fontSet($basic-font, normal, px(20), 1.2, color(text, error), 0.2em);
         border: unset;
         writing-mode: vertical-lr;
         cursor: pointer;
