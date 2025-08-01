@@ -1,8 +1,5 @@
 <script setup>
-  import Icon from './Icon.vue';
-</script>
-
-<script setup>
+  import Icon from '@/components/common/Icon.vue';
   const props = defineProps({
     title: {
       type: String,
@@ -12,7 +9,10 @@
 </script>
 
 <template>
-  
+  <icon
+  icon-name="product"
+  class="search-icon"/>
+
   <div class="card">
     <div class="card__title">
       <img src="/src/assets/image/Product/pot.png" />
@@ -51,7 +51,6 @@
 </template>
 
 <style scoped>
-
   .search-bar {
     display: flex;
     align-items: center;
