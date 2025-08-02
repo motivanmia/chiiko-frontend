@@ -1,4 +1,5 @@
 <template>
+    <div class="wrappertatle">
   <div class="outer-wrapper">
     <div class="recipe-wrapper">
       <!-- 食物圖片 -->
@@ -221,6 +222,7 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
@@ -289,6 +291,11 @@
 </script>
 <!-- ──────────────────────────────────────────────────────────────────────── -->
 <style scoped>
+  .wrappertatle{
+    margin-top: 200px;
+    margin-bottom: 200px;
+  }
+
   /* 食譜圖片 */
   .recipe-image {
     width: 800px;

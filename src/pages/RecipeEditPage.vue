@@ -446,11 +446,14 @@
 </script>
 <!-- ──────────────────────────────────────────────────────────────────────── -->
 <style scoped>
+
+
   .recipe-editor {
     width: 1200px;
     background-color: #ead7c4;
     margin: 32px auto;
     border-radius: 20px;
+    margin-top: 200px;
   }
 
   .recipe-editortatale {
@@ -572,6 +575,8 @@
     display: flex; /* ✨ 關鍵：啟用 flex 排列 */
     justify-content: space-between; /* ✨ 左右分開 */
     align-items: center;
+    margin-bottom: 150px;
+    margin-top: 50px;
   }
 
   .recipe-editor__treetag,
