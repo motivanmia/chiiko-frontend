@@ -75,6 +75,7 @@
     }
 
     formError.value = '';
+    
     alert('✅ 註冊成功！');
   }
 </script>
