@@ -21,5 +21,8 @@
     color: color(text, dark);
     letter-spacing: .3em;
     text-shadow:0 4px 5px rgba(59, 55, 57, 0.4);
+    @include rwdmax(768) {
+      font-size: 28px;
+    }
   }
 </style>

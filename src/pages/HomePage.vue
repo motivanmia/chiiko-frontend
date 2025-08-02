@@ -4,13 +4,9 @@
 
   import ShareRecipeButton from '../components/button/ShareRecipeButton.vue';
 
-  import SeeMoreButton from '../components/button/SeeMoreButton.vue';
-
   import delicious from '../components/Delicious.vue';
 
-  import section_title from '../components/SectionTitle.vue';
-
-  import login from '../components/user/Login.vue';
+  // import section_title from '../components/SectionTitle.vue';
 
   const hotSearch = ref([
     { keyitem: '芒果冰沙', path: '#' },
@@ -18,6 +14,10 @@
     { keyitem: '小黃瓜', path: '#' },
     { keyitem: '甜甜圈', path: '#' },
   ]);
+
+  // import login from '../components/user/Login.vue';
+
+  import hot from '@/components/home/HomeHot.vue';
 
   // function ShareRecipe() {
   //   console.log('前往分享食譜');
@@ -53,29 +53,17 @@
 
     <div class="scoll-down">向下捲動</div>
   </div>
-  <!-- <div>
-    <ShareRecipeButton @ShareRecipeButtonclick="ShareRecipe">
-      <template #click-me>點我</template>
-      <template #share>分享食譜</template>
-    </ShareRecipeButton>
-  </div>
+  <hot />
 
-  <div>
-    <SeeMoreButton @seeMoreButtonclick="SeeMore" />
-  </div>
+  <ShareRecipeButton
+    id="ShareRecipeButton"
+    @ShareRecipeButtonclick="ShareRecipe"
+  >
+    <template #click-me>點我</template>
+    <template #share>分享食譜</template>
+  </ShareRecipeButton>
 
-  <div>
-    <delicious />
-  </div>
-
-  <div>
-    <section_title />
-  </div> -->
-
-  <!-- <Category></Category> -->
-  <!-- <login/> -->
-
-  <!-- <RecipeOverview/> -->
+  <delicious id="delicious" />
 </template>
 
 <style lang="scss" scoped>
@@ -130,6 +118,12 @@
     }
     a {
       color: #fff;
+    }
+    #ShareRecipeButton {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      // z-index: 1;
     }
   }
 </style>
