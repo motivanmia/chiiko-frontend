@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
       vue({
         template: {
           compilerOptions: {
-            isCustomElement: (tag) => tag === 'iconify-icon',
+            isCustomElement: (tag) => ['iconify-icon', 'img-comparison-slider'].includes(tag),
           },
         },
       }),
