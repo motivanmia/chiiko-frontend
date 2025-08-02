@@ -54,7 +54,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    row-gap: 40px;
+    row-gap: 100px;
 
     &__card {
       width: 292px;
