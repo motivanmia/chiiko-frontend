@@ -1,6 +1,6 @@
 <script setup>
   import InputField from '@/components/user/InputField.vue';
-  import Icon from '../common/Icon.vue';
+  import Icon from '@/components/common/Icon.vue';
   import { ref } from 'vue';
   import tomato from '@/assets/image/footer/03.png';
 
@@ -11,7 +11,7 @@
   const passwordConfirm = ref('');
   const agree = ref(false); // 新增同意條款狀態
   const formError = ref('');
-  const showSignin = ref(true); // 一開始顯示
+  // const showSignin = ref(true); // 一開始顯示
   const errorKey = ref(0);
 
   /////
@@ -81,10 +81,7 @@
 </script>
 
 <template>
-  <div
-    class="background"
-    v-if="showSignin"
-  >
+  <div class="background">
     <div class="signin-box">
       <div
         id="close"
@@ -249,7 +246,7 @@
     width: 100%;
     min-height: 100vh;
     // height: 100vh;
-    // position: absolute;
+    position: absolute;
     top: 0;
     display: flex;
     align-items: center;
@@ -257,12 +254,13 @@
     letter-spacing: 0.15em;
     padding: px(50);
     .signin-box {
+      z-index: 50;
       display: flex;
       width: auto;
       background-color: #fff;
       border-radius: 20px;
       padding: 30px;
-      position: relative;
+      position: fixed;
       @include rwdmax(768) {
         flex-direction: column;
         margin: 0;
@@ -309,7 +307,7 @@
           }
         }
       }
-      .app-signin:nth-child(2){
+      .app-signin:nth-child(2) {
         margin-top: 65px;
         @include rwdmax(768) {
           margin-top: 20px;
