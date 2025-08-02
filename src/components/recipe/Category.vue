@@ -1,18 +1,18 @@
 <script setup>
-import { category_name } from '@/constants/recipeCategory';
-
+  import { categoryName } from '@/constants/recipeCategory';
 </script>
 
 <template>
   <div class="category">
     <div
-      v-for="buttons in category_name"
+      v-for="buttons in categoryName"
       class="category-box"
     >
       <button class="category-box__button">
         <img
-          src="/src/assets/image/Recipes/solo-meal.jpg"
-          alt="solo-meal"
+          :src="buttons.image"
+          :alt="buttons.title"
+          class="category-box__image"
         />
         <span class="category-box__title">{{ buttons.title }}</span>
       </button>
@@ -26,7 +26,7 @@ import { category_name } from '@/constants/recipeCategory';
     width: 100%;
     display: flex;
     justify-content: center;
-    margin:30px auto 0 auto;
+    margin: 30px auto 0 auto;
     flex-wrap: wrap;
     gap: 40px;
   }
@@ -43,36 +43,67 @@ import { category_name } from '@/constants/recipeCategory';
       padding: 0;
       border: 0; //暫時先設定
       font-size: large;
-      overflow: hidden; 
+      overflow: hidden;
       cursor: pointer;
       background: transparent;
       position: relative;
 
-      // &:hover{
-        
-      // }
-
-      & > img{
-        width: 100%;
+      &:hover {
       }
 
+      & > img {
+        width: 100%;
+        height: 100%; // 確保圖片填滿按鈕
+        object-fit: cover; // 讓圖片填滿空間但不變形
+      transition: filter 0.3s ease, transform 0.3s ease;
+      // ✅ 預設狀態就是模糊的
+      filter: blur(5px); 
+      transform: scale(1); // 預設沒有縮放
+      }
+
+      &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4); // 預設透明
+      transition: background-color 0.3s ease; // 過渡效果
+      z-index: 1;
+      }
     }
 
-    .category-box__title{
+    .category-box__title {
       position: absolute;
-      top:50%;
-      left:50%;
+      top: 50%;
+      left: 50%;
       transform: translateX(-50%) translateY(-50%);
       z-index: 1;
       letter-spacing: 1.2px;
-      color: color(text,light);
-      text-shadow: 0px 4px 4px rgba(0,0,0,0.25);
+      color: color(text, light);
+      text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
       font-size: 24px;
       font-weight: larger;
       white-space: nowrap;
     }
 
-
+    // 當滑鼠懸停時 (hover)
+    &:hover {
+      // 給圖片移除模糊效果
+      img {
+        filter: blur(0px); // 變清晰
+        transform: scale(1.05); 
+      }
+      
+      // 同時改變遮罩層的透明度
+      &::after {
+        background-color: rgba(0, 0, 0, 0); // 變成完全透明
+      }
+    }
   }
 
+
+
+  
 </style>

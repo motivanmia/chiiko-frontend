@@ -19,6 +19,8 @@
     { keyitem: '甜甜圈', path: '#' },
   ]);
 
+  import IndexRecipeOverview from '@/components/home/IndexRecipeOverview.vue';
+
   // function ShareRecipe() {
   //   console.log('前往分享食譜');
   // }
@@ -71,6 +73,8 @@
   <div>
     <section_title />
   </div> -->
+  
+  <!-- <IndexRecipeOverview/> -->
 
   <!-- <Category></Category> -->
   <!-- <login/> -->
