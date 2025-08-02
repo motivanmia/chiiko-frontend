@@ -1,6 +1,6 @@
 <script setup>
   import InputField from '@/components/user/InputField.vue';
-  import Icon from '../common/Icon.vue';
+  import Icon from '@/components/common/Icon.vue';
   import { ref } from 'vue';
 
   const account = ref('');
@@ -16,7 +16,10 @@
   <div class="background">
     <div class="login-box">
       <div id="close">
-        <Icon icon-name="remove" id="icon-remove"/>
+        <Icon
+          icon-name="remove"
+          id="icon-remove"
+        />
       </div>
       <h1>會員登入</h1>
       <form @submit.prevent="login">
@@ -88,17 +91,18 @@
     align-items: center;
     justify-content: center;
     .login-box {
+      z-index: 50;
       // display: none;
       background-color: #fff;
       border-radius: 20px;
       padding: px(30);
-      position: relative;
-      #close{
+      position: fixed;
+      #close {
         background-color: color(button, main);
         display: inline-block;
         border-radius: 50%;
         padding: px(10);
-        color: color(text,light);
+        color: color(text, light);
         position: absolute;
         right: 0;
         top: 0;

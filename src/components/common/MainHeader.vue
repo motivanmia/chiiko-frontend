@@ -1,6 +1,8 @@
 <script setup>
-  import { ref, computed } from 'vue';
-  import Icon from '../common/Icon.vue';
+  import { ref, computed, defineAsyncComponent } from 'vue';
+  import Icon from '@/components/common/Icon.vue';
+  import LoginModal from '@/components/user/Login.vue';
+  import SigninModal from '@/components/user/signin.vue';
 
   // nav選單項目
   const navLinks = ref([
@@ -37,28 +39,58 @@
 
   // 登入前的會員選單
   const menuItemLogout = [
-    { title: '登入', icon: 'login', path: '#' },
-    { title: '註冊', path: '#' },
+    { title: '登入', icon: 'login', action: 'login' },
+    { title: '註冊', action: 'signin' },
   ];
 
   // 登入後的會員選單
   const menuItemLonin = [
     { title: '登出', icon: 'logout', action: 'logout' },
     { title: '會員資料', paht: '/account' },
-    { title: '消息通知', paht: '#' },
-    { title: '我的食譜', paht: '#' },
-    { title: '食譜收藏', paht: '#' },
-    { title: '願望清單', paht: '#' },
-    { title: '訂單查詢', paht: '#' },
+    { title: '消息通知', paht: '/account' },
+    { title: '我的食譜', paht: '/account' },
+    { title: '食譜收藏', paht: '/account' },
+    { title: '願望清單', paht: '/account' },
+    { title: '訂單查詢', paht: '/account' },
   ];
 
-  // hover覆蓋
+  // 子選單hover覆蓋背景
   const overlayVisible = ref(false);
   const showOverlay = () => {
     overlayVisible.value = true;
   };
   const hideOverlay = () => {
     overlayVisible.value = false;
+  };
+
+  // 登入/註冊彈窗
+  const activeModal = ref(null);
+  const ModalComponents = {
+    login: LoginModal,
+    signin: SigninModal,
+  };
+  const currentModalComponent = computed(() => {
+    return activeModal.value ? ModalComponents[activeModal.value] : null;
+  });
+
+  const handleAction = (action) => {
+    if (action === 'logout') {
+      logout();
+    } else {
+      openModal(action);
+    }
+  };
+
+  const openModal = (modalKey) => {
+    // console.log(modalKey);
+    activeModal.value = modalKey;
+  };
+  const closeModal = () => {
+    activeModal.value = null;
+  };
+  const loginSuccess = () => {
+    isLogin.value = true;
+    closeModal();
   };
 </script>
 
@@ -133,7 +165,7 @@
               class="nav__submenu"
             >
               <div class="submenu__title">
-                <a href="#">食材學堂</a>
+                <a href="/school">食材學堂</a>
               </div>
               <div class="submenu__content school__grid">
                 <a
@@ -170,10 +202,10 @@
               :key="item.title"
             >
               <button
-                v-if="item.action === 'logout'"
+                v-if="item.action"
                 type="button"
                 class="member__item"
-                @click="logout"
+                @click="handleAction(item.action)"
               >
                 {{ item.title }}
                 <Icon
@@ -210,6 +242,17 @@
       </div>
     </div>
   </header>
+
+  <teleport to="body">
+    <transition name="modal-fade">
+      <component
+        v-if="activeModal"
+        :is="currentModalComponent"
+        @close="closeModal"
+        @login-success="loginSuccess"
+      />
+    </transition>
+  </teleport>
 </template>
 
 <style lang="scss" scoped>
@@ -480,5 +523,13 @@
     .member__icon {
       @include font-size(24);
     }
+  }
+  .modal-fade-enter-active,
+  .modal-fade-leave-active {
+    transition: 0.1s ease;
+  }
+  .modal-fade-enter-from,
+  .modal-fade-leave-to {
+    opacity: 0;
   }
 </style>
