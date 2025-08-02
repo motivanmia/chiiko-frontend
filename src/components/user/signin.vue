@@ -142,7 +142,7 @@
           </InputField>
           <InputField
             v-model="phone"
-            type="phone"
+            type="tel"
             label="手機"
             placeholder="請輸入您的手機號碼"
             autocomplete="tel"
