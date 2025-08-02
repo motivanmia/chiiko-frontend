@@ -16,8 +16,52 @@ const router = createRouter({
     },
     {
       path: '/account',
-      name: 'account',
       component: AccountPage,
+      children: [
+        {
+          path: '',
+          redirect: '/account/profile',
+        },
+        {
+          path: 'profile',
+          name: 'profile',
+          component: () => import('@/components/member/MemberProfile.vue'),
+        },
+        {
+          path: 'password',
+          name: 'password',
+          component: () => import('@/components/member/MemberPwd.vue'),
+          // 待更換新頁面
+        },
+        {
+          path: 'inform',
+          name: 'inform',
+          component: () => import('@/components/member/MemberProfile.vue'),
+          // 待更換新頁面
+        },
+        {
+          path: 'my-recipe',
+          name: 'my-recipe',
+          component: () => import('@/components/member/MemberRecipe.vue'),
+        },
+        {
+          path: 'recipe-collect',
+          name: 'recipe-collect',
+          component: () => import('@/components/member/MemberCollect.vue'),
+        },
+        {
+          path: 'wishlist',
+          name: 'wishlist',
+          component: () => import('@/components/member/MemberProfile.vue'),
+          // 待更換新頁面
+        },
+        {
+          path: 'orders',
+          name: 'orders',
+          component: () => import('@/components/member/MemberProfile.vue'),
+          // 待更換新頁面
+        },
+      ],
     },
     {
       path: '/school',

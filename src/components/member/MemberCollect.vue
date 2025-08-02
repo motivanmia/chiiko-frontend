@@ -1,9 +1,7 @@
 <script setup>
   // import MemberSidebar from './MemberSidebar.vue';
 
-
   import Icon from '../common/Icon.vue';
-
 </script>
 
 <template>
@@ -42,26 +40,22 @@
     height: auto;
     display: flex;
     justify-content: center;
-    margin: auto;
+    margin-top: 10px;
     background-color: #b5c5a8;
-    max-width: 900px;
-
+    border-radius: 15px;
 
     &__board {
-      background-color: #b5c5a8;
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       gap: 16px;
-      width: 100%;
 
       padding: 64px 0px;
-      
 
       .collect-recipe__card {
         background-color: white;
         border-radius: 20px;
-        padding: 20px;
+        padding: 10px;
         display: flex;
         flex-direction: column;
 
@@ -71,7 +65,6 @@
             width: 100%;
             height: auto;
             border-radius: 20px;
-            
           }
         }
 
@@ -85,7 +78,7 @@
           & > h3 {
             font-size: px(20);
             letter-spacing: 1.2px;
-            color: color(text,dark);
+            color: color(text, dark);
           }
         }
 
@@ -97,11 +90,11 @@
 
           & > p {
             font-size: px(16);
-            color: color(text,dark);
+            color: color(text, dark);
           }
           .markL-icon {
             font-size: px(20);
-            color:color(text,dark);
+            color: color(text, dark);
             cursor: pointer;
           }
         }

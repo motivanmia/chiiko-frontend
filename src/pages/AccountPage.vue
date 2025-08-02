@@ -8,8 +8,9 @@
     <div>
       <MemberSidebar />
     </div>
-    <div>
+    <div class="member__contant">
       <MemberDashboard />
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -23,5 +24,10 @@
     gap: 10px;
     justify-content: center;
     margin-top: 215px;
+  }
+  .member__contant {
+    width: 100%;
+    max-width: 887px;
+    margin-bottom: 200px;
   }
 </style>

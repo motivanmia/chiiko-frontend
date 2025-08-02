@@ -48,6 +48,7 @@
     justify-content: space-between;
     align-items: center;
     max-width: 887px;
+    width: 100%;
     padding: 20px 30px;
     @include fontSet($font: $basic-font, $fw: normal, $color: color(text, dark), $ls: 1.8px);
   }
