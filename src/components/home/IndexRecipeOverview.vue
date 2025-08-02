@@ -72,8 +72,9 @@
 
       & > img{
         width: 100%;
-        height: auto;
+        height: 100%;
         border-radius: 20px;
+        object-fit: cover;
       }
     }
     &__button {
@@ -90,6 +91,12 @@
       border: none;
       color:color(text,light);
       cursor: pointer;
+
+        &:hover{
+          color:color(button,main);
+          background-color: color(text,light);
+          transition: background-color 0.3s ease, color 0.3s ease;
+        }
     }
   }
 </style>
