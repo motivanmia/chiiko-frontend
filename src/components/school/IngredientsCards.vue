@@ -1,5 +1,6 @@
 <script setup>
-  import { Ingredients } from '@/constants/schoolIngredients';
+  import { useIngredientStore } from '@/stores/ingredient';
+  const ingredient = useIngredientStore();
   import { ref, watch, computed } from 'vue';
   import { useRoute } from 'vue-router';
 
@@ -15,16 +16,14 @@
   const displayCount = ref(50);
 
   const vegetableList = computed(() =>
-    Ingredients.filter((item) => item.category === 'vegetables'),
+    ingredient.list.filter((item) => item.category === 'vegetables'),
   );
-  console.log(vegetableList);
-
-  const meatList = computed(() => Ingredients.filter((item) => item.category === 'meat'));
+  const meatList = computed(() => ingredient.list.filter((item) => item.category === 'meat'));
 
   const filteredList = computed(() => {
     if (category.value === 'vegetable') return vegetableList.value;
     if (category.value === 'meat') return meatList.value;
-    return Ingredients;
+    return ingredient.list;
   });
 </script>
 
@@ -32,16 +31,17 @@
   <div class="Ingredients">
     <div
       class="Ingredients__card"
-      v-for="Ingredient in filteredList.slice(0, displayCount)"
-      :key="Ingredient.id"
+      v-for="item in filteredList.slice(0, displayCount)"
+      :key="item.id"
+      @click="ingredient.updateActive(item)"
     >
       <div class="Ingredients__card-imgbox">
         <img
-          :src="Ingredient.img[0]"
+          :src="item.img[0]"
           alt=""
         />
       </div>
-      <h3>{{ Ingredient.name }}</h3>
+      <h3>{{ item.name }}</h3>
     </div>
   </div>
 </template>
@@ -62,6 +62,7 @@
       box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
       border-radius: 20px;
       position: relative;
+      cursor: pointer;
 
       & > h3 {
         display: block;
