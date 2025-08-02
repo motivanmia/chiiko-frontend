@@ -64,9 +64,12 @@
   .recipe-card {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    // justify-content: center;
+    margin: 30px auto;
     gap: 40px;
-    margin-top: 30px;
+    max-width: 1200px;
+    width: 100%;
+
 
     &__box {
       justify-content: center;

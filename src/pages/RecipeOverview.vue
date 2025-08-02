@@ -1,5 +1,5 @@
 <script setup>
-import { category_name } from '@/constants/recipeCategory';
+import { categoryName } from '@/constants/recipeCategory';
 
 import MainHeader from '@/components/common/MainHeader.vue';
 
@@ -22,15 +22,21 @@ import RecipeCards from '@/components/recipe/RecipeCards.vue';
 
 <Category/>
 
+<div class="section-box">
 <SectionTitle/>
+</div>
 
 <RecipeCards/>
 
+<div class="section-box">
 <SectionTitle/>
+</div>
 
 <RecipeCards/>
 
+<div class="section-box">
 <SectionTitle/>
+</div>
 
 <RecipeCards/>
 
@@ -39,6 +45,9 @@ import RecipeCards from '@/components/recipe/RecipeCards.vue';
 
 <style lang="scss" scoped>
 
+.section-box{
+  margin: auto;
+}
 
 
 </style>
