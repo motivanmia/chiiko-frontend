@@ -514,6 +514,7 @@
       width: 100%;
       text-decoration: none;
       color: color(text, dark);
+      cursor: pointer;
     }
     .member__item:hover {
       background-color: color(button, main);

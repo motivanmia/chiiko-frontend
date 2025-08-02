@@ -3,6 +3,7 @@
   import Icon from '@/components/common/Icon.vue';
   import { ref } from 'vue';
 
+  const emit = defineEmits(['close']);
   const account = ref('');
   const password = ref('');
 
@@ -15,7 +16,10 @@
 <template>
   <div class="background">
     <div class="login-box">
-      <div id="close">
+      <div
+        id="close"
+        @click="$emit('close')"
+      >
         <Icon
           icon-name="remove"
           id="icon-remove"
@@ -80,9 +84,12 @@
 
 <style lang="scss" scoped>
   .background {
+    z-index: 50;
     color: color(text, dark);
     letter-spacing: 0.1rem;
-    background-color: rgba(76, 56, 35, 0.5);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     width: 100%;
     height: 100vh;
     position: absolute;
@@ -91,12 +98,11 @@
     align-items: center;
     justify-content: center;
     .login-box {
-      z-index: 50;
       // display: none;
       background-color: #fff;
       border-radius: 20px;
       padding: px(30);
-      position: fixed;
+      position: relative;
       #close {
         background-color: color(button, main);
         display: inline-block;
@@ -108,6 +114,7 @@
         top: 0;
         transform: translate(50%, -50%);
         font-size: px(30);
+        cursor: pointer;
       }
       h1 {
         text-align: center;
