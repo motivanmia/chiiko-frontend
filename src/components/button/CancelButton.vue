@@ -1,7 +1,25 @@
-<script setup></script>
+<script setup>
+  import { defineProps, defineEmits } from 'vue';
+
+  const props = defineProps({
+    type: {
+      type: String,
+      default: 'button',
+    },
+  });
+
+  const emit = defineEmits(['click']);
+  const handleClick = (event) => {
+    emit('click', event);
+  };
+</script>
 
 <template>
-  <button class="cancel__btn">
+  <button
+    :type="props.type"
+    class="cancel__btn"
+    @click="handleClick"
+  >
     <slot></slot>
   </button>
 </template>

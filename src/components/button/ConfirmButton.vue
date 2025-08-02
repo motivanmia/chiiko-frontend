@@ -1,7 +1,19 @@
-<script setup></script>
+<script setup>
+  import { defineProps } from 'vue';
+
+  const props = defineProps({
+    type: {
+      type: String,
+      default: 'button',
+    },
+  });
+</script>
 
 <template>
-  <button class="confirm__btn">
+  <button
+    :type="props.type"
+    class="confirm__btn"
+  >
     <slot></slot>
   </button>
 </template>

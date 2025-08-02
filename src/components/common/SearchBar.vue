@@ -1,5 +1,13 @@
 <script setup>
   import Icon from './Icon.vue';
+  import { defineProps } from 'vue';
+
+  const props = defineProps({
+    type: {
+      type: String,
+      default: '想找什麼食譜？',
+    },
+  });
 
   const search = () => {
     console.log('搜尋');
@@ -10,7 +18,7 @@
   <div class="search__bar">
     <input
       type="text"
-      placeholder="想找什麼食譜？"
+      :placeholder="props.placeholder"
       class="search__input"
     />
     <button
