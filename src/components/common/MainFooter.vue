@@ -3,8 +3,8 @@
 </script>
 
 <template>
-  <footer class="main-footer container-large">
-    <div class="main-footer__container">
+  <footer class="main-footer">
+    <div class="main-footer__container container-large">
       <div class="main-footer__header">
         <h2 class="main-footer__title">
           不是專業廚師也沒關係
@@ -307,15 +307,15 @@
 <style lang="scss" scoped>
   .main-footer {
     position: relative;
-    padding: 60px 0 40px;
+    padding: px(60) 0 px(40);
     background: url('@/assets/image/footer/footer-banner.svg') no-repeat top center / cover;
 
     &__container {
       position: relative;
-      padding: px(200) px(200) 0 px(200);
+      padding: px(100) pxTovw(80) 0 pxTovw(80);
 
       @include rwdmax(1200) {
-        padding: px(70) px(10) 0 px(70);
+        padding: px(70) px(10) 0 px(10);
       }
     }
 
@@ -327,10 +327,10 @@
     }
 
     &__title {
-      @include fontSet($basic-font, 600, px(40), 1.2, color(text, light), 0.1em);
+      @include fontSet($basic-font, bold, px(40), 1.2, color(text, light), 0.1em);
 
       @include rwdmax(768) {
-        @include fontSet($basic-font, 600, px(16), 1.2, color(text, light), normal);
+        @include fontSet($basic-font, bold, px(16), 1.2, color(text, light), 0.1em);
       }
     }
 
