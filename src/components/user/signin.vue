@@ -4,6 +4,7 @@
   import { ref } from 'vue';
   import tomato from '@/assets/image/footer/03.png';
 
+  const emit = defineEmits(['close']);
   const name = ref('');
   const account = ref(''); // 這是 email，作為登入帳號
   const password = ref('');
@@ -11,7 +12,6 @@
   const passwordConfirm = ref('');
   const agree = ref(false); // 新增同意條款狀態
   const formError = ref('');
-  // const showSignin = ref(true); // 一開始顯示
   const errorKey = ref(0);
 
   /////
@@ -75,7 +75,7 @@
     }
 
     formError.value = '';
-    
+
     alert('✅ 註冊成功！');
   }
 </script>
@@ -85,7 +85,7 @@
     <div class="signin-box">
       <div
         id="close"
-        @click="showSignin = false"
+        @click="$emit('close')"
       >
         <Icon
           icon-name="remove"
@@ -240,31 +240,37 @@
 
 <style lang="scss" scoped>
   .background {
+    z-index: 50;
     color: color(text, dark);
     letter-spacing: 0.1rem;
-    background-color: rgba(76, 56, 35, 0.5);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     width: 100%;
-    min-height: 100vh;
-    // height: 100vh;
-    position: absolute;
+    height: 100vh;
+    position: fixed;
     top: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     letter-spacing: 0.15em;
     padding: px(50);
+    @include rwdmax(768) {
+      padding: px(10);
+    }
     .signin-box {
-      z-index: 50;
       display: flex;
       width: auto;
       background-color: #fff;
       border-radius: 20px;
       padding: 30px;
-      position: fixed;
+      position: relative;
       @include rwdmax(768) {
         flex-direction: column;
         margin: 0;
-        // padding: clamp(18px, 1.56vw, 30px);
+        padding: clamp(18px, 1.56vw, 30px);
+        overflow-y: scroll;
+        max-height: 95vh;
       }
       #close {
         background-color: color(button, main);
@@ -278,6 +284,12 @@
         transform: translate(50%, -50%);
         font-size: clamp(18px, 1.56vw, 30px); //30px
         cursor: pointer;
+        @include rwdmax(768) {
+          right: 5px;
+          top: 5px;
+          transform: none;
+          position: absolute;
+        }
       }
       h1 {
         text-align: center;
