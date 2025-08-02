@@ -1,21 +1,47 @@
 <script setup>
+  import { useRoute, useRouter } from 'vue-router';
+  import { watch, ref } from 'vue';
+
   const SchoolCategory = [
-    { title: '植物性食材', img: '/src/assets/image/School/vegetables.jpg' },
-    { title: '動物性食材', img: '/src/assets/image/School/meat.jpg' },
+    { title: '植物性食材', value: 'vegetable', img: '/src/assets/image/School/vegetables.jpg' },
+    { title: '動物性食材', value: 'meat', img: '/src/assets/image/School/meat.jpg' },
   ];
+
+  const router = useRouter();
+  const route = useRoute();
+  const category = ref(route.query.category || '');
+  watch(
+    () => route.query.category,
+    (newVal, oldVal) => {
+      category.value = newVal;
+      console.log(category.value);
+    },
+  );
+
+  const onCategoryClick = (value) => {
+    console.log(value);
+    router.push({
+      query: {
+        category: value,
+      },
+    });
+  };
 </script>
 
 <template>
   <div class="category">
     <div
       class="category__buttons"
-      v-for="Buttons in SchoolCategory"
+      v-for="item in SchoolCategory"
+      :key="item.value"
+      @click="onCategoryClick(item.value)"
     >
       <img
-        :src="Buttons.img"
+        :class="['category__img', { 'category__img--active': category === item.value }]"
+        :src="item.img"
         alt=""
       />
-      <h2>{{ Buttons.title }}</h2>
+      <h2>{{ item.title }}</h2>
     </div>
   </div>
 </template>
@@ -36,13 +62,7 @@
       text-align: center;
       position: relative;
       overflow: hidden;
-
-      & > img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        filter: blur(2px);
-      }
+      cursor: pointer;
 
       & > h2 {
         position: absolute;
@@ -56,6 +76,17 @@
         font-size: 24px;
         font-weight: larger;
         white-space: nowrap;
+        font-weight: 700;
+      }
+    }
+    &__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(2px);
+      transition: filter 0.3s ease;
+      &--active {
+        filter: blur(2px) brightness(40%);
       }
     }
   }

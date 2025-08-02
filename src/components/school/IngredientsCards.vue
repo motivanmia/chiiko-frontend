@@ -1,15 +1,38 @@
 <script setup>
   import { Ingredients } from '@/constants/schoolIngredients';
-  import { ref } from 'vue';
+  import { ref, watch, computed } from 'vue';
+  import { useRoute } from 'vue-router';
 
-  const displayCount = ref(24);
+  const route = useRoute();
+  const category = ref(route.query.category || '');
+  watch(
+    () => route.query.category,
+    (newVal, oldVal) => {
+      category.value = newVal;
+    },
+  );
+
+  const displayCount = ref(50);
+
+  const vegetableList = computed(() =>
+    Ingredients.filter((item) => item.category === 'vegetables'),
+  );
+  console.log(vegetableList);
+
+  const meatList = computed(() => Ingredients.filter((item) => item.category === 'meat'));
+
+  const filteredList = computed(() => {
+    if (category.value === 'vegetable') return vegetableList.value;
+    if (category.value === 'meat') return meatList.value;
+    return Ingredients;
+  });
 </script>
 
 <template>
   <div class="Ingredients">
     <div
       class="Ingredients__card"
-      v-for="Ingredient in Ingredients.slice(0, displayCount)"
+      v-for="Ingredient in filteredList.slice(0, displayCount)"
       :key="Ingredient.id"
     >
       <div class="Ingredients__card-imgbox">
