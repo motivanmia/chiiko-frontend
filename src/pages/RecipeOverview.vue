@@ -22,21 +22,21 @@ import RecipeCards from '@/components/recipe/RecipeCards.vue';
 
 <Category/>
 
-<div class="section-box">
-<SectionTitle/>
-</div>
+
+<SectionTitle title="/當季熱門\" class="section"></SectionTitle>
+
 
 <RecipeCards/>
 
-<div class="section-box">
-<SectionTitle/>
-</div>
+
+<SectionTitle title="/最多收藏\" class="section"></SectionTitle>
+
 
 <RecipeCards/>
 
-<div class="section-box">
-<SectionTitle/>
-</div>
+
+<SectionTitle title="/最新投稿\" class="section"></SectionTitle>
+
 
 <RecipeCards/>
 
@@ -45,8 +45,8 @@ import RecipeCards from '@/components/recipe/RecipeCards.vue';
 
 <style lang="scss" scoped>
 
-.section-box{
-  margin: auto;
+.section{
+  margin: px(200) auto px(100); //暫時設定
 }
 
 

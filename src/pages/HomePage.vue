@@ -14,6 +14,9 @@
     { keyitem: '小黃瓜', path: '#' },
     { keyitem: '甜甜圈', path: '#' },
   ]);
+  // import login from '../components/user/Login.vue';
+
+  import hot from '@/components/home/HomeHot.vue';
 
   // function ShareRecipe() {
   //   console.log('前往分享食譜');
@@ -49,6 +52,17 @@
 
     <div class="scoll-down">向下捲動</div>
   </div>
+  <hot />
+
+  <ShareRecipeButton
+    id="ShareRecipeButton"
+    @ShareRecipeButtonclick="ShareRecipe"
+  >
+    <template #click-me>點我</template>
+    <template #share>分享食譜</template>
+  </ShareRecipeButton>
+
+  <delicious id="delicious" />
 </template>
 
 <style lang="scss" scoped>
