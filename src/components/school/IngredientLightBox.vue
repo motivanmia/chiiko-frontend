@@ -14,11 +14,30 @@
       <h1>{{ ingredient.active.name }}</h1>
     </div>
     <div class="lightbox__content">
-      <div class="lightbox__img">
-        <img
-          :src="ingredient.active.img[0]"
-          alt=""
-        />
+      <div class="lightbox__imgbox">
+        <img-comparison-slider
+          style="
+            --divider-width: 3px;
+            --divider-color: #6b6e4f;
+            --default-handle-width: clamp(20px, 50px, 200px);
+            --default-handle-color: #6b6e4f;
+          "
+        >
+          <img
+            class="lightbox__img"
+            slot="first"
+            data-before
+            :src="ingredient.active.img[0]"
+            alt=""
+          />
+          <img
+            class="lightbox__img"
+            slot="second"
+            data-after
+            :src="ingredient.active.img[1]"
+            alt=""
+          />
+        </img-comparison-slider>
       </div>
       <div class="lightbox__text">
         <div class="lightbox__text--box">
@@ -124,7 +143,7 @@
       height: 8%;
       border-bottom: 2px solid black;
       & > h1 {
-        font-size: 40px;
+        font-size: 2vw;
         font-weight: bold;
         text-align: center;
         color: color(text, dark);
@@ -144,26 +163,43 @@
       justify-content: space-between;
     }
 
-    &__img {
-      height: 100%;
-      width: 40%;
+    &__imgbox {
+      width: 18vw;
+      aspect-ratio: 1 / 1;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       position: absolute;
-      & > img {
-        height: 100%;
+      img-comparison-slider {
         width: 100%;
-        object-fit: contain;
-        position: absolute;
+        height: 100%;
+        border: none;
+        outline: none;
+        box-shadow: none;
+        background: transparent;
       }
+
+      img-comparison-slider::part(container),
+      img-comparison-slider::part(before),
+      img-comparison-slider::part(after),
+      img-comparison-slider::part(handle) {
+        border: none;
+        outline: none;
+        box-shadow: none;
+        background: transparent;
+      }
+    }
+    &__img {
+      object-fit: contain;
+      width: 100%;
+      aspect-ratio: 1 / 1;
     }
     &__foot {
       width: 80%;
       height: 25%;
-      margin: 20px auto;
+      margin: 1vw auto;
       & > h2 {
-        font-size: 24px;
+        font-size: 1.25vw;
         font-weight: bold;
         text-align: center;
         color: color(text, dark);
@@ -172,8 +208,8 @@
       & > p {
         display: block;
         width: 80%;
-        margin: 20px auto 0 auto;
-        font-size: 18px;
+        margin: 1vw auto 0 auto;
+        font-size: 0.9375vw;
         color: color(text, dark);
       }
     }
@@ -194,23 +230,23 @@
           padding-top: 3px;
           margin-bottom: 10px;
           color: color(text, dark);
-          font-size: 20px;
+          font-size: 1vw;
           font-weight: 700;
         }
         & > span {
           color: color(text, dark);
-          font-size: 18px;
+          font-size: 0.9375vw;
           line-height: normal;
         }
       }
       &--checkicon {
         color: green;
-        font-size: 32px;
+        font-size: 1.66vw;
         margin: 0 5px;
       }
       &--ngicon {
         color: red;
-        font-size: 32px;
+        font-size: 1.66vw;
         margin: 0 10px;
       }
     }
@@ -218,13 +254,17 @@
     &__close {
       background-color: color(button, main);
       border-radius: 50%;
-      height: 60px;
-      width: 60px;
+      height: 3.125vw;
+      width: 3.125vw;
       position: absolute;
-      right: -25px;
-      top: -25px;
+      right: -1.3vw;
+      top: -1.3vw;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       &--icon {
-        font-size: 60px;
+        font-size: 3.125vw;
       }
     }
     &__seemore {
