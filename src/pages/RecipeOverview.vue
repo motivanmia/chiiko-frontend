@@ -15,6 +15,15 @@ import RecipeCards from '../components/recipe/RecipeCards.vue';
 
 import Pagination from '@/components/Pagination.vue';
 
+// import MemberSidebar from '@/components/member/MemberSidebar.vue';
+
+import MemberRecipe from '@/components/member/MemberRecipe.vue';
+
+// import TEST from '@/components/member/TEST.vue';
+
+
+
+
 </script>
 
 <template>
@@ -40,7 +49,13 @@ import Pagination from '@/components/Pagination.vue';
 
 <RecipeCards /> -->
 
-<Pagination></Pagination>
+<!-- <Pagination></Pagination> -->
+
+<!-- <MemberSidebar></MemberSidebar> -->
+
+<!-- <MemberRecipe/> -->
+
+<TEST/>
 
 </template>
 
