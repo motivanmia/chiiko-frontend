@@ -11,6 +11,7 @@
     <input
       type="text"
       placeholder="想找什麼食譜？"
+      class="search__input"
     />
     <button
       @click="search"
@@ -29,11 +30,11 @@
     position: relative;
     width: 490px;
     margin: 0 auto;
-    input {
+    .search__input {
       width: 100%;
       padding: 10px 25px;
       border-radius: 20px;
-      border: none;
+      border: 1px solid #ccc;
       box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21) inset;
       background: #fff;
       @include fontSet(
@@ -44,6 +45,11 @@
         $color: color(search, placeholder),
         $ls: 3px
       );
+      &:focus {
+        outline: none;
+        border: 1px solid color(text, dark);
+        color: color(text, dark);
+      }
     }
     .search__btn {
       position: absolute;
