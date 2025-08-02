@@ -14,12 +14,12 @@
     () => route.query.category,
     (newVal, oldVal) => {
       category.value = newVal;
-      console.log(category.value);
+      // console.log(category.value);
     },
   );
 
   const onCategoryClick = (value) => {
-    console.log(value);
+    // console.log(value);
     router.push({
       query: {
         category: value,
@@ -85,6 +85,9 @@
       object-fit: cover;
       filter: blur(2px);
       transition: filter 0.3s ease;
+      &:hover {
+        filter: blur(2px) brightness(40%);
+      }
       &--active {
         filter: blur(2px) brightness(40%);
       }
