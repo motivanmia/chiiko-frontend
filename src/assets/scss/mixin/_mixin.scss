@@ -117,3 +117,7 @@
   font-family: v.$basic-font;
   font-weight: 700;
 }
+
+@mixin cardBoxShadow {
+  box-shadow: 0 f.px(4) f.px(10) rgba(f.color(text, dark), 25%);
+}
