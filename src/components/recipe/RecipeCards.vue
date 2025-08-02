@@ -1,19 +1,20 @@
 <script setup>
   import Icon from '../common/Icon.vue';
+
+  import {popularRecipe} from '@/constants/recipes'
 </script>
 
 <template>
   <div class="recipe-card">
     <div
-      v-for="card in 9"
+      v-for="card in popularRecipe"
+      :key="card.id"
       class="recipe-card__box"
     >
       <div class="recipe-card__pic">
         <img
           class="recipe-card__img"
-          src="/src/assets/image/Recipes/misopotato.png"
-          alt=""
-        />
+          :src="card.image"  :alt="card.title"   />
       </div>
 
       <div class="recipe-card__content">
@@ -22,8 +23,8 @@
           src="/src/assets/image/Recipes/graffiti.png"
           alt=""
         />
-        <h2>味增馬鈴薯煎餅</h2>
-      </div>
+        <h2>{{ card.title }}</h2>  </div>
+
       <div class="icon-board">
         <div class="icon-board__left">
           <p>
@@ -31,7 +32,7 @@
               icon-name="time"
               class="time-icon"
             />
-            約20分鐘
+            約{{ card.time }}分鐘
           </p>
         </div>
         <div class="icon-board__right">
@@ -40,21 +41,21 @@
               icon-name="comment"
               class="comment-icon"
             />
-            120
-          </p>
+            {{ card.comments }}  </p>
 
           <p>
             <Icon
               icon-name="markL"
               class="markL-icon"
             />
-            90
-          </p>
+            {{ card.bookmarks }}  </p>
         </div>
       </div>
+      
       <div class="icon-board__tag">
-        <p>#和風</p>
-        <p>#馬鈴薯</p>
+        <p v-for="tag in card.tag" :key="tag">
+          {{ tag }}
+        </p>
       </div>
     </div>
   </div>
@@ -64,7 +65,7 @@
   .recipe-card {
     display: flex;
     flex-wrap: wrap;
-    // justify-content: center;
+    justify-content: center;
     margin: 30px auto;
     gap: 40px;
     max-width: 1200px;
