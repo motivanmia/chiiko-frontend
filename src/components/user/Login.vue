@@ -1,8 +1,9 @@
 <script setup>
   import InputField from '@/components/user/InputField.vue';
-  import Icon from '../common/Icon.vue';
+  import Icon from '@/components/common/Icon.vue';
   import { ref } from 'vue';
 
+  const emit = defineEmits(['close']);
   const account = ref('');
   const password = ref('');
 
@@ -15,8 +16,14 @@
 <template>
   <div class="background">
     <div class="login-box">
-      <div id="close">
-        <Icon icon-name="remove" id="icon-remove"/>
+      <div
+        id="close"
+        @click="$emit('close')"
+      >
+        <Icon
+          icon-name="remove"
+          id="icon-remove"
+        />
       </div>
       <h1>會員登入</h1>
       <form @submit.prevent="login">
@@ -77,9 +84,12 @@
 
 <style lang="scss" scoped>
   .background {
+    z-index: 50;
     color: color(text, dark);
     letter-spacing: 0.1rem;
-    background-color: rgba(76, 56, 35, 0.5);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     width: 100%;
     height: 100vh;
     position: absolute;
@@ -93,17 +103,18 @@
       border-radius: 20px;
       padding: px(30);
       position: relative;
-      #close{
+      #close {
         background-color: color(button, main);
         display: inline-block;
         border-radius: 50%;
         padding: px(10);
-        color: color(text,light);
+        color: color(text, light);
         position: absolute;
         right: 0;
         top: 0;
         transform: translate(50%, -50%);
         font-size: px(30);
+        cursor: pointer;
       }
       h1 {
         text-align: center;
