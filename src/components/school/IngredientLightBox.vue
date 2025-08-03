@@ -76,10 +76,10 @@
         </div>
       </div>
     </div>
-    <div class="lightbox__foot">
+    <pre class="lightbox__foot">
       <h2>保存方法</h2>
       <p>{{ ingredient.active.preservation }}</p>
-    </div>
+    </pre>
     <div
       class="lightbox__close"
       @click="ingredient.updateActive(null)"
@@ -103,7 +103,7 @@
     position: fixed;
     width: 55vw;
     height: 80vh;
-    background-color: color(backgroundColor, beige);
+    background-color: white;
     top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -138,7 +138,7 @@
     &__imgbox {
       width: 18vw;
       aspect-ratio: 1 / 1;
-      top: 50%;
+      top: 45%;
       left: 50%;
       transform: translate(-50%, -50%);
       position: absolute;
@@ -180,9 +180,12 @@
       & > p {
         display: block;
         width: 80%;
-        margin: 1vw auto 0 auto;
+        margin: 0 auto 0 auto;
         font-size: 0.9375vw;
         color: color(text, dark);
+        white-space: pre-wrap;
+        word-break: break-word;
+        line-height: normal;
       }
     }
     &__text {
