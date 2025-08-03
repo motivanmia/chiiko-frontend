@@ -1,5 +1,5 @@
 <script setup>
-  import Icon from '../common/Icon.vue';
+  import Icon from '@/components/common/Icon.vue';
   import { ref, Transition } from 'vue';
 
   const profile = ref({
@@ -54,7 +54,7 @@
   ]);
 
   const activeItemId = ref('user-info'); // 預設頁面為會員資料
-  const subMenuOpen = ref(false); // 子選單預設不打開
+  const subMenuOpen = ref(true); // 子選單預設打開(預設在會員資料)
 
   const itemClick = (clickitem) => {
     activeItemId.value = clickitem.id;

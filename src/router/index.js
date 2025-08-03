@@ -1,10 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '@/pages/HomePage.vue';
 import AccountPage from '@/pages/AccountPage.vue';
-import SchoolPage from '@/pages/SchoolPage.vue';
-import RecipeDetailPage from '@/pages/RecipeDetailPage.vue';
-import RecipeEditPage from '@/pages/RecipeEditPage.vue';
-import RecipeOverview from '@/pages/RecipeOverview.vue';
+import ProductPage from '@/pages/ProductPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,7 +27,7 @@ const router = createRouter({
         {
           path: 'password',
           name: 'password',
-          component: () => import('@/components/member/MemberPwd.vue'),
+          component: () => import('@/components/member/MemberChangePwd.vue'),
           // 待更換新頁面
         },
         {
@@ -52,7 +49,7 @@ const router = createRouter({
         {
           path: 'wishlist',
           name: 'wishlist',
-          component: () => import('@/components/member/MemberProfile.vue'),
+          component: () => import('@/components/member/MemberDesire.vue'),
           // 待更換新頁面
         },
         {
@@ -63,25 +60,36 @@ const router = createRouter({
         },
       ],
     },
+    ,
     {
       path: '/school',
       name: 'school',
-      component: SchoolPage 
+      component: () => import('@/pages/SchoolPage.vue'),
     },
-    { 
-      path: '/RecipeDetail', 
-      name: 'RecipeDetail', 
-      component: RecipeDetailPage 
+    {
+      path: '/recipe-detail',
+      name: 'recipe-detail',
+      component: () => import('@/pages/RecipeDetailPage.vue'),
     },
-    { 
-      path: '/RecipeEdit', 
-      name: 'RecipeEdit', 
-      component: RecipeEditPage 
+    {
+      path: '/recipe-edit',
+      name: 'recipe-edit',
+      component: () => import('@/pages/RecipeEditPage.vue'),
     },
     {
       path: '/recipe',
       name: 'recipe',
-      component: RecipeOverview
+      component: () => import('@/pages/RecipeOverview.vue'),
+    },
+    {
+      path: '/product',
+      name: 'product',
+      component: () => import('@/pages/ProductPage.vue'),
+    },
+    {
+      path: '/product-detail',
+      name: 'product-detail',
+      component: () => import('@/pages/ProductContent.vue'),
     },
   ],
 });

@@ -3,6 +3,7 @@
   import { ref, reactive, nextTick } from 'vue';
   import CancelButton from '@/components/button/CancelButton.vue';
   import ConfirmButton from '@/components/button/ConfirmButton.vue';
+  import Swal from 'sweetalert2';
 
   // 是否在編輯模式
   const isEdit = ref(false);
@@ -41,8 +42,10 @@
   // 儲存變更
   const saveChange = () => {
     isEdit.value = false;
-
-    alert('修改成功');
+    Swal.fire({
+      icon: 'success',
+      title: '修改成功',
+    });
     // 清空備份資料
     originalUserInfo = {};
   };
@@ -165,6 +168,40 @@
       $color: color(text, dark),
       $ls: 1.8px
     );
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      .form__wrap {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 90px;
+      }
+    }
+    form.is-edit {
+      .form__group input:not([readonly]) {
+        background-color: #ffffff;
+        pointer-events: auto;
+        cursor: text;
+        border-color: #ccc;
+
+        &:focus {
+          outline: none;
+          border-color: color(button, main);
+        }
+      }
+      .form__group input[readonly] {
+        background: color(search, placeholder);
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+    }
+    .form__action {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+    }
   }
   .edit__btn {
     @include font-size(25);
@@ -189,17 +226,6 @@
       background: #868686;
       box-shadow: 0 0 2.2px 3px rgba(0, 0, 0, 0.25) inset;
       cursor: auto;
-    }
-  }
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    .form__wrap {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      gap: 90px;
     }
   }
   .form__group {
@@ -228,28 +254,5 @@
         $ls: 1.8px
       );
     }
-  }
-  form.is-edit {
-    .form__group input:not([readonly]) {
-      background-color: #ffffff;
-      pointer-events: auto;
-      cursor: text;
-      border-color: #ccc;
-
-      &:focus {
-        outline: none;
-        border-color: color(text, dark);
-      }
-    }
-    .form__group input[readonly] {
-      background: color(search, placeholder);
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-  }
-  .form__action {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 30px;
   }
 </style>

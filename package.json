@@ -13,10 +13,11 @@
   "dependencies": {
     "img-comparison-slider": "^8.0.6",
     "pinia": "^3.0.3",
-    "swiper": "^11.2.10", 
+    "swiper": "^11.2.10",
+    "sweetalert2": "^11.22.2",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1"
-  },                
+  },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",
     "prettier": "3.5.3",
