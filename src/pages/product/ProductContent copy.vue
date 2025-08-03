@@ -79,20 +79,10 @@
             :alt="`縮圖 ${i + 1}`"
           />
         </SwiperSlide>
-        <div>
-          <img
-            class="responsive-img"
-            src="/src/assets/image/Product/Product-buy/product-image.png"
-          />
-        </div>
 
-        <!-- 自訂箭頭：自己放內容 -->
-        <div class="thumbs-button-prev">
-          <span class="thumbs-arrow">&lt;</span>
-        </div>
-        <div class="thumbs-button-next">
-          <span class="thumbs-arrow">&gt;</span>
-        </div>
+        <!-- 箭頭 -->
+        <div class="thumbs-button-prev"></div>
+        <div class="thumbs-button-next"></div>
       </Swiper>
     </div>
 
@@ -146,56 +136,9 @@
     </aside>
   </div>
 
-  <section class="related-section">
-    <h3 class="related-title">搭配好物</h3>
-    <Swiper
-      class="related-swiper"
-      :modules="[Navigation]"
-      :slides-per-view="3"
-      :space-between="20"
-      navigation
-    >
-      <SwiperSlide>
-        <div class="related-card">
-          <img
-            src="/src/assets/image/Product/product-pot.png"
-            class="related-img"
-          />
-          <div class="related-text">
-            <p class="related-name">韓式雪平鍋 18cm</p>
-            <p class="related-sub">可用於煮湯、熱牛奶、煮醬汁、煮粥</p>
-            <p class="related-price">$329</p>
-          </div>
-        </div>
-      </SwiperSlide>
-      <SwiperSlide>
-        <div class="related-card">
-          <img
-            src="/src/assets/image/Product/product-fish.png"
-            class="related-img"
-          />
-          <div class="related-text">
-            <p class="related-name">魚鱗刨刀</p>
-            <p class="related-sub">用於括魚鱗</p>
-            <p class="related-price">$29</p>
-          </div>
-        </div>
-      </SwiperSlide>
-      <SwiperSlide>
-        <div class="related-card">
-          <img
-            src="/src/assets/image/Product/product-chopsticks.png"
-            class="related-img"
-          />
-          <div class="related-text">
-            <p class="related-name">日式和風筷架</p>
-            <p class="related-sub">好筷架 不用嗎</p>
-            <p class="related-price">$29</p>
-          </div>
-        </div>
-      </SwiperSlide>
-    </Swiper>
-  </section>
+  <div class="product-image">
+    <img src="/src/assets/image/Product/Product-buy/product-image.png" />
+  </div>
 </template>
 
 <style scoped>
@@ -437,95 +380,17 @@
     margin-right: 8px;
   }
 
-  .thumbs-arrow {
-    font-size: 20px;
-    font-weight: bold;
-    user-select: none;
+  .product-image {
+    display: flex;
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 0 16px 24px;
   }
 
-  .related-section {
-    margin-top: 40px;
-    margin-bottom: 40px;
-    max-width: 70%;
-    margin-inline: auto;
-    padding: 0 16px;
-  }
-
-  .related-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 16px;
-    color: #222;
-  }
-
-  .related-swiper {
-    position: relative;
-  }
-
-  .related-card {
+  .product-image img {
     width: 100%;
-    background: #fff;
+    display: block;
     border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s ease;
-  }
-
-  .related-card:hover {
-    transform: translateY(-2px);
-  }
-
-  .related-img {
-    width: 100%;
-    aspect-ratio: 1 / 1; /* ✅ 正方形圖片 */
-    object-fit: cover;
-    display: block;
-  }
-
-  .related-text {
-    padding: 12px 10px 16px;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #444;
-    text-align: left;
-  }
-
-  .related-name {
-    font-weight: 600;
-    font-size: 15px;
-    margin-bottom: 4px;
-    color: #222;
-  }
-
-  .related-sub {
-    font-size: 12px;
-    color: #888;
-    margin-bottom: 6px;
-  }
-
-  .related-price {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
-  }
-
-  :deep(.related-swiper .swiper-button-prev),
-  :deep(.related-swiper .swiper-button-next) {
-    color: #b06c2c;
-    top: 40%;
-    width: 24px;
-    height: 24px;
-    font-size: 16px;
-    background: #fff;
-    border-radius: 50%;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .responsive-img {
-    width: 100%;
-    height: auto;
-    display: block;
-    max-width: 100%;
   }
 
   @media (max-width: 880px) {
