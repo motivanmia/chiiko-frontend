@@ -23,8 +23,8 @@
   ];
 
   const navItemSchool = [
-    { title: '植物性食材', path: '#' },
-    { title: '動物性食材', path: '#' },
+    { title: '植物性食材', path: '/school?category=vegetable' },
+    { title: '動物性食材', path: '/school?category=meat' },
   ];
 
   // 登入狀態

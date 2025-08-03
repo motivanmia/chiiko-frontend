@@ -17,7 +17,8 @@
   // import login from '../components/user/Login.vue';
 
   import hot from '@/components/home/HomeHot.vue';
-import IndexRecipeOverview from '@/components/home/IndexRecipeOverview.vue';
+  import IndexRecipeOverview from '@/components/home/IndexRecipeOverview.vue';
+  import HomeSchool from '@/components/home/HomeSchool.vue';
 
   // function ShareRecipe() {
   //   console.log('前往分享食譜');
@@ -65,7 +66,9 @@ import IndexRecipeOverview from '@/components/home/IndexRecipeOverview.vue';
 
   <delicious id="delicious" />
 
-  <IndexRecipeOverview/>
+  <IndexRecipeOverview />
+
+  <HomeSchool />
 </template>
 
 <style lang="scss" scoped>
