@@ -3,7 +3,7 @@
   import { defineProps } from 'vue';
 
   const props = defineProps({
-    type: {
+    placeholder: {
       type: String,
       default: '想找什麼食譜？',
     },
