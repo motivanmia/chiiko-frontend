@@ -5,20 +5,13 @@
   import ShareRecipeButton from '../components/button/ShareRecipeButton.vue';
 
   import delicious from '../components/Delicious.vue';
+  
+  import section_title from '../components/SectionTitle.vue';
 
-  // import section_title from '../components/SectionTitle.vue';
+  import login from '../components/user/Login.vue'
 
-  const hotSearch = ref([
-    { keyitem: '芒果冰沙', path: '#' },
-    { keyitem: '鳳梨', path: '#' },
-    { keyitem: '小黃瓜', path: '#' },
-    { keyitem: '甜甜圈', path: '#' },
-  ]);
-  // import login from '../components/user/Login.vue';
 
-  import hot from '@/components/home/HomeHot.vue';
-  import IndexRecipeOverview from '@/components/home/IndexRecipeOverview.vue';
-  import HomeSchool from '@/components/home/HomeSchool.vue';
+  
 
   // function ShareRecipe() {
   //   console.log('前往分享食譜');
@@ -64,11 +57,8 @@
     <template #share>分享食譜</template>
   </ShareRecipeButton>
 
-  <delicious id="delicious" />
+  <!-- <RecipeOverview/> -->
 
-  <IndexRecipeOverview />
-
-  <HomeSchool />
 </template>
 
 <style lang="scss" scoped>
