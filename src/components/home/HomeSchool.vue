@@ -27,8 +27,8 @@
         <p>{{ item.name }}</p>
       </div>
       <div class="school__text">
-        <h1>{{ item.ligthbox.goodtitle[0] }}</h1>
-        <p>{{ item.ligthbox.goodcontent[0] }}</p>
+        <h1>{{ item.lightbox[0].goodtitle }}</h1>
+        <p>{{ item.lightbox[0].goodcontent }}</p>
       </div>
     </div>
   </div>
