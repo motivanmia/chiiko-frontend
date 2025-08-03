@@ -13,6 +13,7 @@
 
 <template>
   <SectionTitle title="/食材學堂\" />
+  <div class="subtitle"><p>不知道怎麼挑選和保存嗎? 看看小百科吧!</p></div>
   <div class="school">
     <div
       class="school__card"
@@ -36,6 +37,18 @@
 </template>
 
 <style lang="scss" scoped>
+  .subtitle {
+    text-align: center;
+    margin: 30px auto;
+
+    & > p {
+      color: color(text, dark);
+      font-size: 20px;
+      font-style: normal;
+      line-height: normal;
+      letter-spacing: 2px;
+    }
+  }
   .school {
     margin: 50px auto;
     width: 1200px;
@@ -48,6 +61,8 @@
       border-radius: 20px;
       background: rgba(70, 110, 38, 0.6);
       display: flex;
+      filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
+
       &:nth-of-type(2) {
         align-self: flex-end;
         .school__imgbox {
@@ -60,6 +75,7 @@
       height: 100%;
       aspect-ratio: 1 / 1;
       position: relative;
+      margin: 0 30px;
 
       & > img {
         height: 100%;
