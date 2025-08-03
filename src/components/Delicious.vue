@@ -48,13 +48,13 @@
   }
 
   .marquee-track span {
-    font-size: 40px;
+    font-size: 60px;
     font-weight: bold;
-    color: color(orangeColor, light);
+    color: rgb(250, 200, 155, 0.5);
     padding-right: 60px;
-    font-family: basic-font;
+    font-family: Serif Tamil;
     font-style: italic;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.2em;
   }
 
   @keyframes marquee {

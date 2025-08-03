@@ -1,3 +1,5 @@
+@use '../base/variable' as v;
+@use '../mixin/function' as f;
 @use 'sass:math';
 
 // RWD
@@ -27,9 +29,9 @@
 
 // 文字設定
 @mixin fontSet(
-  $font: $basic-font,
+  $font: v.$basic-font,
   $fw: normal,
-  $size: px(16),
+  $size: f.px(16),
   $lh: 1,
   $color: inherit,
   $ls: normal
@@ -81,7 +83,7 @@
 }
 
 // Placeholder
-@mixin placeholder($font: $basic-font, $color: black, $size: px(16), $ls: '') {
+@mixin placeholder($font: v.$basic-font, $color: black, $size: f.px(16), $ls: '') {
   &::placeholder {
     font-family: $font;
     font-size: $size;
@@ -112,6 +114,10 @@
 
 // Title font
 @mixin title {
-  font-family: $basic-font;
+  font-family: v.$basic-font;
   font-weight: 700;
+}
+
+@mixin cardBoxShadow {
+  box-shadow: 0 f.px(4) f.px(10) rgba(f.color(text, dark), 25%);
 }

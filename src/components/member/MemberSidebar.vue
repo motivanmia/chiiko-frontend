@@ -12,12 +12,12 @@
       id: 'user-info',
       icon: 'user',
       title: '會員資料',
-      href: '#',
+      routeName: 'profile',
       children: [
         {
           id: 'change-pwd',
           title: '修改密碼',
-          href: '#',
+          routeName: 'password',
         },
       ],
     },
@@ -25,31 +25,31 @@
       id: 'inform',
       icon: 'bell',
       title: '消息通知',
-      href: '#',
+      routeName: 'inform',
     },
     {
       id: 'my-recipe',
       icon: 'recipe',
       title: '我的食譜',
-      href: '#',
+      routeName: 'my-recipe',
     },
     {
-      id: 'saved-recipe',
+      id: 'recipe-collect',
       icon: 'markL',
       title: '食譜收藏',
-      href: '#',
+      routeName: 'recipe-collect',
     },
     {
       id: 'wishlist',
       icon: 'heartL',
       title: '願望清單',
-      href: '#',
+      routeName: 'wishlist',
     },
     {
       id: 'orders',
       icon: 'order',
       title: '訂單查詢',
-      href: '#',
+      routeName: 'orders',
     },
   ]);
 
@@ -76,20 +76,30 @@
       }
     }
   };
+
+  const changeAvatar = () => {
+    console.log('更換頭像');
+  };
 </script>
 
 <template>
   <div class="sidebar">
+    <!-- 會員頭像 -->
     <div class="profile__pic">
       <img
         :src="profile.avatar"
         alt="會員頭像"
       />
-      <button class="upload__btn">
+      <button
+        class="upload__btn"
+        @click="changeAvatar"
+      >
         <Icon icon-name="upload" />
       </button>
     </div>
     <p class="username">{{ profile.name }}</p>
+
+    <!-- 導覽列 -->
     <nav class="sidebar__list">
       <ul>
         <template
@@ -100,9 +110,9 @@
             v-if="item.children"
             class="sidebar__collapsible"
           >
-            <a
-              :href="item.href"
-              :class="{ active: activeItemId === item.id }"
+            <router-link
+              :to="{ name: item.routeName }"
+              class="parent-link"
               @click.prevent="itemClick(item)"
             >
               <Icon
@@ -122,7 +132,7 @@
                   class="sidebar__arrow"
                 />
               </span>
-            </a>
+            </router-link>
             <Transition name="slide-fade">
               <ul
                 v-show="subMenuOpen"
@@ -132,13 +142,12 @@
                   v-for="subItem in item.children"
                   :key="subItem.id"
                 >
-                  <a
-                    :href="subItem.href"
-                    :class="{ active: activeItemId === subItem.id }"
+                  <router-link
+                    :to="{ name: subItem.routeName }"
                     @click.prevent.stop="itemClick(subItem)"
                   >
                     <span>{{ subItem.title }}</span>
-                  </a>
+                  </router-link>
                 </li>
               </ul>
             </Transition>
@@ -148,9 +157,8 @@
             />
           </li>
           <li v-else>
-            <a
-              :href="item.href"
-              :class="{ active: activeItemId === item.id }"
+            <router-link
+              :to="{ name: item.routeName }"
               @click.prevent="itemClick(item)"
             >
               <Icon
@@ -158,7 +166,7 @@
                 class="sidebar__icon"
               />
               <span class="sidebar__title">{{ item.title }}</span>
-            </a>
+            </router-link>
           </li>
         </template>
       </ul>
@@ -193,6 +201,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .upload__btn:hover {
+    background-color: color(orangeColor, base);
+    transition: 0.2s ease;
   }
   .sidebar {
     display: flex;
@@ -240,6 +252,24 @@
         background-color 0.2s ease,
         color 0.2s ease;
     }
+    li a:hover {
+      color: color(button, main);
+    }
+    li a.router-link-active,
+    li a.router-link-exact-active {
+      // @include fontSet(...); // 樣式保持一致
+      font-family: 'YourBasicFont', sans-serif;
+      font-weight: normal;
+      font-size: 24px; // px(24) 的 fallback
+      color: color(text, light);
+      letter-spacing: 2.4px;
+
+      background-color: color(button, main);
+    }
+    li a.router-link-active:hover,
+    li a.router-link-exact-active:hover {
+      color: color(text, light); // 活躍狀態下 hover 保持白色
+    }
     span {
       padding-left: 10px;
       position: relative;
@@ -249,16 +279,19 @@
       top: center;
       right: -20px;
     }
-    .active {
-      @include fontSet(
-        $font: $basic-font,
-        $fw: normal,
-        $size: px(24),
-        $color: color(text, light),
-        $ls: 2.4px
-      );
-      background-color: color(button, main);
-    }
+    // .active {
+    //   @include fontSet(
+    //     $font: $basic-font,
+    //     $fw: normal,
+    //     $size: px(24),
+    //     $color: color(text, light),
+    //     $ls: 2.4px
+    //   );
+    //   background-color: color(button, main);
+    // }
+    // .active:hover {
+    //   color: color(text, light);
+    // }
   }
   .sidebar__collapsible {
     display: flex;

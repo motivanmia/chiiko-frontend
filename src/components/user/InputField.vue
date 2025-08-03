@@ -1,61 +1,57 @@
+<script setup>
+import { defineProps, defineEmits } from 'vue'
+
+const props = defineProps({
+  modelValue: String,
+  label: String,
+  placeholder: String,
+  type: {
+    type: String,
+    default: 'email',
+  },
+  id: {
+    type: String,
+    default: () => `input-${Math.random().toString(36).substring(2, 8)}`
+  },
+  autocomplete: {
+    type: String,
+    default: 'off'
+  }
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+function onInput(e) {
+  emit('update:modelValue', e.target.value)
+}
+</script>
+
 <template>
   <div class="input-wrapper">
-  <label
-    :for="id"
-    class="input-label"
-  >
-    {{ label }}
-  </label>
-  <input
-    :id="id"
-    :type="type"
-    :placeholder="placeholder"
-    v-model="inputValue"
-    class="input-box"
-    autocomplete=""
-  />
+    <label :for="id" class="input-label">
+      {{ label }}
+    </label>
+    <p class="must"><slot name="must"></slot></p>
+    <p><slot name="tip"></slot></p>
+    <input
+      :id="id"
+      :type="type"
+      :placeholder="placeholder"
+      :autocomplete="autocomplete"
+      :value="modelValue"
+      @input="onInput"
+      class="input-box"
+    />
   </div>
 </template>
 
-<script setup>
-  import { defineProps, defineEmits, watch, ref } from 'vue';
-
-  const props = defineProps({
-    modelValue: String,
-    label: String,
-    placeholder: String,
-    type: {
-      type: String,
-      default: 'email',
-    },
-    id: {
-      type: String,
-      default: () => `input-${Math.random().toString(36).substring(2, 8)}`,
-    },
-  });
-
-  const emit = defineEmits(['update:modelValue']);
-
-  const inputValue = ref(props.modelValue);
-
-  watch(inputValue, (val) => {
-    emit('update:modelValue', val);
-  });
-
-  watch(
-    () => props.modelValue,
-    (val) => {
-      inputValue.value = val;
-    },
-  );
-</script>
 
 <style lang="scss" scoped>
   .input-wrapper {
-    letter-spacing: .1rem;
+    letter-spacing: 0.1rem;
   }
   .input-label {
-    display: block;
+    display: inline-block;
     margin-bottom: 0.5em;
     margin-top: 25px;
   }
@@ -64,9 +60,19 @@
     padding-left: 1.5rem;
     border: 1px solid #ccc;
     border-radius: 20px;
-    font-size: 20px;
-    letter-spacing: .05rem;
-    height:4.0625rem;
-    color:color(search,placeholder)
+    font-size: clamp(18px, 1.04vw, 20px);
+    letter-spacing: 0.05rem;
+    height: 4.0625rem;
+    color: color(search, placeholder);
+  }
+  .must {
+    display: inline-block;
+    font-size: px(16);
+    color: color(search, placeholder);
+  }
+  p {
+    font-size: px(16);
+    color: color(search, placeholder);
+    margin-bottom: px(10);
   }
 </style>

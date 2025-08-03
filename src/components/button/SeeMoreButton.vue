@@ -16,6 +16,21 @@
 </script>
 
 <template>
+  <!-- <button
+    class="see-more__button"
+    @click="handleClick"
+  >
+    <div class="text">
+      {{ text }}
+    </div>
+
+    <div class="icon">
+      <Icon
+        icon-name="btnArrow"
+        class="see-more__icon"
+      />
+    </div>
+  </button> -->
   <button
     class="see-more__button"
     @click="handleClick"
@@ -44,7 +59,7 @@
     cursor: pointer;
     transition: background-color 0.2s ease;
     align-items: center;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.2em;
     transition: 0.5s;
   }
   .icon {
@@ -56,7 +71,7 @@
     align-items: center;
     justify-content: center;
     margin-left: 70px;
-    transition: margin-left 0.6s ease;
+    transition: transform 0.6s ease;
   }
   .see-more__icon {
     font-size: 1.2em;
@@ -76,9 +91,11 @@
     bottom: 0;
     left: 0;
     margin-bottom: -10px;
+    z-index: 1;
   }
   .see-more__button:hover .icon {
-    margin-left: 90px;
+    // margin-left: 90px;
+    transform: translateX(30px);
     background-color: color(backgroundColor, recipe);
   }
 </style>

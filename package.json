@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "prod": "vite build --mode prod",
     "preview": "vite preview",
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "img-comparison-slider": "^8.0.6",
     "pinia": "^3.0.3",
     "swiper": "^11.2.10", 
     "vue": "^3.5.17",
