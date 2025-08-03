@@ -39,67 +39,39 @@
           />
         </img-comparison-slider>
       </div>
+
+      <!-- 好的描述 -->
       <div class="lightbox__text">
-        <div class="lightbox__text--box">
+        <div
+          class="lightbox__text--box"
+          v-for="(item, index) in ingredient.active.lightbox"
+          :key="'good-' + index"
+        >
           <Icon
             icon-name="check"
             class="lightbox__text--checkicon"
           />
           <div class="lightbox__text--item">
-            <h1>{{ ingredient.active.ligthbox.goodtitle[0] }}</h1>
-            <span>{{ ingredient.active.ligthbox.goodcontent[0] }}</span>
-          </div>
-        </div>
-        <div class="lightbox__text--box">
-          <Icon
-            icon-name="check"
-            class="lightbox__text--checkicon"
-          />
-          <div class="lightbox__text--item">
-            <h1>{{ ingredient.active.ligthbox.goodtitle[1] }}</h1>
-            <span>{{ ingredient.active.ligthbox.goodcontent[1] }}</span>
-          </div>
-        </div>
-        <div class="lightbox__text--box">
-          <Icon
-            icon-name="check"
-            class="lightbox__text--checkicon"
-          />
-          <div class="lightbox__text--item">
-            <h1>{{ ingredient.active.ligthbox.goodtitle[2] }}</h1>
-            <span>{{ ingredient.active.ligthbox.goodcontent[2] }}</span>
+            <h1>{{ item.goodtitle }}</h1>
+            <span>{{ item.goodcontent }}</span>
           </div>
         </div>
       </div>
+
+      <!-- 壞的描述 -->
       <div class="lightbox__text">
-        <div class="lightbox__text--box">
+        <div
+          class="lightbox__text--box"
+          v-for="(item, index) in ingredient.active.lightbox"
+          :key="'bad-' + index"
+        >
           <Icon
             icon-name="ng"
             class="lightbox__text--ngicon"
           />
           <div class="lightbox__text--item">
-            <h1>{{ ingredient.active.ligthbox.badtitle[0] }}</h1>
-            <span>{{ ingredient.active.ligthbox.badcontent[0] }}</span>
-          </div>
-        </div>
-        <div class="lightbox__text--box">
-          <Icon
-            icon-name="ng"
-            class="lightbox__text--ngicon"
-          />
-          <div class="lightbox__text--item">
-            <h1>{{ ingredient.active.ligthbox.badtitle[1] }}</h1>
-            <span>{{ ingredient.active.ligthbox.badcontent[1] }}</span>
-          </div>
-        </div>
-        <div class="lightbox__text--box">
-          <Icon
-            icon-name="ng"
-            class="lightbox__text--ngicon"
-          />
-          <div class="lightbox__text--item">
-            <h1>{{ ingredient.active.ligthbox.badtitle[2] }}</h1>
-            <span>{{ ingredient.active.ligthbox.badcontent[2] }}</span>
+            <h1>{{ item.badtitle }}</h1>
+            <span>{{ item.badcontent }}</span>
           </div>
         </div>
       </div>
@@ -117,7 +89,7 @@
         class="lightbox__close--icon"
       />
     </div>
-    <SeeMore class="lightbox__seemore"></SeeMore>
+    <SeeMore class="lightbox__seemore" />
   </div>
   <div
     class="overlay"
