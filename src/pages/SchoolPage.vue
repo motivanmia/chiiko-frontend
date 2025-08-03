@@ -6,6 +6,7 @@
   import IngredientsCards from '@/components/school/IngredientsCards.vue';
   import SearchBar from '@/components/common/SearchBar.vue';
   import IngredientLightBox from '@/components/school/IngredientLightBox.vue';
+  import Pagination from '@/components/Pagination.vue';
 </script>
 
 <template>
@@ -13,11 +14,13 @@
 
   <Category></Category>
 
-  <SearchBar></SearchBar>
+  <SearchBar placeholder="輸入想要了解的食材"></SearchBar>
 
   <IngredientsCards></IngredientsCards>
 
   <IngredientLightBox v-if="ingredient.active" />
+
+  <Pagination />
 </template>
 
 <style lang="scss" scoped></style>
