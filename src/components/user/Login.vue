@@ -3,14 +3,32 @@
   import Icon from '@/components/common/Icon.vue';
   import { ref } from 'vue';
 
-  const emit = defineEmits(['close']);
+  const emit = defineEmits(['close', 'login-success']);
+
+  // 假帳號密碼
+  const FAKE_ACCOUNT = 'test123@1.1';
+  const FAKE_PASSWORD = 'test123';
+
   const account = ref('');
   const password = ref('');
 
-  // const login = () => {
-  //   console.log('登入帳號:', account.value);
-  //   console.log('登入密碼:', password.value);
-  // };
+  // 控制 toast 顯示
+  // const showSuccess = ref(false);
+
+  const noSuccess = ref(false);
+
+  // 範例 login 函式：驗證是否與假帳密吻合
+  const login = () => {
+    if (account.value === FAKE_ACCOUNT && password.value === FAKE_PASSWORD) {
+      emit('login-success');
+      emit('close');
+    } else {
+      noSuccess.value = true;
+      setTimeout(() => {
+        noSuccess.value = false;
+      }, 1000);
+    }
+  };
 </script>
 
 <template>
@@ -45,12 +63,7 @@
         >
           忘記密碼?
         </a>
-        <button
-          type="submit"
-          id="btn_login"
-        >
-          登入
-        </button>
+        <button id="btn_login">登入</button>
       </form>
 
       <p>快速登入</p>
@@ -79,6 +92,14 @@
         <a href="#">點我註冊</a>
       </div>
     </div>
+    <transition name="fade">
+      <div
+        v-if="noSuccess"
+        class="toast"
+      >
+        帳號或密碼錯誤！
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -201,5 +222,33 @@
         }
       }
     }
+  }
+  /* 彈窗樣式 */
+  .toast {
+    position: fixed;
+    top: 5vw;
+    left: 50%;
+    transform: translateX(-50%);
+    background: color(text, light);
+    color: color(button, main);
+    padding: 0.6em 1.2em;
+    border-radius: 20px;
+    font-size: 20px;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* 淡入淡出動畫 */
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s ease;
+  }
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+  .fade-enter-to,
+  .fade-leave-from {
+    opacity: 1;
   }
 </style>

@@ -28,13 +28,14 @@
   ];
 
   // 登入狀態
-  const isLogin = ref(true);
+  const isLogin = ref(localStorage.getItem('isLogin') === 'true');
 
-  const memberMenuItem = computed(() => (isLogin.value ? menuItemLonin : menuItemLogout));
+  const memberMenuItem = computed(() => (isLogin.value ? menuItemLogin : menuItemLogout));
 
   // 登出
   const logout = () => {
     isLogin.value = false;
+    localStorage.removeItem('isLogin');
   };
 
   // 登入前的會員選單
@@ -44,7 +45,7 @@
   ];
 
   // 登入後的會員選單
-  const menuItemLonin = [
+  const menuItemLogin = [
     { title: '登出', icon: 'logout', action: 'logout' },
     { title: '會員資料', path: '/account' },
     { title: '消息通知', path: '/account/inform' },
@@ -90,8 +91,15 @@
   };
   const loginSuccess = () => {
     isLogin.value = true;
+    localStorage.setItem('isLogin', 'true');
     closeModal();
+    showToast.value = true;
+    setTimeout(() => {
+      showToast.value = false;
+    }, 3000);
   };
+
+  const showToast = ref(false); // 顯示登入成功提示
 </script>
 
 <template>
@@ -253,6 +261,14 @@
       />
     </transition>
   </teleport>
+  <transition name="fade">
+    <div
+      v-if="showToast"
+      class="toast"
+    >
+      登入成功！
+    </div>
+  </transition>
 </template>
 
 <style lang="scss" scoped>
@@ -532,5 +548,31 @@
   .modal-fade-enter-from,
   .modal-fade-leave-to {
     opacity: 0;
+  }
+
+  .toast {
+    position: fixed;
+    top: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: color(text, light);
+    color: color(button, main);
+    padding: 0.6em 1.2em;
+    border-radius: 0.4em;
+    font-size: 20px;
+    pointer-events: none;
+    z-index: 20;
+  }
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s ease;
+  }
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+  .fade-enter-to,
+  .fade-leave-from {
+    opacity: 1;
   }
 </style>

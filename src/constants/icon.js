@@ -46,6 +46,8 @@ export const iconMap = {
   google: 'devicon:google',
   login: 'hugeicons:login-02',
   logout: 'hugeicons:logout-02',
+  eyes: 'gravity-ui:eyes-look-left',
+  close_eyes: 'humbleicons:eye-close',
 };
 
 /**
