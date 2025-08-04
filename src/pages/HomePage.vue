@@ -1,5 +1,8 @@
 <script setup>
   import { ref } from 'vue';
+  import { useSearch } from '@/constants/search';
+
+
   import SearchBar from '@/components/common/SearchBar.vue';
   import ShareRecipeButton from '@/components/button/ShareRecipeButton.vue';
   import delicious from '@/components/Delicious.vue';
@@ -22,6 +25,9 @@
   // function SeeMore() {
   //   console.log('查看更多被點擊');
   // }
+
+  const { searchTerm, handleSearch } = useSearch();
+
 </script>
 
 <template>
@@ -32,9 +38,13 @@
     />
 
     <div class="search__section">
-      <SearchBar />
+      <SearchBar
+        v-model="searchTerm"
+        @search="handleSearch"
+      />
       <div class="hot-search-wrapper">
-        <HotSearch />
+        <HotSearch
+        @search="handleSearch" />
       </div>
     </div>
 
