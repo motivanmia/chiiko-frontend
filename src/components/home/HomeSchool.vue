@@ -34,7 +34,7 @@
         </div>
       </div>
     </div>
-    <SeeMoreButton class="SeeMoreButton" />
+    <SeeMoreButton class="SeeMoreButton" path="/school"/>
   </div>
 </template>
 

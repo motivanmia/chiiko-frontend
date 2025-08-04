@@ -13,17 +13,23 @@
       type: String,
       default: 'center center',
     },
+    path: {
+      type: String,
+      default: '/',
+    },
   });
 </script>
 
 <template>
   <div id="image-wrapper">
-    <img   
+    <RouterLink :to="props.path" >
+    <img
       :src="img"
       :style="{ objectPosition }"
     />
     <div class="overlay"></div>
     <h1>{{ text }}</h1>
+    </RouterLink>
   </div>
 </template>
 
@@ -35,7 +41,7 @@
     position: relative;
     cursor: pointer;
     margin-bottom: 50px;
-    @include rwdmax(1200){
+    @include rwdmax(1200) {
       width: 100%;
     }
     @include rwdmax(768) {
@@ -69,7 +75,7 @@
       left: 50%;
       transform: translate(-50%, -50%);
       // font-size: 40px;
-      font-size:  clamp(20px, 5.5vw, 40px);;
+      font-size: clamp(20px, 5.5vw, 40px);
       font-weight: bold;
       color: color(text, light);
       width: 100%;

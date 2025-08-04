@@ -6,17 +6,21 @@
       type: String,
       default: '查看更多',
     },
+    path: {
+      type: String,
+      default: '/',
+    },
   });
 
-  const emit = defineEmits(['seeMoreButtonclick']);
+  // const emit = defineEmits(['seeMoreButtonclick']);
 
-  function handleClick() {
-    emit('seeMoreButtonclick');
-  }
+  // function handleClick() {
+  //   emit('seeMoreButtonclick');
+  // }
 </script>
 
 <template>
-  <!-- <button
+  <RouterLink :to="props.path"
     class="see-more__button"
     @click="handleClick"
   >
@@ -30,22 +34,7 @@
         class="see-more__icon"
       />
     </div>
-  </button> -->
-  <button
-    class="see-more__button"
-    @click="handleClick"
-  >
-    <div class="text">
-      {{ text }}
-    </div>
-
-    <div class="icon">
-      <Icon
-        icon-name="btnArrow"
-        class="see-more__icon"
-      />
-    </div>
-  </button>
+  </RouterLink>
 </template>
 
 <style lang="scss" scoped>
@@ -61,6 +50,9 @@
     align-items: center;
     letter-spacing: 0.2em;
     transition: 0.5s;
+    justify-content: center;
+    width: max-content;
+    text-decoration: none;
   }
   .icon {
     display: flex;

@@ -14,8 +14,12 @@
 
     <div id="hot_img_s">
       <span>
-        <hot_img class="hot_img" />
         <hot_img
+          class="hot_img"
+          path="/recipe-detail"
+        />
+        <hot_img
+          path="/recipe-detail"
           class="hot_img"
           :img="img03"
           text="牛番茄燉牛腩剛剛好"
@@ -24,12 +28,14 @@
       <span id="right">
         <DropdownMenu id="DropdownMenu" />
         <hot_img
+          path="/recipe-detail"
           class="hot_img"
           :img="img02"
           text="烤箱裡的紙包鮭魚"
           objectPosition="0% 70%"
         />
         <hot_img
+          path="/recipe-detail"
           class="hot_img"
           :img="img04"
           text="剛好一口的奶酪布丁"
@@ -37,7 +43,10 @@
         />
       </span>
     </div>
-    <SeeMoreButton id="SeeMoreButton" />
+    <SeeMoreButton
+      id="SeeMoreButton"
+      path="/recipe"
+    />
   </div>
 </template>
 
