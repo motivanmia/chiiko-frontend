@@ -8,6 +8,7 @@ import RecipeOverview from '@/pages/RecipeOverview.vue';
 import RecipeSolo from '@/pages/RecipeSolo.vue';
 import RecipeSearch from '@/pages/RecipeSearch.vue';
 import RecipeSearchNone from '@/pages/RecipeSearchNone.vue';
+import TestComponentPage from '@/pages/TestComponentPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -112,6 +113,11 @@ const router = createRouter({
       name: 'none',
       component: () => import('@/pages/RecipeSearchNone.vue')
     },
+    {
+      path: '/TestComponent', 
+      name: 'TestComponent', 
+      component: TestComponentPage 
+    }
   ],
 });
 
