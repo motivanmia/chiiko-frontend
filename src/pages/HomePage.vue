@@ -49,6 +49,8 @@
 
     <IndexRecipeOverview />
 
+    <HomeSchool id="HomeSchool"/>
+
     <ShareRecipeButton
       id="ShareRecipeButton"
       @ShareRecipeButtonclick="handleShareRecipe"
@@ -56,8 +58,6 @@
       <template #click-me>點我</template>
       <template #share>分享食譜</template>
     </ShareRecipeButton>
-
-    <HomeSchool />
   </div>
 </template>
 

@@ -12,31 +12,37 @@
 </script>
 
 <template>
-  <SectionTitle title="/食材學堂\" />
-  <div class="subtitle"><p>不知道怎麼挑選和保存嗎? 看看小百科吧!</p></div>
-  <div class="school">
-    <div
-      class="school__card"
-      v-for="item in result"
-      :key="item.id"
-    >
-      <div class="school__imgbox">
-        <img
-          :src="item.img[0]"
-          alt=""
-        />
-        <p>{{ item.name }}</p>
-      </div>
-      <div class="school__text">
-        <h1>{{ item.lightbox[0].goodtitle }}</h1>
-        <p>{{ item.lightbox[0].goodcontent }}</p>
+  <div id="HomeSchool">
+    <SectionTitle title="/食材學堂\" />
+    <div class="subtitle"><p>不知道怎麼挑選和保存嗎? 看看小百科吧!</p></div>
+    <div class="school">
+      <div
+        class="school__card"
+        v-for="item in result"
+        :key="item.id"
+      >
+        <div class="school__imgbox">
+          <img
+            :src="item.img[0]"
+            alt=""
+          />
+          <p>{{ item.name }}</p>
+        </div>
+        <div class="school__text">
+          <h1>{{ item.lightbox[0].goodtitle }}</h1>
+          <p>{{ item.lightbox[0].goodcontent }}</p>
+        </div>
       </div>
     </div>
+    <SeeMoreButton class="SeeMoreButton" />
   </div>
-  <SeeMoreButton class="SeeMoreButton" />
 </template>
 
 <style lang="scss" scoped>
+#HomeSchool{
+  margin-top: 150px;
+  margin-bottom: 200px ;
+}
   .subtitle {
     text-align: center;
     margin: 30px auto;
@@ -50,12 +56,12 @@
     }
   }
   .school {
-    margin: 50px auto;
-    width: 1200px;
+    margin: 50px auto 120px;
+    max-width: 1200px;
     display: flex;
     flex-direction: column;
     &__card {
-      width: 900px;
+      max-width: 900px;
       height: 200px;
       margin: 20px;
       border-radius: 20px;

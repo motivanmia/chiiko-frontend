@@ -26,7 +26,7 @@
     transform: scale(1.3);
     position: absolute;
     right: 30px;
-    bottom: 0;
+    bottom: 20px;
   }
   img {
     width: 80px;
