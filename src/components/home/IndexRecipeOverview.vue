@@ -5,47 +5,49 @@
   import SectionTitle from '../SectionTitle.vue';
 
   const card = categoryName;
-
-  
-
 </script>
 
 <template>
-<div class="recipe-all">
-  <!-- 上面的名稱待修改 -->
-  <div class="recipe-category">
-    
-    <div class="recipe-category__section">
-      <SectionTitle title="/靈感 X 食譜\"></SectionTitle>
-    </div>
+  <div class="recipe-all">
+    <!-- 上面的名稱待修改 -->
+    <div class="recipe-category">
+      <div class="recipe-category__section">
+        <SectionTitle title="/靈感 X 食譜\"></SectionTitle>
+      </div>
 
-    <div class="recipe-category__box">
-      <div v-for="cards in card" class="recipe-category__card">
-        <!-- cards是我們設立的變數 -->
-        <img
-          :src="cards.image"
-          :alt="cards.title"
-        />
-        <button class="recipe-category__button">{{ cards.title }}</button>
+      <div class="recipe-category__box">
+        <div
+          v-for="cards in card"
+          class="recipe-category__card"
+        >
+          <!-- cards是我們設立的變數 -->
+          <img
+            :src="cards.image"
+            :alt="cards.title"
+          />
+          <button class="recipe-category__button">{{ cards.title }}</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <style lang="scss" scoped>
-  .recipe-all{
+  .recipe-category__section {
+    margin-top: 50px;
+  }
+  .recipe-all {
     display: flex;
     justify-content: center;
   }
-    // 上面暫時這樣設定
+  // 上面暫時這樣設定
 
-  .recipe-category{
+  .recipe-category {
     display: flex;
     flex-direction: column;
     margin: 0 auto 100px; //暫時設定
 
-    &__section{
+    &__section {
       margin-bottom: 50px;
     }
 
@@ -61,42 +63,93 @@
       justify-content: space-between;
       row-gap: 50px;
       flex-wrap: wrap;
-    }
-    &__card {
-      background-color: black;
-      width: 290px;
-      height: 267px;
-      // height: auto;
-      position: relative;
-      border-radius: 20px;
+      margin-top: 50px;
 
-      & > img{
-        width: 100%;
-        height: 100%;
-        border-radius: 20px;
-        object-fit: cover;
-      }
-    }
-    &__button {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translate(-50%, 50%);
-      border-radius: 20px;
-      width: 235px;
-      height: 55px;
-      font-size: 24px;
-      letter-spacing: 1.2px;
-      background-color: color(button,main);
-      border: none;
-      color:color(text,light);
-      cursor: pointer;
+        @media screen and (max-width:1200px){
+          gap:150px;
+          justify-content: center;
+        }
 
-        &:hover{
-          color:color(button,main);
-          background-color: color(text,light);
-          transition: background-color 0.3s ease, color 0.3s ease;
+        @media screen and (max-width:768px){
+          gap: 50px;
+          justify-content: center;
         }
     }
+  &__card {
+    background-color: black;
+    width: 290px;
+    height: 267px;
+    position: relative;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // 卡片預設陰影
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+    z-index: 0;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); // 卡片 hover 陰影
+      
+      &::after {
+        // background-color: rgba(0, 0, 0, 0);
+      }
+      
+      img {
+        // filter: brightness(0.8);
+      }
+
+      .recipe-category__button {
+        color: color(button, main);
+        background-color: color(text, light);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+      }
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      // background-color: rgba(0, 0, 0, 0.25);
+      transition: background-color 0.3s ease;
+      z-index: 1;
+    }
+
+    & > img {
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      object-fit: cover;
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
   }
+
+  &__button {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    border-radius: 20px;
+    width: 235px;
+    height: 55px;
+    font-size: 24px;
+    letter-spacing: 1.2px;
+    background-color: color(button, main);
+    border: none;
+    color: color(text, light);
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); 
+    transition: 
+      background-color 0.3s ease, 
+      color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+}
+  
 </style>

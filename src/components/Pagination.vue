@@ -29,6 +29,8 @@
     flex-wrap: nowrap;
     align-items: center;
     gap: 5px;
+    justify-content: center;
+    margin: 100px 0;
 
     & > button {
       background-color: white;

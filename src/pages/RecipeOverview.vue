@@ -1,5 +1,5 @@
 <script setup>
-import { categoryName } from '@/constants/recipeCategory';
+// import { categoryName } from '@/constants/recipeCategory';
 
 import MainHeader from '@/components/common/MainHeader.vue';
 

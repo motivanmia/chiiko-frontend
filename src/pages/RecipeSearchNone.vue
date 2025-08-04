@@ -12,7 +12,7 @@ import Pagination from '@/components/Pagination.vue';
 
 const breadcrumbItems = ref([
   { text: '靈感 X 食譜', href: '#' },
-  { text: '搜尋結果: 飯', href: '#' } //修改預設
+  { text: '搜尋結果: 123', href: '#' } //修改預設
 ]);
 </script>
 
@@ -27,12 +27,16 @@ const breadcrumbItems = ref([
   
   <SectionTitle title="/搜索結果\" class="section"></SectionTitle>
   
-  <div class="content-wrapper">
-    <BreadCrumb class="bread-crumb" :items="breadcrumbItems"/>
-    <RecipeCardSolo class="solo"/>
-  </div>
-  
-  <Pagination/>
+  <div class="bread-crumb__box">
+  <BreadCrumb :items="breadcrumbItems" class="bread-crumb"/>
+</div>
+
+  <span class="search-result">
+    <p>
+      找不到符合搜尋字詞「123 」的食譜。
+    </p>
+  </span>
+
 </template>
 
 <style lang="scss" scoped>
@@ -66,5 +70,22 @@ const breadcrumbItems = ref([
   .content-wrapper {
     padding: 0 15px;
   }
+}
+
+.search-result{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30vw;
+  
+  & > p{
+    font-size: 32px;
+  }
+}
+
+.bread-crumb__box{
+  display: flex;
+  max-width: 1200px;
+  margin: auto;
 }
 </style>
