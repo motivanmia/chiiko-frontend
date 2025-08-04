@@ -1,20 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '@/pages/HomePage.vue';
 import AccountPage from '@/pages/AccountPage.vue';
-import SchoolPage from '@/pages/SchoolPage.vue';
-import RecipeDetailPage from '@/pages/RecipeDetailPage.vue';
-import RecipeEditPage from '@/pages/RecipeEditPage.vue';
-import RecipeOverview from '@/pages/RecipeOverview.vue';
-import RecipeSolo from '@/pages/RecipeSolo.vue';
-import RecipeSearch from '@/pages/RecipeSearch.vue';
-import RecipeSearchNone from '@/pages/RecipeSearchNone.vue';
 import TestComponentPage from '@/pages/TestComponentPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior(to, from, savedPosition) {
+    return {
+      top: 0,
+      behavior: 'smooth',
+    };
+  },
   routes: [
     {
-      path:'/',
+      path: '/',
       component: () => import('@/pages/Portal.vue'),
       meta: { requiresLayout: false },
     },

@@ -1,6 +1,4 @@
-<script setup>
-  import Icon from './Icon.vue';
-</script>
+<script setup></script>
 
 <template>
   <footer class="main-footer">
@@ -13,146 +11,146 @@
       </div>
       <div class="main-footer__wrapper">
         <div class="main-footer__recipe">
-          <a
-            href="/recipe"
+          <RouterLink
+            to="/recipe"
             class="main-footer__recipe-title"
           >
             靈感×食譜
-          </a>
+          </RouterLink>
           <ul class="main-footer__recipe-list">
             <li class="main-footer__recipe-item">
-              <a
-                href="/solo"
+              <RouterLink
+                to="/solo"
                 class="main-footer__recipe-link"
               >
                 一人料理
-              </a>
+              </RouterLink>
             </li>
             <li class="main-footer__recipe-item">
-              <a
-                href="/solo"
+              <RouterLink
+                to="/solo"
                 class="main-footer__recipe-link"
               >
                 家庭聚餐
-              </a>
+              </RouterLink>
             </li>
             <li class="main-footer__recipe-item">
-              <a
-                href="/solo"
+              <RouterLink
+                to="/solo"
                 class="main-footer__recipe-link"
               >
                 浪漫晚餐
-              </a>
+              </RouterLink>
             </li>
             <li class="main-footer__recipe-item">
-              <a
-                href="/solo"
+              <RouterLink
+                to="/solo"
                 class="main-footer__recipe-link"
               >
                 戶外料理
-              </a>
+              </RouterLink>
             </li>
             <li class="main-footer__recipe-item">
-              <a
-                href="/solo"
+              <RouterLink
+                to="/solo"
                 class="main-footer__recipe-link"
               >
                 健身/減糖餐
-              </a>
+              </RouterLink>
             </li>
             <li class="main-footer__recipe-item">
-              <a
-                href="/solo"
+              <RouterLink
+                to="/solo"
                 class="main-footer__recipe-link"
               >
                 懶人快煮
-              </a>
+              </RouterLink>
             </li>
             <li class="main-footer__recipe-item">
-              <a
-                href="/solo"
+              <RouterLink
+                to="/solo"
                 class="main-footer__recipe-link"
               >
                 慶生/節慶料理
-              </a>
+              </RouterLink>
             </li>
             <li class="main-footer__recipe-item">
-              <a
-                href="/solo"
+              <RouterLink
+                to="/solo"
                 class="main-footer__recipe-link"
               >
                 低預算料理
-              </a>
+              </RouterLink>
             </li>
           </ul>
         </div>
 
         <div class="main-footer__food">
-          <a
-            href="/school"
+          <RouterLink
+            to="/school"
             class="main-footer__food-title"
           >
             食材學堂
-          </a>
+          </RouterLink>
           <ul class="main-footer__food-list">
             <li class="main-footer__food-item">
-              <a
-                href="/school?category=vegetable"
+              <RouterLink
+                to="/school?category=vegetable"
                 class="main-footer__food-link"
               >
                 植物性食材
-              </a>
+              </RouterLink>
             </li>
             <li class="main-footer__food-item">
-              <a
-                href="/school?category=meat"
+              <RouterLink
+                to="/school?category=meat"
                 class="main-footer__food-link"
               >
                 動物性食材
-              </a>
+              </RouterLink>
             </li>
           </ul>
         </div>
 
         <div class="main-footer__product">
-          <a
-            href="/product"
+          <RouterLink
+            to="/product"
             class="main-footer__product-title"
           >
             好物精選
-          </a>
+          </RouterLink>
           <ul class="main-footer__product-list">
             <li class="main-footer__product-item">
-              <a
-                href="/product"
+              <RouterLink
+                to="/product"
                 class="main-footer__product-link"
               >
                 鍋具/鍋鏟
-              </a>
+              </RouterLink>
             </li>
             <li class="main-footer__product-item">
-              <a
-                href="/product"
+              <RouterLink
+                to="/product"
                 class="main-footer__product-link"
               >
                 烤箱/氣炸鍋
-              </a>
+              </RouterLink>
             </li>
             <li class="main-footer__product-item">
-              <a
-                href="/product"
+              <RouterLink
+                to="/product"
                 class="main-footer__product-link"
               >
                 刀具/砧板
-              </a>
+              </RouterLink>
             </li>
             <li class="main-footer__product-item">
-              <a
-                href="/product"
+              <RouterLink
+                to="/product"
                 class="main-footer__product-link"
               >
                 廚房小物
-              </a>
+              </RouterLink>
             </li>
           </ul>
         </div>
@@ -161,20 +159,10 @@
           <h3 class="main-footer__contact-title">聯絡我們</h3>
           <ul class="main-footer__contact-list">
             <li class="main-footer__contact-item">
-              <p
-                href="#"
-                class="main-footer__contact-link"
-              >
-                聯絡信箱：hello@yourdomain.com
-              </p>
+              <p class="main-footer__contact-link">聯絡信箱：hello@yourdomain.com</p>
             </li>
             <li class="main-footer__contact-item">
-              <p
-                href="#"
-                class="main-footer__contact-link"
-              >
-                商業合作：collab@yourdomain.com
-              </p>
+              <p class="main-footer__contact-link">商業合作：collab@yourdomain.com</p>
             </li>
           </ul>
         </div>
