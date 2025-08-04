@@ -51,7 +51,9 @@
       </div>
     </div>
 
-    <div class="scoll-down">向下捲動</div>
+    <div class="scoll-down">
+      <p>向下捲動</p>
+    </div>
   </div>
   <div>
     <hot />
@@ -85,6 +87,18 @@
       height: 100%;
       object-fit: cover;
       z-index: -2;
+      @include rwdmax(1200) {
+        object-position: px(-220);
+      }
+    }
+    @include rwdmax(1400) {
+      height: 850px;
+    }
+    @include rwdmax(1200) {
+      height: 750px;
+    }
+    @include rwdmax(768) {
+      height: 600px;
     }
   }
   .scoll-down {
@@ -107,12 +121,36 @@
       $color: color(text, base),
       $ls: 1.5px
     );
+    @include rwdmax(1400) {
+      width: 350px;
+      height: 160px;
+      padding-top: 12px;
+    }
+    @include rwdmax(1200) {
+      width: 300px;
+      height: 150px;
+      padding-top: 10px;
+      @include font-size(18);
+    }
+    @include rwdmax(768) {
+      width: 190px;
+      height: 140px;
+      padding-top: 10px;
+      @include font-size(14);
+    }
+    p {
+      animation: wave 1.5s infinite linear;
+    }
   }
   .search__section {
     position: absolute;
     text-align: center;
     top: 50%;
     right: 15%;
+    @include rwdmax(768) {
+      right: 50%;
+      transform: translateX(50%);
+    }
   }
   .search__hot {
     margin-top: 25px;

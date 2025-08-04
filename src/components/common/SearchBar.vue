@@ -38,6 +38,9 @@
     position: relative;
     width: 490px;
     margin: 0 auto;
+    @include rwdmax(768) {
+      width: 330px;
+    }
     .search__input {
       width: 100%;
       padding: 10px 25px;
@@ -58,6 +61,9 @@
         border: 1px solid color(text, dark);
         color: color(text, dark);
       }
+      @include rwdmax(768) {
+        @include font-size(16);
+      }
     }
     .search__btn {
       position: absolute;
@@ -66,12 +72,14 @@
       transform: translateY(-50%);
       background: none;
       border: none;
-      font-size: 1.5rem;
       cursor: pointer;
     }
     .search__icon {
       color: color(search, placeholder);
       @include font-size(35);
+      @include rwdmax(768) {
+        @include font-size(30);
+      }
     }
   }
 </style>
