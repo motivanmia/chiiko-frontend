@@ -20,11 +20,6 @@
 </template>
 
 <style lang="scss" scoped>
-// div{
-//   position: relative;
-//   margin-top: 100vh;
-//   display: block;
-// }
   button {
     background-color: transparent;
     border: none;
