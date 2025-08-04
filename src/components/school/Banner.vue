@@ -24,7 +24,6 @@
 <style lang="scss" scoped>
   .banner-box {
     margin: 50px auto;
-    margin-top: 200px;
     border-radius: 20px;
     position: relative;
     width: 100%;

@@ -89,7 +89,10 @@
         class="lightbox__close--icon"
       />
     </div>
-    <SeeMore class="lightbox__seemore" />
+    <SeeMore
+      text="查看相關食譜"
+      class="lightbox__seemore"
+    />
   </div>
   <div
     class="overlay"
@@ -246,6 +249,7 @@
       position: absolute;
       right: 10%;
       bottom: 4%;
+      transform: scale(1.5);
     }
   }
   .overlay {

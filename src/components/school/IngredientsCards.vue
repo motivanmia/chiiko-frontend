@@ -41,7 +41,7 @@
           alt=""
         />
       </div>
-      <h3>{{ item.name }}</h3>
+      <h3 class="Ingredients__card--name">{{ item.name }}</h3>
     </div>
   </div>
 </template>
@@ -63,6 +63,19 @@
       border-radius: 20px;
       position: relative;
       cursor: pointer;
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+        .Ingredients__card--name {
+          color: color(button, main);
+          background-color: color(text, light);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+        }
+      }
 
       & > h3 {
         display: block;
@@ -82,6 +95,8 @@
         font-weight: larger;
         white-space: nowrap;
         color: color(text, light);
+        box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
+        transition: background-color 0.3s ease;
       }
 
       &-imgbox {
