@@ -8,7 +8,6 @@ import RecipeOverview from '@/pages/RecipeOverview.vue';
 import RecipeSolo from '@/pages/RecipeSolo.vue';
 import RecipeSearch from '@/pages/RecipeSearch.vue';
 import RecipeSearchNone from '@/pages/RecipeSearchNone.vue';
-import RecipeSearchNone from '@/pages/RecipeSearchNone.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
