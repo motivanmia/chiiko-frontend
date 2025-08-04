@@ -71,15 +71,36 @@
     max-width: 1200px;
     width: 100%;
 
-
     &__box {
       justify-content: center;
       position: relative;
+      flex: 0 1 calc(33.333% - 27px); // 三欄布局，扣除 gap
+      min-width: 300px; // 最小寬度
+
+      @media (max-width: 1024px) {
+        flex: 0 1 calc(50% - 20px); // 平板：兩欄
+      }
+
+      @media (max-width: 640px) {
+        flex: 0 1 100%; // 手機：單欄
+      }
     }
     &__pic {
       width: 100%;
       height: auto;
       cursor: pointer;
+      overflow: hidden;
+      border-radius: 20px;
+    }
+
+    &__img {
+      width: 100%;
+      height: auto;
+      transition: 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
     }
 
     &__content {
@@ -87,6 +108,10 @@
       bottom: 0;
       left: 50%;
       transform: translateY(-110%) translateX(-50%);
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
       & > h2 {
         font-size: 28px;
@@ -94,8 +119,8 @@
         letter-spacing: 1.2px;
         color: color(text, light);
         position: absolute;
-        left:50%;
-        transform: translateY(-150%) translateX(-50%);
+        left: 50%;
+        transform: translateY(50%) translateX(-50%);
       }
     }
 

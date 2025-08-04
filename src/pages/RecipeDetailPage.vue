@@ -4,7 +4,7 @@
     <div class="recipe-wrapper">
       <!-- 食物圖片 -->
       <img
-        src="@/assets/image/recipe010-min.png"
+        src="@/assets/image/Group_537.png"
         alt="香煎豆腐卷"
         class="recipe-image"
       />
@@ -36,11 +36,17 @@
         <!-- 收藏與回覆 -->
         <div class="meta">
           <div>
-            <span>🔖</span>
+            <span><Icon
+                  icon-name="markL"
+                  class="markL"
+                /></span>
             105收藏
           </div>
           <div>
-            <span>💬</span>
+            <span><Icon
+                  icon-name="comment"
+                  class="comment"
+                /></span>
             50回覆
           </div>
         </div>
@@ -105,7 +111,7 @@
         v-for="(step, index) in steps"
         :key="index"
       >
-        <p class="step-label">步驟 {{ index + 1 }}</p>
+        <p class="step-label">步驟{{ numberToChinese(index + 1) }}</p>
         <p class="step-text">{{ step }}</p>
       </div>
     </div>
@@ -132,155 +138,108 @@
     </div>
   </div>
   <!-- 留言區 -->
-  <div class="comment-wrapper">
-    <div
-      v-for="(comment, index) in comments"
-      :key="index"
-      class="comment-item"
-    >
-      <!-- 🟠 使用者資訊＋按鈕 合併對齊 -->
-      <div class="comment-header">
-        <div class="comment-user">
-          <img
-            :src="comment.avatar"
-            alt="使用者頭像"
-            class="comment-avatar"
-          />
-          <p class="comment-author">{{ comment.name }}</p>
-        </div>
+  <div>
 
-        <button
-          @click="toggleOptions(index)"
-          class="comment-options-btn"
-        >
-          <Icon
-            icon-name="option"
-            class="comment-options-icon"
-          />
-        </button>
-      </div>
 
-      <!-- 折疊泡泡 -->
-      <div
-        v-if="comment.showOptions"
-        class="comment-dropdown-bubble"
-      >
-        <div class="comment-dropdown-arrow"></div>
-        <button
-          @click="replyToComment(comment.name)"
-          class="comment-reply-btn"
-        >
-          回覆留言
-        </button>
-        <button
-          @click="reportComment(comment.name)"
-          class="comment-report-btn"
-        >
-          檢舉留言
-        </button>
-      </div>
-
-      <!-- 留言內容 -->
-      <p class="comment-content">{{ comment.message }}</p>
-
-      <!-- 分隔線 -->
-      <div class="comment-divider"></div>
-    </div>
-
-    <!-- 新留言 -->
-    <!-- 留言輸入區塊 -->
-    <div class="comment-input-group">
-      <!-- 使用者頭像 -->
-      <img
-        src="@/assets/image/Mask group.png"
-        alt="使用者頭像"
-        class="comment-user-avatar-large"
-      />
-
-      <!-- 右邊：留言框＋按鈕 -->
-      <div class="comment-input-right">
-        <textarea
-          v-model="newComment"
-          placeholder="請輸入留言..."
-          class="comment-input"
-        ></textarea>
-
-        <div class="comment-actions-wrapper">
-          <button
-            @click="postComment"
-            class="comment-menu"
-          >
-            暫存食譜
-          </button>
-          <button
-            @click="postComment"
-            class="comment-submit"
-          >
-            發布留言
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- ✅ 2. 在您想放置留言區的地方，像這樣使用元件 -->
+     <div class="comment-section-container">
+    <CommentSection 
+      :initial-comments="recipeComments" 
+      :current-user-avatar="currentUserAvatar"
+    />
+</div>
   </div>
   </div>
+
 </template>
 
 <script setup>
   import { ref } from 'vue';
   import Icon from '@/components/common/Icon.vue';
-  import ShareRecipeButton from '@/assets/image/Mask group.png';
+  import CommentSection from '@/components/CommentSection.vue';
+  import avatarImage from '@/assets/image/Mask group.png';
+  import postImage from '@/assets/image/Rectangle_5.png'; 
+
   // 模擬資料
   const steps = [
-    '將板豆腐切成小塊（大小剛好能適合包肉片即可）',
+    '將板豆腐切成小塊（大小剛好能卷進肉片即可）',
     '將切好的板豆腐包進薄肉片裡',
-    '將包好的肉片豆腐裹上一層起司粉與胡椒粉',
-    '再裹上一層麵包粉',
-    '平底鍋煎熟，即可完成',
+    '將包好的肉片豆腐裹上一層起司酥炸粉，放在盤子上靜置五分鐘',
+    '靜置好的肉片豆腐再裹上一層麵包粉',
+    '平底鍋熱油，放進裹好粉的肉片豆腐，煎至金黃酥脆即可。',
   ];
 
   const ingredients = [
     '板豆腐／一盒',
-    '起司粉／適量',
-    '胡椒粉／適量',
+    '起司酥炸粉／適量',
+    '椒鹽粉／適量',
     '薄片的豬肉片／一盒',
     '麵包粉／適量',
   ];
 
-  const comments = ref([
-    {
-      name: '小胖子',
-      message: '太好吃了！我還加了辣椒！',
-      avatar: ShareRecipeButton,
-      showOptions: false,
-    },
-    {
-      name: '大胖子',
-      message: '板豆腐硬一點比較好？',
-      avatar: ShareRecipeButton,
-      showOptions: false,
-    },
-  ]);
+  function numberToChinese(num) {
+  // 確保輸入的是數字且大於0
+  if (typeof num !== 'number' || num < 1) {
+    return '';
+  }
 
-  const newComment = ref('');
+  // 中文數字的對應表
+  const chineseNums = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
 
-  function postComment() {
-    if (newComment.value.trim() !== '') {
-      comments.value.push({ name: '你', message: newComment.value, showOptions: false });
-      newComment.value = '';
+  // 處理 1 到 10 的情況
+  if (num <= 10) {
+    return chineseNums[num];
+  }
+
+  // 處理 11 到 19 的情況
+  if (num > 10 && num < 20) {
+    // 例如：12 -> '十' + '二'
+    return '十' + chineseNums[num % 10];
+  }
+
+  // 處理 20, 30, 40 ... 99 的情況
+  if (num >= 20 && num < 100) {
+    const tens = Math.floor(num / 10); // 取十位數，例如 23 -> 2
+    const ones = num % 10;           // 取個位數，例如 23 -> 3
+
+    if (ones === 0) {
+      // 如果是 20, 30 這種整數
+      return chineseNums[tens] + '十'; // 例如：'二' + '十'
+    } else {
+      // 如果是 21, 35 這種非整數
+      return chineseNums[tens] + '十' + chineseNums[ones]; // 例如：'二' + '十' + '三'
     }
   }
 
-  function toggleOptions(index) {
-    comments.value[index].showOptions = !comments.value[index].showOptions;
-  }
+  // 如果數字大於等於100，暫時返回原數字 (您可以根據需求擴展此函式)
+  return num.toString();
+}
 
-  function replyToComment(name) {
-    alert(`你要回覆 ${name} 的留言`);
-  }
 
-  function reportComment(name) {
-    alert(`你已檢舉 ${name} 的留言`);
-  }
+ const recipeComments = ref([
+  {
+      id: 1, // 記得為每則留言加上 ID
+      name: '小胖子',
+      message: '太好吃了！我還加了辣椒！',
+      avatar: avatarImage, // 這裡應該是真實路徑
+      showOptions: false,
+      showReplyBox: false,   
+      reply: '' ,
+      image: postImage  // 這裡應該是真實路徑
+    },
+    {
+      id: 2,
+      name: '大胖子',
+      message: '板豆腐硬一點比較好？',
+      avatar: avatarImage,
+      showOptions: false,
+      showReplyBox: false,  
+      reply: ''  
+    },
+]);
+
+const currentUserAvatar = ref(avatarImage);
+
 
   function copyIngredients() {
     const text = ingredients.join('\n');
@@ -291,8 +250,17 @@
 </script>
 <!-- ──────────────────────────────────────────────────────────────────────── -->
 <style scoped>
+
+.comment-image {
+
+  max-width: 160px;
+  max-height: 160px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
   .wrappertatle{
-    margin-top: 200px;
+    margin-top: 230px;
     margin-bottom: 200px;
   }
 
@@ -301,7 +269,7 @@
     width: 800px;
     height: 640px;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: 20px;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -310,377 +278,294 @@
   .recipe-wrapper {
     display: flex;
     align-items: flex-start;
-    gap: 2px;
-    margin: 2px auto;
+    gap: 0px;
+    margin: 0px auto;
   }
 
   /* 小卡排版 */
 
-  .recipe-card {
-    width: 350px;
-    background-color: #ead7c4;
-    padding: 1.5rem;
-    border-radius: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  }
+.recipe-card {
+  width: 393px; /* 稍微加寬一點以容納內容 */
+  background-color: #EAD7C4; /* 使用目標圖片中較淺的背景色 */
+  padding: 15px; /* 統一內距 */
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  
+  /* 使用 Flexbox 來控制內部元素的排列，這是佈局的核心 */
+  display: flex;
+  flex-direction: column; /* 讓所有子元素垂直堆疊 */
+}
 
-  /* 標題、發布者、內文 */
+/* =================================================================== */
+/*                         卡片內部各區塊樣式                           */
+/* =================================================================== */
 
-  .recipe-card h1 {
-    font-size: 32px;
-  }
-  .recipe-card h2 {
-    text-align: right;
-    color: #6b6e4f;
-    margin-top: 10px;
-  }
-  .recipe-card p {
-    font-size: 24px;
-    margin-top: 10px;
-  }
+/* 標題 + 發布者 */
+.header {
+  /* 這個容器不需要太多特殊樣式，間距由父層的 gap 控制 */
+}
+.recipe-card h1 {
+  font-size: 32px; /* 稍微加大標題 */
+  font-weight: 600;
+  margin-top: 10px; /* 移除 h1 預設的 margin */
+  letter-spacing: 2px;
+}
+.recipe-card h2 {
+  text-align: right;
+  color: #888; /* 使用較柔和的灰色 */
+  font-size: 16px;
+  font-weight: normal;
+  margin-top: 5px;
+  margin-bottom: 50px; /* 微調與標題的距離 */
+}
 
-  /* 標籤 */
+/* 介紹文字 */
+.description {
+  font-size: 24px; /* 稍微縮小字體以符合比例 */
+  line-height: 1.2; /* 增加行高，提升易讀性 */
+  letter-spacing: 2px;
+  color: #333;
+  margin-bottom: 25px;
+}
 
-  .tags {
-    margin-top: 30px;
-  }
+/* TAG 區塊 */
+.tags {
+  color: #888;
+  font-size: 16px;
+  margin-bottom: 30px;
+  letter-spacing: 2px;
+}
 
-  /* 收藏回覆 */
-
-  .meta {
-    display: flex;
-    align-items: center;
-    margin-top: 30px;
-    gap: 20px;
-  }
-
-  /* 烹煮時間料理份數分割線 */
-
-  .time-serving {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    margin-top: 1rem;
-  }
-
-  .info-block {
-    text-align: center;
-  }
-
-  .top {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 600;
-  }
-
-  /* 烹煮時間料理份數分割線 */
-
-  .divider {
-    width: 1px;
-    height: 36px;
-    background-color: #888;
-  }
-
-  /* 收藏分享按鈕 */
-
-  .button-group {
-    display: flex;
-    gap: 16px;
-    padding-top: 16px;
-  }
-
-  .btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 40px;
-    border-radius: 999px;
+/* 收藏與回覆 */
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* 調整兩個項目之間的距離 */
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 50px;
+}
+/* 讓 icon 和文字垂直對齊 */
+.meta > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.markL, .comment {
     font-size: 16px;
-  }
+}
+.comment {
+  transform: scaleX(-1); /* 水平翻轉 */
+}
 
-  .btn-collect {
-    background-color: white;
-    color: #333;
-    border: 1px solid #d1d5db;
-  }
+/* 時間與份數 */
+.time-serving {
+  display: flex;
+  align-items: center;
+  justify-content: space-around; /* 讓內容均勻分佈 */
+  padding: 16px 0; /* 增加上下內距 */
+  /* margin-top: 1rem; <-- 已由父層 gap 取代 */
+  font-size: 24px;
+}
+.info-block {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.top {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.label
+{  
+  font-size: 24px;
+}
+.value {
+  margin: 20px 0 0; /* 與上方標題的距離 */
+  font-size: 20px;
+}
 
-  .btn-collect:hover {
-    background-color: #f3f4f6;
-  }
+/* 分隔線 */
+.divider {
+  width: 1px;
+  height: 48px; /* 稍微加長 */
+  background-color: #000000;
+}
 
-  .btn-share {
-    background-color: #d0844e;
-    color: white;
-    border: none;
-  }
 
-  .btn-share:hover {
-    background-color: #c46e2e;
-  }
+/* =================================================================== */
+/*                          按鈕區塊 (收藏 & 分享)                      */
+/* =================================================================== */
 
-  .icon {
-    font-size: 20px;
-    display: inline-flex;
-    align-items: center;
-  }
-  /* 食譜圖片+右邊小卡 */
-  .outer-wrapper {
-    display: flex;
-    justify-content: center;
-  }
-  .recipe-wrapper {
-    display: flex;
-    gap: 10px;
-  }
+/* 包裹「收藏」和「分享」兩個按鈕的容器 */
+.button-group {
+  /* 啟用 Flexbox 佈局，讓裡面的按鈕可以水平排列 */
+  display: flex;
+  justify-content: center;
+  /* 設定按鈕與按鈕之間的水平間距為 16px */
+  gap: 14px;
+  margin-bottom: 25px;
+}
 
-  /* 食譜步驟+所需食材排版 */
+/* 兩個按鈕共用的樣式 (.btn-collect 和 .btn-share 都會套用) */
 
-  .step-ingredient-wrapper {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 2rem;
-    align-items: flex-start;
-  }
 
-  .step-box,
-  .ingredient-box {
-    padding: 1.5rem;
-    border-radius: 12px;
-  }
-  .step-box {
-    width: 800px;
-    background-color: #ead7c4;
-  }
-  .ingredient-box {
-    width: 350px;
-    background-color: #fff;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  }
+/* 「收藏」按鈕的專屬樣式 */
+.btn-collect {
+  background-color: white; /* 白色背景 */
+  color: #333;            /* 深灰色文字 */
+  border-color: #ddd;      /* 淺灰色邊框 (會覆蓋 .btn 的透明邊框) */
+  width: 153px;
+  height: 47px;
+}
+/* 當滑鼠懸停在「收藏」按鈕上時的樣式 */
+.btn-collect:hover {
+    background-color: #e7e7e7;
+    border: 1px solid #e7e7e7;
+    transition: 0.2s ease;
+}
 
-  .section-ingredient-header {
-    display: flex;
-    justify-content: space-between; /* ← 左右貼齊關鍵 */
-    align-items: center; /* ← 垂直對齊文字中心 */
-  }
+/* 「分享」按鈕的專屬樣式 */
+.btn-share {
+  background-color: #D97C48; /* 橘色背景 */
+  color: white;              /* 白色文字 */
+  border: none;              /* 移除邊框 (會覆蓋 .btn 的透明邊框) */
+  width: 153px;
+  height: 47px;
+}
+/* 當滑鼠懸停在「分享」按鈕上時的樣式 */
+.btn-share:hover {
+    background-color: #e7e7e7;
+    border: 1px solid #e7e7e7;
+    transition: 0.2s ease;
+}
 
-  .section-ingredient-title {
-    font-size: 32px;
-    margin: 0; /* 確保不會有 h3 自帶的外距影響 */
-  }
+.btn {
 
-  .copy-icon {
-    font-size: 20px;
-    cursor: pointer;
-  }
+ 
+  /* 啟用 Flexbox，用來對齊按鈕【內部】的圖示和文字 */
+  display: flex;
+  align-items: center;     /* 讓圖示和文字垂直置中 */
+  justify-content: center; /* 讓圖示和文字水平置中 */
+  
+  /* 圖示與文字之間的水平間距 */
+  gap: 8px;
+  
+  /* 內距 (Padding)：設定按鈕內容與邊框之間的距離 */
+  /* 上下 12px，左右 0px。因為按鈕寬度是自動伸展的，所以左右 padding 設為 0 即可。 */
+  padding: 13px 0;
+  
+  /* 邊框圓角：設定一個非常大的值，會讓按鈕變成完美的膠囊形狀 */
+  border-radius: 999px;
+  
+  /* 字體大小和粗細 */
+  font-size: 20px;
 
-  .section-ingredient-title {
-    margin-bottom: 15px;
-  }
+  
+  /* 
+    預設一個透明的邊框。
+    這是一個小技巧，用來防止當滑鼠懸停 (hover) 在 .btn-collect 上，
+    突然增加邊框時，導致整個按鈕輕微「跳動」一下的問題。
+  */
+  border: 2px solid transparent;
+  
 
-  .section-ingredient-item {
-    margin-bottom: 6px;
-    font-size: 24px;
-    color: #333;
-    line-height: 1.6;
-  }
+}
 
-  .step-title {
-    font-size: 40px;
-    margin-top: 10px;
-  }
+/* =================================================================== */
+/*                      頁面主要區塊佈局 (圖片、步驟、食材)                */
+/* =================================================================== */
 
-  .step-label {
-    font-size: 32px;
-    margin-bottom: 40px;
-  }
-  .step-text {
-    font-size: 24px;
-    margin-bottom: 20px;
-    margin-left: 70px;
-  }
+/* 包裹「食譜圖片」和「右側小卡」的容器 */
+.outer-wrapper {
+  /* 啟用 Flexbox，並讓裡面的內容水平置中 */
+  display: flex;
+  justify-content: center;
+}
+.recipe-wrapper {
+  display: flex; /* 讓圖片和小卡可以水平並排 */
+  gap: 10px;   /* 圖片和小卡之間的水平間距 */
+}
 
+/* 包裹「料理步驟」和「所需食材」的容器 */
+.step-ingredient-wrapper {
+  display: flex;
+  justify-content: center; /* 水平置中 */
+  align-items: flex-start; /* 讓兩個區塊的頂部對齊 */
+  gap: 10px;               /* 兩個區塊之間的水平間距 */
+  margin-top: 10px;        /* 與上方的 .outer-wrapper 之間的垂直距離 (1rem 約等於 16px) */
+}
+
+/* 「料理步驟」和「所需食材」兩個盒子的共用樣式 */
+.step-box,
+.ingredient-box {
+  padding: 35px;   /* 內距 */
+  border-radius: 20px; /* 圓角 */
+}
+
+/* 「料理步驟」盒子的專屬樣式 */
+.step-box {
+  width: 800px;           /* 固定寬度 */
+  background-color: #ead7c4; /* 背景色 */
+}
+/* 「所需食材」盒子的專屬樣式 */
+.ingredient-box {
+  width: 393px;           /* 固定寬度 */
+  background-color: #fff; /* 白色背景 */
+  border: 1px solid #e5e7eb; /* 淺灰色邊框 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* 細微的陰影效果 */
+}
+
+/* 「所需食材」標題區塊的容器 */
+.section-ingredient-header {
+  display: flex;
+  justify-content: space-between; /* 關鍵：讓標題和複製圖示左右分離、貼齊邊緣 */
+  align-items: center;           /* 垂直置中對齊 */
+}
+
+/* 「所需食材」的標題 (h3) */
+.section-ingredient-title {
+  font-size: 32px;
+
+}
+.copy-icon {
+  font-size: 20px;
+  cursor: pointer;
+  margin-bottom: 15px
+}
+
+/* 為了調整標題和下方列表的間距，單獨為標題設定 margin-bottom */
+.section-ingredient-title {
+  margin-bottom: 40px;
+}
+
+/* 食材列表中的每一個項目 (li) */
+.section-ingredient-item {
+  margin-bottom: 25px; /* 項目之間的垂直間距 */
+  font-size: 24px;
+  color: #333;
+}
+
+
+
+/* "步驟 1", "步驟 2" ... 的標籤 */
+.step-label {
+  font-size: 28px;
+  margin-bottom: 15px; /* 與下方步驟內容的垂直距離 */
+}
+
+/* 實際的步驟文字內容 */
+.step-text {
+  font-size: 24px;
+  margin-bottom: 70px; /* 與下一個步驟標籤的垂直距離 */
+  margin-left: 70px;   /* 左側縮排，製造出層次感 */
+}
   /* 留言區 */
 
-  /* 留言整體容器 */
-  .comment-wrapper {
-    width: 1160px;
-    margin: 0 auto;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-    border-radius: 24px;
-    margin-top: 20px;
-  }
 
-  /* 單一留言區塊 */
-  .comment-item {
-    align-items: flex-start;
-    gap: 16px;
-    padding: 8px 20px 8px 16px; /* 上下40px，左右24px */
-    background-color: #fff;
-    position: relative;
-  }
 
-  /* 新留言輸入欄位 */
-  .comment-input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-  }
 
-  .comment-divider {
-    border-bottom: 2px dotted #ccc;
-    margin: 0 36px 0 36px; /* 若頭像寬為48 + 間距24 */
-    padding-bottom: 15px;
-  }
 
-  .comment-author {
-    font-size: 20px;
-  }
-
-  .comment-content {
-    font-size: 24px;
-    margin-left: 50px;
-  }
-  .comment-user {
-    display: flex; /* ➤ 讓頭像與名稱並排 */
-    align-items: center; /* ➤ 垂直置中對齊 */
-    gap: 8px;
-  }
-
-  .comment-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-
-  .comment-dropdown-toggle {
-    text-align: right;
-    background: transparent;
-    border: none;
-    padding: 0;
-    margin: 0;
-  }
-  .comment-dropdown-icon {
-    text-align: right;
-    color: #6b6e4f;
-    margin-bottom: 10px;
-    font-size: 20px;
-  }
-
-  /* 外框樣式（圓角、陰影、底色） */
-  .comment-dropdown-bubble {
-    position: absolute;
-    top: 60px;
-    right: 5px;
-    background-color: #fefaf2;
-    border: 2px solid #db7c36;
-    border-radius: 16px;
-    padding: 6px;
-    width: 160px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    z-index: 20;
-  }
-
-  /* 小箭頭 */
-  .comment-dropdown-arrow {
-    position: absolute;
-    top: -16px;
-    right: 16px;
-    width: 0;
-    height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-bottom: 16px solid #db7c36;
-  }
-
-  /* 回覆按鈕（橘色） */
-  .comment-reply-btn,
-  .comment-report-btn {
-    background-color: #fefaf2;
-    color: rgb(0, 0, 0);
-    padding: 6px 30px;
-    border: none;
-    font-size: 18px;
-    font-weight: bold;
-    display: inline-block;
-  }
-
-  .comment-reply-btn:hover,
-  .comment-report-btn:hover {
-    background-color: #db7c36;
-    color: rgb(255, 255, 255);
-    border-radius: 16px;
-  }
-
-  .comment-options-btn {
-    font-size: 20px;
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-  }
-
-  .comment-input {
-    margin: 20px auto auto auto;
-    width: 945px;
-    height: 160px;
-    padding: 12px;
-    display: block;
-
-    text-align: left;
-    vertical-align: top;
-    border: 1px solid #000;
-    border-radius: 8px;
-    resize: none;
-  }
-
-  /* 發布留言按鈕 */
-  .comment-submit {
-    background: #f97316;
-    color: white;
-    border: none;
-  }
-
-  .comment-menu {
-    background: #ffffff;
-    border: 2px solid #919191;
-    color: rgb(0, 0, 0);
-  }
-
-  .comment-menu,
-  .comment-submit {
-    width: 180px;
-    padding: 10px 16px;
-    border-radius: 24px;
-    font-size: 24px;
-    cursor: pointer;
-  }
-
-  .comment-submit:hover {
-    background: #ead7c4;
-    color: #000000;
-  }
-
-  .comment-actions-wrapper {
-    width: 945px;
-    margin: 16px auto 0;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .comment-user-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 6px;
-  }
 
   /* RWD手機 */
 

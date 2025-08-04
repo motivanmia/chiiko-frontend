@@ -8,6 +8,7 @@ import RecipeOverview from '@/pages/RecipeOverview.vue';
 import RecipeSolo from '@/pages/RecipeSolo.vue';
 import RecipeSearch from '@/pages/RecipeSearch.vue';
 import RecipeSearchNone from '@/pages/RecipeSearchNone.vue';
+import TestComponentPage from '@/pages/TestComponentPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,13 +40,11 @@ const router = createRouter({
           path: 'password',
           name: 'password',
           component: () => import('@/components/member/MemberChangePwd.vue'),
-          // 待更換新頁面
         },
         {
           path: 'inform',
           name: 'inform',
-          component: () => import('@/components/member/MemberProfile.vue'),
-          // 待更換新頁面
+          component: () => import('@/components/member/MemberInform.vue'),
         },
         {
           path: 'my-recipe',
@@ -61,7 +60,6 @@ const router = createRouter({
           path: 'wishlist',
           name: 'wishlist',
           component: () => import('@/components/member/MemberDesire.vue'),
-          // 待更換新頁面
         },
         {
           path: 'orders',
@@ -105,17 +103,22 @@ const router = createRouter({
     {
       path: '/solo',
       name: 'solo',
-      component: RecipeSolo,
+      component: () => import('@/pages/RecipeSolo.vue'),
     },
     {
       path: '/search',
       name: 'search',
-      component: RecipeSearch,
+      component: () => import('@/pages/RecipeSearch.vue'),
     },
     {
       path: '/none',
       name: 'none',
-      component: RecipeSearchNone,
+      component: () => import('@/pages/RecipeSearchNone.vue'),
+    },
+    {
+      path: '/TestComponent',
+      name: 'TestComponent',
+      component: TestComponentPage,
     },
   ],
 });
