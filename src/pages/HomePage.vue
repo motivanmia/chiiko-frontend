@@ -59,7 +59,7 @@
 
     <IndexRecipeOverview />
 
-    <HomeSchool id="HomeSchool"/>
+    <HomeSchool id="HomeSchool" />
 
     <ShareRecipeButton
       id="ShareRecipeButton"
@@ -122,7 +122,7 @@
       width: 350px;
       height: 160px;
       padding-top: 12px;
-      @include font-size(18);
+      @include font-size(16);
     }
     @include rwdmax(1200) {
       width: 300px;

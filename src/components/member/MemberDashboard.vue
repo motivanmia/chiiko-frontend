@@ -7,10 +7,6 @@
     { label: '食譜收藏', count: 3 },
     { label: '願望清單', count: 3 },
   ]);
-
-  const addRecipe = () => {
-    console.log('新增食譜');
-  };
 </script>
 
 <template>
@@ -26,16 +22,18 @@
       </div>
     </div>
 
-    <button
-      class="add__recipe"
-      @click="addRecipe"
+    <router-link
+      :to="{ name: 'recipe-edit' }"
+      class="btn__link"
     >
-      <Icon
-        icon-name="plus"
-        class="add__icon"
-      />
-      新增食譜
-    </button>
+      <button class="add__recipe">
+        <Icon
+          icon-name="plus"
+          class="add__icon"
+        />
+        新增食譜
+      </button>
+    </router-link>
   </div>
 </template>
 
@@ -68,6 +66,9 @@
     .stats__count {
       @include font-size(24);
     }
+  }
+  .btn__link {
+    text-decoration: none;
   }
   .add__recipe {
     padding: 7px 20px;

@@ -140,13 +140,13 @@
                 class="nav__arrow"
               />
             </div>
-            <a
+            <RouterLink
               v-else
-              :href="item.path"
+              :to="item.path"
               class="nav__link"
             >
               {{ item.title }}
-            </a>
+            </RouterLink>
 
             <!-- 子選單 -->
             <div
@@ -154,17 +154,17 @@
               class="nav__submenu"
             >
               <div class="submenu__title">
-                <a href="/recipe">靈感×食譜</a>
+                <RouterLink to="/recipe">靈感×食譜</RouterLink>
               </div>
               <div class="submenu__content recipes__grid">
-                <a
+                <RouterLink
                   v-for="recipe in navItemRecipes"
                   :key="recipe.title"
-                  :href="recipe.path"
+                  :to="recipe.path"
                   class="recipes__item"
                 >
                   {{ recipe.title }}
-                </a>
+                </RouterLink>
               </div>
             </div>
 
@@ -173,17 +173,17 @@
               class="nav__submenu"
             >
               <div class="submenu__title">
-                <a href="/school">食材學堂</a>
+                <RouterLink to="/school">食材學堂</RouterLink>
               </div>
               <div class="submenu__content school__grid">
-                <a
+                <RouterLink
                   v-for="school in navItemSchool"
                   :key="school.title"
-                  :href="school.path"
+                  :to="school.path"
                   class="school__item"
                 >
                   {{ school.title }}
-                </a>
+                </RouterLink>
               </div>
             </div>
           </li>
@@ -222,9 +222,9 @@
                   class="member__icon"
                 />
               </button>
-              <a
+              <RouterLink
                 v-else
-                :href="item.path"
+                :to="item.path"
                 class="member__item"
               >
                 {{ item.title }}
@@ -233,20 +233,20 @@
                   :icon-name="item.icon"
                   class="member__icon"
                 />
-              </a>
+              </RouterLink>
             </template>
           </div>
         </div>
 
-        <a
-          href="#"
+        <RouterLink
+          to="/cart"
           class="actions__item"
         >
           <Icon
             icon-name="cart"
             class="actions__icon"
           />
-        </a>
+        </RouterLink>
       </div>
     </div>
   </header>
@@ -306,6 +306,24 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    @include rwdmax(1440) {
+      height: 75px;
+      padding: 10px 50px;
+      top: 10px;
+      left: 12px;
+      right: 12px;
+    }
+    @include rwdmax(1200) {
+      height: 70px;
+      padding: 8px 40px;
+      top: 8px;
+      left: 10px;
+      right: 10px;
+    }
+    @include rwdmax(768) {
+      height: 60px;
+      padding: 8px 27px;
+    }
   }
   .logo__link {
     display: flex;
@@ -315,6 +333,15 @@
       height: 86px;
       width: auto;
       display: block;
+      @include rwdmax(1440) {
+        height: 56px;
+      }
+      @include rwdmax(1200) {
+        height: 47px;
+      }
+      @include rwdmax(768) {
+        height: 45px;
+      }
     }
   }
 
@@ -323,6 +350,9 @@
     display: flex;
     align-items: center;
     gap: 230px;
+    @include rwdmax(1440) {
+      gap: 150px;
+    }
   }
   .nav {
     display: flex;
@@ -335,6 +365,9 @@
       padding: 0;
       margin: 0;
       list-style: none;
+      @include rwdmax(1440) {
+        gap: 50px;
+      }
     }
   }
   .nav__item {
@@ -361,8 +394,26 @@
       $color: color(text, dark),
       $ls: 4.8px
     );
+    @include rwdmax(1440) {
+      gap: 5px;
+      @include fontSet(
+        $font: $basic-font,
+        $fw: bold,
+        $size: px(16),
+        $color: color(text, dark),
+        $ls: 3px
+      );
+    }
+    @include rwdmax(1200) {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
     .nav__arrow {
       @include font-size(30);
+      @include rwdmax(1440) {
+        @include font-size(20);
+      }
     }
   }
   .nav__link:hover {
@@ -404,11 +455,19 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 35px 50px;
+    @include rwdmax(1440) {
+      border-radius: 15px;
+      gap: 35px 20px;
+      padding: 40px 190px;
+    }
     .submenu__title {
       grid-column: 1/2;
       text-align: center;
       padding-right: 50px;
       border-right: 1px solid color(text, dark);
+      @include rwdmax(1440) {
+        padding-right: 0;
+      }
       a {
         @include fontSet(
           $font: $basic-font,
@@ -418,6 +477,9 @@
           $ls: 4.8px
         );
         margin: 0;
+        @include rwdmax(1440) {
+          @include font-size(24);
+        }
       }
       a:hover {
         color: color(button, main);
@@ -431,6 +493,9 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 35px 30px;
+    @include rwdmax(1440) {
+      gap: 20px 20px;
+    }
   }
   .recipes__item {
     @include fontSet(
@@ -444,6 +509,11 @@
     padding: 10px;
     border-radius: 20px;
     transition: all 0.2s ease;
+    @include rwdmax(1440) {
+      @include font-size(16);
+      letter-spacing: 4px;
+      padding: 7px;
+    }
     &:hover {
       background-color: color(button, main);
       color: color(text, light);
@@ -466,6 +536,11 @@
     padding: 10px;
     border-radius: 20px;
     transition: all 0.2s ease;
+    @include rwdmax(1440) {
+      @include font-size(16);
+      letter-spacing: 4px;
+      padding: 7px;
+    }
     &:hover {
       background-color: color(button, main);
       color: color(text, light);
@@ -476,6 +551,9 @@
     display: flex;
     align-items: center;
     gap: 55px;
+    @include rwdmax(1440) {
+      gap: 35px;
+    }
     .actions__member {
       position: relative;
       padding: 50px 0;
@@ -494,10 +572,18 @@
     }
     .actions__icon {
       @include font-size(40);
+      @include rwdmax(1440) {
+        @include font-size(25);
+      }
     }
     .actions__member:hover > .overlay {
       opacity: 1;
       visibility: visible;
+    }
+    @include rwdmax(1200) {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
     }
   }
 
@@ -513,6 +599,12 @@
     flex-direction: column;
     gap: 15px;
     right: 5%;
+    @include rwdmax(1440) {
+      border-radius: 15px;
+      width: 150px;
+      gap: 8px;
+      padding: 3px;
+    }
     .member__item {
       @include fontSet(
         $font: $basic-font,
@@ -530,7 +622,14 @@
       width: 100%;
       text-decoration: none;
       color: color(text, dark);
+      @include rwdmax(1440) {
+        padding: 5px 20px;
+      }
       cursor: pointer;
+      @include rwdmax(1440) {
+        @include font-size(16);
+        letter-spacing: 4px;
+      }
     }
     .member__item:hover {
       background-color: color(button, main);
@@ -539,6 +638,9 @@
     }
     .member__icon {
       @include font-size(24);
+      @include rwdmax(1440) {
+        @include font-size(16);
+      }
     }
   }
   .modal-fade-enter-active,

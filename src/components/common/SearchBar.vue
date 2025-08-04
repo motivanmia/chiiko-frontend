@@ -99,7 +99,8 @@ const search = () => {
         color: color(text, dark);
       }
       @include rwdmax(1440) {
-        @include font-size(20);
+        @include font-size(18);
+        padding: 8px 20px;
       }
       @include rwdmax(768) {
         @include font-size(16);
