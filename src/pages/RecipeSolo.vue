@@ -1,5 +1,5 @@
 <script setup>
-import { categoryName } from '@/constants/recipeCategory';
+import {useSearch} from '@/constants/search'
 
 import Banner from '@/components/recipe/Banner.vue';
 import Category from '@/components/recipe/Category.vue';
@@ -9,6 +9,10 @@ import HotSearch from '@/components/common/HotSearch.vue';
 import BreadCrumb from '@/components/recipe/BreadCrumb.vue';
 import RecipeCardSolo from '@/components/recipe/RecipeCardSolo.vue';
 import Pagination from '@/components/Pagination.vue';
+
+const { searchTerm, handleSearch } = useSearch();
+
+
 </script>
 
 <template>
@@ -16,8 +20,12 @@ import Pagination from '@/components/Pagination.vue';
   <Category/>
   
   <div class="search-container">
-    <SearchBar/>
-    <HotSearch/>
+    <!-- ✅ 修正：將 v-model 和 @search 事件綁定上去 -->
+    <SearchBar
+      v-model="searchTerm" 
+      @search="handleSearch"
+    />
+    <HotSearch @search="handleSearch"/>
   </div>
   
   <SectionTitle title="/一人料理\" class="section"></SectionTitle>

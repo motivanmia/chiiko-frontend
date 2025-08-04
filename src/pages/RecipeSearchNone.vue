@@ -1,5 +1,8 @@
 <script setup>
 import {ref} from 'vue';
+import {useSearch} from '@/constants/search'
+
+
 import Banner from '@/components/recipe/Banner.vue';
 import Category from '@/components/recipe/Category.vue';
 import SectionTitle from '@/components/SectionTitle.vue';
@@ -14,6 +17,9 @@ const breadcrumbItems = ref([
   { text: '靈感 X 食譜', href: '#' },
   { text: '搜尋結果: 123', href: '#' } //修改預設
 ]);
+
+const { searchTerm, handleSearch } = useSearch();
+
 </script>
 
 <template>
@@ -21,7 +27,10 @@ const breadcrumbItems = ref([
   <Category/>
   
   <div class="search-container">
-    <SearchBar/>
+    <SearchBar
+      v-model="searchTerm" 
+      @search="handleSearch"
+    />
     <HotSearch/>
   </div>
   
