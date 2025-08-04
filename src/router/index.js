@@ -35,7 +35,6 @@ const router = createRouter({
           path: 'password',
           name: 'password',
           component: () => import('@/components/member/MemberChangePwd.vue'),
-          // 待更換新頁面
         },
         {
           path: 'inform',
@@ -56,7 +55,6 @@ const router = createRouter({
           path: 'wishlist',
           name: 'wishlist',
           component: () => import('@/components/member/MemberDesire.vue'),
-          // 待更換新頁面
         },
         {
           path: 'orders',
@@ -113,10 +111,10 @@ const router = createRouter({
       component: () => import('@/pages/RecipeSearchNone.vue'),
     },
     {
-      path: '/TestComponent', 
-      name: 'TestComponent', 
-      component: TestComponentPage 
-    }
+      path: '/TestComponent',
+      name: 'TestComponent',
+      component: TestComponentPage,
+    },
   ],
 });
 
