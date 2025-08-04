@@ -39,8 +39,7 @@ const router = createRouter({
         {
           path: 'inform',
           name: 'inform',
-          component: () => import('@/components/member/MemberProfile.vue'),
-          // 待更換新頁面
+          component: () => import('@/components/member/MemberInform.vue'),
         },
         {
           path: 'my-recipe',
@@ -100,17 +99,17 @@ const router = createRouter({
     {
       path: '/solo',
       name: 'solo',
-      component: () => import('@/pages/RecipeSolo.vue')
+      component: () => import('@/pages/RecipeSolo.vue'),
     },
     {
       path: '/search',
       name: 'search',
-      component: () => import('@/pages/RecipeSearch.vue')
+      component: () => import('@/pages/RecipeSearch.vue'),
     },
     {
       path: '/none',
       name: 'none',
-      component: () => import('@/pages/RecipeSearchNone.vue')
+      component: () => import('@/pages/RecipeSearchNone.vue'),
     },
   ],
 });
