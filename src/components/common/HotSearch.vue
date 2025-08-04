@@ -46,7 +46,6 @@ const handleHotSearchClick = (keyword) => {
   letter-spacing: 1.2px;
   // flex-wrap: nowrap;
 
-<<<<<<< HEAD
     text-shadow: var(--hot-search-text-shadow, none);
     @media screen and (max-width: 1440px) {
       font-size: 18px;
@@ -54,13 +53,6 @@ const handleHotSearchClick = (keyword) => {
     @media screen and (max-width: 768px) {
       font-size: 14px;
     }
-=======
-  text-shadow: var(--hot-search-text-shadow, none);
-
-  @media screen and (max-width: 768px) {
-    font-size: 14px;
-  }
->>>>>>> Daivd
 
   & > h3 {
     color: var(--hot-search-color, color(text, dark));
