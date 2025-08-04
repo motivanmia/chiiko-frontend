@@ -13,7 +13,12 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path:'/',
+      component: () => import('@/pages/Portal.vue'),
+      meta: { requiresLayout: false },
+    },
+    {
+      path: '/home',
       name: 'home',
       component: HomePage,
     },
@@ -100,17 +105,17 @@ const router = createRouter({
     {
       path: '/solo',
       name: 'solo',
-      component: RecipeSolo
+      component: RecipeSolo,
     },
     {
       path: '/search',
       name: 'search',
-      component: RecipeSearch
+      component: RecipeSearch,
     },
     {
       path: '/none',
       name: 'none',
-      component: RecipeSearchNone
+      component: RecipeSearchNone,
     },
   ],
 });

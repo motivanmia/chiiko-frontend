@@ -1,6 +1,5 @@
 <script setup>
   import ShareRecipeButton from '@/assets/image/ShareRecipeButton.png'
-  // 傳入的 props
 
   const emit = defineEmits(['ShareRecipeButtonclick']);
 

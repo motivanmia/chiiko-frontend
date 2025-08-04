@@ -2,7 +2,7 @@
   import InputField from '@/components/user/InputField.vue';
   import Icon from '@/components/common/Icon.vue';
   import { ref } from 'vue';
-  import tomato from '@/assets/image/footer/03.png';
+  import tomato from '@/assets/image/signin/cut-tomato.png';
 
   const emit = defineEmits(['close']);
   const name = ref('');
@@ -315,10 +315,10 @@
           margin-right: 0;
         }
         img {
-          width: 150px;
-          transform: rotate(-30deg);
+          width: 200px;
+          // transform: rotate(-30deg);
           display: block;
-          margin: 0 auto;
+          margin: auto;
           @include rwdmax(768) {
             display: none;
           }

@@ -6,16 +6,27 @@
 
   const route = useRoute();
   const mainStyle = computed(() => {
-    return { mainContent: route.fullPath !== '/' };
+    return { mainContent: route.fullPath !== '/home' };
   });
 </script>
 
 <template>
-  <MainHeader />
+  <template v-if="$route.meta.requiresLayout !== false">
+    <MainHeader />
+    <main :class="mainStyle">
+      <RouterView />
+    </main>
+    <MainFooter />
+  </template>
+  <template v-else>
+    <router-view />
+  </template>
+
+  <!-- <MainHeader />
   <main :class="mainStyle">
     <RouterView />
   </main>
-  <MainFooter />
+  <MainFooter /> -->
 </template>
 
 <style lang="scss" scoped>
