@@ -100,17 +100,17 @@ const router = createRouter({
     {
       path: '/solo',
       name: 'solo',
-      component: RecipeSolo
+      component: () => import('@/pages/RecipeSolo.vue')
     },
     {
       path: '/search',
       name: 'search',
-      component: RecipeSearch
+      component: () => import('@/pages/RecipeSearch.vue')
     },
     {
       path: '/none',
       name: 'none',
-      component: RecipeSearchNone
+      component: () => import('@/pages/RecipeSearchNone.vue')
     },
   ],
 });
