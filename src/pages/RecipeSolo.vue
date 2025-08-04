@@ -1,5 +1,6 @@
 <script setup>
-import {ref} from 'vue';
+import { categoryName } from '@/constants/recipeCategory';
+
 import Banner from '@/components/recipe/Banner.vue';
 import Category from '@/components/recipe/Category.vue';
 import SectionTitle from '@/components/SectionTitle.vue';
@@ -8,12 +9,6 @@ import HotSearch from '@/components/common/HotSearch.vue';
 import BreadCrumb from '@/components/recipe/BreadCrumb.vue';
 import RecipeCardSolo from '@/components/recipe/RecipeCardSolo.vue';
 import Pagination from '@/components/Pagination.vue';
-
-
-const breadcrumbItems = ref([
-  { text: '靈感 X 食譜', href: '#' },
-  { text: '搜尋結果: 飯', href: '#' } //修改預設
-]);
 </script>
 
 <template>
@@ -25,10 +20,10 @@ const breadcrumbItems = ref([
     <HotSearch/>
   </div>
   
-  <SectionTitle title="/搜索結果\" class="section"></SectionTitle>
+  <SectionTitle title="/一人料理\" class="section"></SectionTitle>
   
   <div class="content-wrapper">
-    <BreadCrumb class="bread-crumb" :items="breadcrumbItems"/>
+    <BreadCrumb class="bread-crumb"/>
     <RecipeCardSolo class="solo"/>
   </div>
   

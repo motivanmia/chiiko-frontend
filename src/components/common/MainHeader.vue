@@ -146,7 +146,7 @@
               class="nav__submenu"
             >
               <div class="submenu__title">
-                <a href="#">靈感×食譜</a>
+                <a href="/school">靈感×食譜</a>
               </div>
               <div class="submenu__content recipes__grid">
                 <a
