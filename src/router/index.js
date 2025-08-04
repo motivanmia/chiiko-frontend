@@ -4,6 +4,7 @@ import AccountPage from '@/pages/AccountPage.vue';
 import SchoolPage from '@/pages/SchoolPage.vue';
 import RecipeDetailPage from '@/pages/RecipeDetailPage.vue';
 import RecipeEditPage from '@/pages/RecipeEditPage.vue';
+import TestComponentPage from '@/pages/TestComponentPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +34,11 @@ const router = createRouter({
       name: 'RecipeEdit', 
       component: RecipeEditPage 
     },
+    {
+      path: '/TestComponent', 
+      name: 'TestComponent', 
+      component: TestComponentPage 
+    }
   ],
 });
 
