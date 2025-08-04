@@ -146,7 +146,12 @@
         v-if="isEdit"
         class="form__action"
       >
-        <CancelButton @click="cancelBtnClick">取消修改</CancelButton>
+        <CancelButton
+          type="button"
+          @click="cancelBtnClick"
+        >
+          取消修改
+        </CancelButton>
         <ConfirmButton type="submit">儲存變更</ConfirmButton>
       </div>
     </form>
