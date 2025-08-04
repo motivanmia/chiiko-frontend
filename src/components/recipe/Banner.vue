@@ -6,7 +6,7 @@
     },
     title: {
       type: String,
-      default: '靈感 X 食譜',
+      default: '靈感×食譜',
     },
   });
 </script>
@@ -23,7 +23,6 @@
 
 <style lang="scss" scoped>
   .banner-box {
-    
     border-radius: 20px;
     position: relative;
     width: 100%;

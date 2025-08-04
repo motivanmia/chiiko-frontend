@@ -2,24 +2,24 @@
   import { ref, computed, defineAsyncComponent } from 'vue';
   import Icon from '@/components/common/Icon.vue';
   import LoginModal from '@/components/user/Login.vue';
-  import SigninModal from '@/components/user/Signin.vue';
+  import SigninModal from '@/components/user/signin.vue';
 
   // nav選單項目
   const navLinks = ref([
     { key: 'recipes', title: '靈感×食譜', isOpen: true },
     { key: 'school', title: '學材食堂', isOpen: true },
-    { key: 'prodouts', title: '好物精選', isOpen: false, path: '#' },
+    { key: 'prodouts', title: '好物精選', isOpen: false, path: '/product' },
   ]);
 
   const navItemRecipes = [
-    { title: '一人料理', path: '#' },
-    { title: '家庭聚餐', path: '#' },
-    { title: '浪漫晚餐', path: '#' },
-    { title: '戶外料理', path: '#' },
-    { title: '懶人快煮', path: '#' },
-    { title: '健身/減糖餐', path: '#' },
-    { title: '低預算料理', path: '#' },
-    { title: '慶生/節慶料理', path: '#' },
+    { title: '一人料理', path: '/solo' },
+    { title: '家庭聚餐', path: '/solo' },
+    { title: '浪漫晚餐', path: '/solo' },
+    { title: '戶外料理', path: '/solo' },
+    { title: '懶人快煮', path: '/solo' },
+    { title: '健身/減糖餐', path: '/solo' },
+    { title: '低預算料理', path: '/solo' },
+    { title: '慶生/節慶料理', path: '/solo' },
   ];
 
   const navItemSchool = [
@@ -28,7 +28,7 @@
   ];
 
   // 登入狀態
-  const isLogin = ref(false);
+  const isLogin = ref(true);
 
   const memberMenuItem = computed(() => (isLogin.value ? menuItemLonin : menuItemLogout));
 
@@ -46,12 +46,12 @@
   // 登入後的會員選單
   const menuItemLonin = [
     { title: '登出', icon: 'logout', action: 'logout' },
-    { title: '會員資料', paht: '/account' },
-    { title: '消息通知', paht: '/account' },
-    { title: '我的食譜', paht: '/account' },
-    { title: '食譜收藏', paht: '/account' },
-    { title: '願望清單', paht: '/account' },
-    { title: '訂單查詢', paht: '/account' },
+    { title: '會員資料', path: '/account' },
+    { title: '消息通知', path: '/account/inform' },
+    { title: '我的食譜', path: '/account/my-recipe' },
+    { title: '食譜收藏', path: '/account/recipe-collect' },
+    { title: '願望清單', path: '/account/wishlist' },
+    { title: '訂單查詢', path: '/account/orders' },
   ];
 
   // 子選單hover覆蓋背景
@@ -102,7 +102,7 @@
 
   <header class="header">
     <a
-      href="/"
+      href="/home"
       class="logo__link"
     >
       <img
@@ -146,7 +146,7 @@
               class="nav__submenu"
             >
               <div class="submenu__title">
-                <a href="/school">靈感×食譜</a>
+                <a href="/recipe">靈感×食譜</a>
               </div>
               <div class="submenu__content recipes__grid">
                 <a

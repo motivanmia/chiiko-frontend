@@ -78,11 +78,11 @@
         object-position: px(-220);
       }
     }
-    @include rwdmax(1400) {
-      height: 850px;
+    @include rwdmax(1440) {
+      height: 625px;
     }
     @include rwdmax(1200) {
-      height: 750px;
+      height: 600px;
     }
     @include rwdmax(768) {
       height: 600px;
@@ -108,16 +108,16 @@
       $color: color(text, base),
       $ls: 1.5px
     );
-    @include rwdmax(1400) {
+    @include rwdmax(1440) {
       width: 350px;
       height: 160px;
       padding-top: 12px;
+      @include font-size(18);
     }
     @include rwdmax(1200) {
       width: 300px;
       height: 150px;
       padding-top: 10px;
-      @include font-size(18);
     }
     @include rwdmax(768) {
       width: 190px;

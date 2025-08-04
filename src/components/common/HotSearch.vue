@@ -35,7 +35,9 @@
     // flex-wrap: nowrap;
 
     text-shadow: var(--hot-search-text-shadow, none);
-
+    @media screen and (max-width: 1440px) {
+      font-size: 18px;
+    }
     @media screen and (max-width: 768px) {
       font-size: 14px;
     }

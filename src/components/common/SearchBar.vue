@@ -38,6 +38,9 @@
     position: relative;
     width: 490px;
     margin: 0 auto;
+    @include rwdmax(1440) {
+      width: 400px;
+    }
     @include rwdmax(768) {
       width: 330px;
     }
@@ -61,6 +64,9 @@
         border: 1px solid color(text, dark);
         color: color(text, dark);
       }
+      @include rwdmax(1440) {
+        @include font-size(20);
+      }
       @include rwdmax(768) {
         @include font-size(16);
       }
@@ -77,8 +83,11 @@
     .search__icon {
       color: color(search, placeholder);
       @include font-size(35);
-      @include rwdmax(768) {
+      @include rwdmax(1440) {
         @include font-size(30);
+      }
+      @include rwdmax(768) {
+        @include font-size(28);
       }
     }
   }

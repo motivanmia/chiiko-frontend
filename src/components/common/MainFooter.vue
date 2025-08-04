@@ -14,20 +14,15 @@
       <div class="main-footer__wrapper">
         <div class="main-footer__recipe">
           <a
-            href="#"
+            href="/recipe"
             class="main-footer__recipe-title"
           >
-            靈感
-            <Icon
-              icon-name="close"
-              class="main-footer__recipe-icon"
-            />
-            食譜
+            靈感×食譜
           </a>
           <ul class="main-footer__recipe-list">
             <li class="main-footer__recipe-item">
               <a
-                href="#"
+                href="/solo"
                 class="main-footer__recipe-link"
               >
                 一人料理
@@ -35,7 +30,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <a
-                href="#"
+                href="/solo"
                 class="main-footer__recipe-link"
               >
                 家庭聚餐
@@ -43,7 +38,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <a
-                href="#"
+                href="/solo"
                 class="main-footer__recipe-link"
               >
                 浪漫晚餐
@@ -51,7 +46,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <a
-                href="#"
+                href="/solo"
                 class="main-footer__recipe-link"
               >
                 戶外料理
@@ -59,7 +54,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <a
-                href="#"
+                href="/solo"
                 class="main-footer__recipe-link"
               >
                 健身/減糖餐
@@ -67,7 +62,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <a
-                href="#"
+                href="/solo"
                 class="main-footer__recipe-link"
               >
                 懶人快煮
@@ -75,7 +70,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <a
-                href="#"
+                href="/solo"
                 class="main-footer__recipe-link"
               >
                 慶生/節慶料理
@@ -83,7 +78,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <a
-                href="#"
+                href="/solo"
                 class="main-footer__recipe-link"
               >
                 低預算料理
@@ -94,7 +89,7 @@
 
         <div class="main-footer__food">
           <a
-            href="#"
+            href="/school"
             class="main-footer__food-title"
           >
             食材學堂
@@ -102,7 +97,7 @@
           <ul class="main-footer__food-list">
             <li class="main-footer__food-item">
               <a
-                href="#"
+                href="/school?category=vegetable"
                 class="main-footer__food-link"
               >
                 植物性食材
@@ -110,7 +105,7 @@
             </li>
             <li class="main-footer__food-item">
               <a
-                href="#"
+                href="/school?category=meat"
                 class="main-footer__food-link"
               >
                 動物性食材
@@ -121,7 +116,7 @@
 
         <div class="main-footer__product">
           <a
-            href="#"
+            href="/product"
             class="main-footer__product-title"
           >
             好物精選
@@ -129,7 +124,7 @@
           <ul class="main-footer__product-list">
             <li class="main-footer__product-item">
               <a
-                href="#"
+                href="/product"
                 class="main-footer__product-link"
               >
                 鍋具/鍋鏟
@@ -137,7 +132,7 @@
             </li>
             <li class="main-footer__product-item">
               <a
-                href="#"
+                href="/product"
                 class="main-footer__product-link"
               >
                 烤箱/氣炸鍋
@@ -145,7 +140,7 @@
             </li>
             <li class="main-footer__product-item">
               <a
-                href="#"
+                href="/product"
                 class="main-footer__product-link"
               >
                 刀具/砧板
@@ -153,7 +148,7 @@
             </li>
             <li class="main-footer__product-item">
               <a
-                href="#"
+                href="/product"
                 class="main-footer__product-link"
               >
                 廚房小物
