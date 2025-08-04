@@ -159,7 +159,7 @@
       flex-grow: 1;
       flex-basis: px(300);
       position: sticky;
-      top: 0;
+      top: px(170);
     }
   }
 
@@ -171,8 +171,6 @@
 
       &__summary {
         width: 100%;
-        position: sticky;
-        top: 0;
       }
     }
   }
