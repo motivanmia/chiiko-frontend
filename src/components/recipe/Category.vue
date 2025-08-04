@@ -68,7 +68,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.4); // 預設透明
+      background-color: rgba(0, 0, 0, 0.1); // 預設透明
       transition: background-color 0.3s ease; // 過渡效果
       z-index: 1;
       }
