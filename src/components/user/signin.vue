@@ -127,6 +127,7 @@
         <form @submit.prevent="handleSubmit">
           <h1>會員註冊</h1>
           <InputField
+            variant="signin"
             v-model="name"
             label="姓名"
             placeholder="請輸入您的姓名"
@@ -138,6 +139,7 @@
             </template>
           </InputField>
           <InputField
+            variant="signin"
             v-model="phone"
             type="tel"
             label="手機"
@@ -145,6 +147,7 @@
             autocomplete="tel"
           />
           <InputField
+            variant="signin"
             v-model="account"
             label="電子信箱"
             placeholder="請輸入您的電子郵件地址"
@@ -155,6 +158,7 @@
           </InputField>
 
           <InputField
+            variant="signin"
             v-model="password"
             label="密碼"
             type="password"
@@ -172,6 +176,7 @@
           </InputField>
 
           <InputField
+            variant="signin"
             v-model="passwordConfirm"
             label="確認密碼"
             type="password"
@@ -247,14 +252,14 @@
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     position: fixed;
     top: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     letter-spacing: 0.15em;
-    padding: px(50);
+    padding: px(30);
     @include rwdmax(768) {
       padding: px(10);
     }
@@ -263,8 +268,12 @@
       width: auto;
       background-color: #fff;
       border-radius: 20px;
-      padding: 30px;
+      padding: 20px 30px;
       position: relative;
+      // max-height: 90vh;
+      // overflow-y: scroll;
+      overflow-x: hidden;
+      overflow: visible;
       @include rwdmax(768) {
         flex-direction: column;
         margin: 0;
@@ -285,10 +294,7 @@
         font-size: clamp(18px, 1.56vw, 30px); //30px
         cursor: pointer;
         @include rwdmax(768) {
-          right: 5px;
-          top: 5px;
-          transform: none;
-          position: absolute;
+          transform: translate(-10%, 10%);
         }
       }
       h1 {
@@ -302,7 +308,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-
         @include rwdmax(768) {
           border: none;
           padding: 0;
@@ -310,7 +315,7 @@
           margin-right: 0;
         }
         img {
-          width: 300px;
+          width: 150px;
           transform: rotate(-30deg);
           display: block;
           margin: 0 auto;
@@ -320,7 +325,7 @@
         }
       }
       .app-signin:nth-child(2) {
-        margin-top: 65px;
+        margin-top: 50px;
         @include rwdmax(768) {
           margin-top: 20px;
         }
@@ -329,24 +334,22 @@
         display: flex;
         border-radius: px(20);
         box-shadow: 0 2px 5px #aaa;
-        padding: px(40);
-        height: px(78);
-        width: 305px; //305px
+        padding: px(20);
+        height: px(60);
+        width: 250px;
         margin-top: px(40);
         text-decoration: none;
         border: 1px solid transparent;
-
         @include rwdmax(768) {
           width: 70%;
           padding: 10px 20px;
           margin-top: 20px;
           height: 50px;
         }
-
         span {
           color: color(text, dark);
           font-style: normal;
-          font-size: clamp(16px, 2vw, 24px);
+          font-size: clamp(16px, 2vw, 20px);
           margin-left: px(20);
           letter-spacing: 0.1em;
           @include rwdmax(768) {
@@ -389,18 +392,19 @@
         #btn_signin {
           font-size: clamp(16px, 1.25vw, 24px);
           width: 100%;
-          height: px(65);
+          height: 35px;
           border-radius: 20px;
           border: none;
           background-color: color(button, main);
           color: color(text, light);
-          margin-top: px(20);
+          margin-top: px(10);
           cursor: pointer;
         }
       }
       #login {
-        margin-top: px(26);
+        margin-top: px(20);
         text-align: center;
+        font-size: 14px;
       }
       .login {
         color: color(text, dark);
@@ -414,8 +418,8 @@
       align-items: center;
       cursor: pointer;
       user-select: none;
-      margin-top: px(50);
-      font-size: clamp(11px, 1.55vw, 16px);
+      margin-top: 20px;
+      font-size: clamp(13px, 1.55vw, 14px);
       @include rwdmax(768) {
         // font-size: clamp(11px,1.8vw,16px);
       }

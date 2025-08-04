@@ -2,7 +2,7 @@
   import { ref, computed, defineAsyncComponent } from 'vue';
   import Icon from '@/components/common/Icon.vue';
   import LoginModal from '@/components/user/Login.vue';
-  import SigninModal from '@/components/user/signin.vue';
+  import SigninModal from '@/components/user/Signin.vue';
 
   // nav選單項目
   const navLinks = ref([
