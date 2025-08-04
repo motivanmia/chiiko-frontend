@@ -11,8 +11,14 @@
   import login from '../components/user/Login.vue'
 
 
-  
+  import hot from '@/components/home/HomeHot.vue';
+  import IndexRecipeOverview from '@/components/home/IndexRecipeOverview.vue';
 
+  import { useRouter } from 'vue-router';
+  const router = useRouter();
+  function handleShareRecipe() {
+    router.push('/RecipeEdit');
+  }
   // function ShareRecipe() {
   //   console.log('前往分享食譜');
   // }
@@ -47,18 +53,21 @@
 
     <div class="scoll-down">向下捲動</div>
   </div>
-  <hot />
+  <div>
+    <hot />
 
-  <ShareRecipeButton
-    id="ShareRecipeButton"
-    @ShareRecipeButtonclick="ShareRecipe"
-  >
-    <template #click-me>點我</template>
-    <template #share>分享食譜</template>
-  </ShareRecipeButton>
+    <delicious id="delicious" />
 
-  <!-- <RecipeOverview/> -->
+    <IndexRecipeOverview />
 
+    <ShareRecipeButton
+      id="ShareRecipeButton"
+      @ShareRecipeButtonclick="handleShareRecipe"
+    >
+      <template #click-me>點我</template>
+      <template #share>分享食譜</template>
+    </ShareRecipeButton>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -115,11 +124,15 @@
     a {
       color: #fff;
     }
-    #ShareRecipeButton {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      // z-index: 1;
+  }
+  #ShareRecipeButton {
+    position: sticky;
+    right: 20px;
+    bottom: 30px;
+    z-index: 1;
+    @include rwdmax(768) {
+      right: 0;
+      bottom: 10px;
     }
   }
 </style>

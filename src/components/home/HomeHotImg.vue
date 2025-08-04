@@ -18,7 +18,7 @@
 
 <template>
   <div id="image-wrapper">
-    <img
+    <img   
       :src="img"
       :style="{ objectPosition }"
     />
@@ -35,8 +35,13 @@
     position: relative;
     cursor: pointer;
     margin-bottom: 50px;
+    @include rwdmax(1200){
+      width: 100%;
+    }
     @include rwdmax(768) {
-      width: 90%;
+      width: 95%;
+      margin-left: auto;
+      margin-right: auto;
       height: calc(90% * 0.526);
     }
 

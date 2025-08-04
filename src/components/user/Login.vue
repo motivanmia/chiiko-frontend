@@ -91,18 +91,31 @@
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
     width: 100%;
-    height: 100vh;
-    position: absolute;
+    min-height: 100vh;
+    position: fixed;
     top: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: px(30);
+    @include rwdmax(768) {
+      padding: px(10);
+    }
     .login-box {
       // display: none;
       background-color: #fff;
       border-radius: 20px;
       padding: px(30);
       position: relative;
+      // min-width: 280px;
+      width: 30%;
+      @include rwdmax(1200) {
+        width: 40%;
+      }
+      @include rwdmax(768) {
+        width: 95%;
+        padding: px(20);
+      }
       #close {
         background-color: color(button, main);
         display: inline-block;
@@ -113,18 +126,24 @@
         right: 0;
         top: 0;
         transform: translate(50%, -50%);
-        font-size: px(30);
+        font-size: clamp(18px, 1.56vw, 30px); //30px
         cursor: pointer;
+        @include rwdmax(768) {
+          transform: translate(-10%, 10%);
+        }
       }
       h1 {
         text-align: center;
         // margin-bottom: 10%;
         font-size: px(24);
+        @include rwdmax(768) {
+          font-size: px(20);
+        }
       }
       form {
         display: inline-block;
         font-size: px(20);
-        width: 470px;
+        width: 100%;
         #forget-password {
           display: block;
           border: none;
@@ -137,35 +156,38 @@
         #btn_login {
           font-size: px(24);
           width: 100%;
-          height: px(65);
+          height: 50px;
           border-radius: 20px;
           border: none;
           background-color: color(button, main);
           color: color(text, light);
           margin-top: 10%;
           cursor: pointer;
+          @include rwdmax(768) {
+            font-size: px(20);
+          }
         }
       }
       p {
-        font-size: px(20);
+        font-size: clamp(16px, 2vw, 20px);
         margin-top: px(20);
         margin-bottom: px(20);
       }
       #icon {
         display: flex;
         justify-content: center;
-        gap: px(70);
+        gap: clamp(20px, 10vw, 70px);
         margin-bottom: 10%;
         #fb {
           color: #125dff;
-          font-size: px(60);
+          font-size: clamp(40px, 5vw, 50px);
         }
         #line {
           color: #0cad37;
-          font-size: px(60);
+          font-size: clamp(40px, 5vw, 50px);
         }
         #google {
-          font-size: px(50);
+          font-size: clamp(30px, 4vw, 40px);
           display: flex;
           align-items: center;
         }
