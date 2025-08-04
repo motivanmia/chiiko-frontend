@@ -34,17 +34,19 @@
     letter-spacing: 1.2px;
     // flex-wrap: nowrap;
 
+    text-shadow: var(--hot-search-text-shadow, none);
+
     @media screen and (max-width: 768px) {
       font-size: 14px;
     }
 
     & > h3 {
-      color: color(text, dark);
+      color: var(--hot-search-color, color(text, dark));
 
       & > span {
         & > a {
           padding: 0 5px;
-          color: color(text, dark);
+          color: var(--hot-search-color, color(text, dark));
           text-decoration: underline;
         }
       }
