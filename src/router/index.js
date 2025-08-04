@@ -101,6 +101,11 @@ const router = createRouter({
       component: () => import('@/pages/ProductContent.vue'),
     },
     {
+      path: '/cart',
+      name: 'cart',
+      component: () => import('@/pages/CartPage.vue'),
+    },
+    {
       path: '/solo',
       name: 'solo',
       component: () => import('@/pages/RecipeSolo.vue'),
