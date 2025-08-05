@@ -4,7 +4,7 @@
 
   const profile = ref({
     name: '花媽媽烹飪教室',
-    avatar: '/src/assets/image/ShareRecipeButton.png',
+    avatar: new URL('@/assets/image/ShareRecipeButton.png', import.meta.url).href,
   });
 
   const menuItem = ref([

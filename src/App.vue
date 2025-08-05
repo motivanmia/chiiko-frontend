@@ -32,5 +32,8 @@
 <style lang="scss" scoped>
   .mainContent {
     margin-top: px(215);
+    @include rwdmax(1200) {
+      margin-top: px(120);
+    }
   }
 </style>
