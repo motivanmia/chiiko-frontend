@@ -89,7 +89,12 @@
       </div>
       <div id="signin">
         <span>還沒有帳號嗎?</span>
-        <a href="#">點我註冊</a>
+        <a
+          href="#"
+          id="go_signin"
+        >
+          點我註冊
+        </a>
       </div>
     </div>
     <transition name="fade">
@@ -149,6 +154,9 @@
         transform: translate(50%, -50%);
         font-size: clamp(18px, 1.56vw, 30px); //30px
         cursor: pointer;
+        &:hover {
+          background-color: #d6b59c;
+        }
         @include rwdmax(768) {
           transform: translate(-10%, 10%);
         }
@@ -166,13 +174,31 @@
         font-size: px(20);
         width: 100%;
         #forget-password {
-          display: block;
+          display: inline-block;
           border: none;
           background-color: transparent;
           padding: 0;
           color: color(text, dark);
           font-size: px(16);
           margin-top: px(10);
+          text-decoration: none;
+          position: relative;
+
+          &::after {
+            position: absolute;
+            content: '';
+            box-shadow: 0 0.5px 0 rgba(59, 55, 57);
+            width: 100%;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            transform: scaleX(1);
+            transform-origin: right;
+            transition: transform 0.5s ease;
+          }
+          &:hover::after {
+            transform: scaleX(0);
+          }
         }
         #btn_login {
           font-size: px(24);
@@ -184,6 +210,9 @@
           color: color(text, light);
           margin-top: 10%;
           cursor: pointer;
+          &:hover {
+            background-color: #d6b59c;
+          }
           @include rwdmax(768) {
             font-size: px(20);
           }
@@ -219,6 +248,24 @@
         a {
           color: color(text, dark);
           margin-left: px(20);
+          text-decoration: none;
+          position: relative;
+          display: inline-block;
+          &::after {
+            position: absolute;
+            content: '';
+            box-shadow: 0 0.5px 0 rgba(59, 55, 57);
+            width: 100%;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            transform: scaleX(1);
+            transform-origin: right;
+            transition: transform 0.5s ease;
+          }
+          &:hover::after {
+            transform: scaleX(0);
+          }
         }
       }
     }

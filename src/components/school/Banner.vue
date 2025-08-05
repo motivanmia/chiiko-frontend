@@ -2,7 +2,7 @@
   const props = defineProps({
     img: {
       type: String,
-      default: '/src/assets/image/School/banner.jpg',
+      default: new URL('@/assets/image/School/banner.jpg', import.meta.url).href,
     },
     title: {
       type: String,
@@ -30,6 +30,7 @@
     height: 300px;
     display: flex;
     justify-content: center;
+    padding: 0 10px;
 
     & > img {
       border-radius: 20px;

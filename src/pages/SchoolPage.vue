@@ -10,17 +10,18 @@
 </script>
 
 <template>
-  <Banner></Banner>
-
-  <Category></Category>
-
-  <SearchBar placeholder="輸入想要了解的食材"></SearchBar>
-
-  <IngredientsCards></IngredientsCards>
-
-  <IngredientLightBox v-if="ingredient.active" />
-
-  <Pagination />
+  <div>
+    <Banner />
+    <Category />
+    <SearchBar placeholder="輸入想要了解的食材" />
+    <IngredientsCards />
+    <IngredientLightBox v-if="ingredient.active" />
+    <Pagination />
+  </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+  body {
+    overflow: hidden;
+  }
+</style>

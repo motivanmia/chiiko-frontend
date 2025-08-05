@@ -1,8 +1,24 @@
 <script setup>
   import { useIngredientStore } from '@/stores/ingredient';
+  const ingredient = useIngredientStore();
+
   import Icon from '@/components/common/Icon.vue';
   import SeeMore from '@/components/button/SeeMoreButton.vue';
-  const ingredient = useIngredientStore();
+  import { computed, watch, onMounted } from 'vue';
+  // watch(
+  //   active, // 這裡的 ingredient.active 已經是 ref
+  //   (val) => {
+  //     console.log(val);
+  //     if (val) {
+  //       document.body.style.overflow = 'hidden';
+  //       document.documentElement.style.overflow = 'hidden';
+  //     } else {
+  //       document.body.style.overflow = '';
+  //       document.documentElement.style.overflow = '';
+  //     }
+  //   },
+  //   { immediate: true, deep: true },
+  // );
 </script>
 
 <template>
@@ -80,7 +96,7 @@
       <h2>保存方法</h2>
       <p>{{ ingredient.active.preservation }}</p>
     </pre>
-    <div
+    <!-- <div
       class="lightbox__close"
       @click="ingredient.updateActive(null)"
     >
@@ -88,7 +104,7 @@
         icon-name="close"
         class="lightbox__close--icon"
       />
-    </div>
+    </div> -->
     <SeeMore
       text="查看相關食譜"
       class="lightbox__seemore"
@@ -111,6 +127,19 @@
     left: 50%;
     transform: translate(-50%, -50%);
     border-radius: 20px;
+    @include rwdmax(1200) {
+      width: 80%;
+      height: 80%;
+      top: 50%;
+      left: 50%;
+    }
+    @include rwdmax(768) {
+      height: 95%;
+      overflow-y: scroll;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
 
     &__name {
       margin: 30px auto;
@@ -123,6 +152,9 @@
         text-align: center;
         color: color(text, dark);
         letter-spacing: 0.3em;
+        @include rwdmax(1200) {
+          font-size: 32px;
+        }
       }
     }
 
@@ -132,10 +164,14 @@
       margin-right: auto;
       padding-bottom: 30px;
       width: 80%;
-      height: 47%;
+      height: 56%;
       border-bottom: 2px solid black;
       display: flex;
       justify-content: space-between;
+      @include rwdmax(768) {
+        flex-wrap: wrap;
+        height: unset;
+      }
     }
 
     &__imgbox {
@@ -163,6 +199,14 @@
         box-shadow: none;
         background: transparent;
       }
+      @include rwdmax(768) {
+        display: block;
+        position: static;
+        transform: unset;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        margin-bottom: 30px;
+      }
     }
     &__img {
       object-fit: contain;
@@ -173,12 +217,19 @@
       width: 80%;
       height: 25%;
       margin: 1vw auto;
+      @include rwdmax(768) {
+        width: 95%;
+        height: unset;
+      }
       & > h2 {
         font-size: 1.25vw;
         font-weight: bold;
         text-align: center;
         color: color(text, dark);
         letter-spacing: 0.3em;
+        @include rwdmax(1200) {
+          font-size: 24px;
+        }
       }
       & > p {
         display: block;
@@ -189,6 +240,9 @@
         white-space: pre-wrap;
         word-break: break-word;
         line-height: normal;
+        @include rwdmax(1200) {
+          font-size: 16px;
+        }
       }
     }
     &__text {
@@ -197,6 +251,11 @@
       display: flex;
       flex-wrap: wrap;
       align-content: space-around;
+      @include rwdmax(768) {
+        display: inline-flex;
+        width: 50%;
+        height: 50%;
+      }
 
       &--box {
         width: 100%;
@@ -210,22 +269,34 @@
           color: color(text, dark);
           font-size: 1vw;
           font-weight: 700;
+          @include rwdmax(1200) {
+            font-size: 18px;
+          }
         }
         & > span {
           color: color(text, dark);
           font-size: 0.9375vw;
           line-height: normal;
+          @include rwdmax(1200) {
+            font-size: 16px;
+          }
         }
       }
       &--checkicon {
         color: green;
         font-size: 1.66vw;
         margin: 0 5px;
+        @include rwdmax(1200) {
+          font-size: 18px;
+        }
       }
       &--ngicon {
         color: red;
         font-size: 1.66vw;
         margin: 0 10px;
+        @include rwdmax(1200) {
+          font-size: 18px;
+        }
       }
     }
 
@@ -241,26 +312,40 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      @include rwdmax(1200) {
+        height: 4vw;
+        width: 4vw;
+      }
       &--icon {
         font-size: 3.125vw;
+      }
+      @include rwdmax(1200) {
+        font-size: 4vw;
       }
     }
     &__seemore {
       position: absolute;
       right: 10%;
-      bottom: 4%;
+      bottom: 5%;
       transform: scale(1.5);
+      @include rwdmax(1200) {
+        transform: scale(1.2);
+      }
+      @include rwdmax(768) {
+        position: static;
+        transform: unset;
+        margin: 10px auto;
+      }
     }
   }
   .overlay {
     position: fixed;
     z-index: 998;
-    height: 100vw;
+    height: 100vh;
     width: 100%;
     opacity: 0.6;
     background-color: black;
-    top: 55%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
   }
 </style>

@@ -1,24 +1,21 @@
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-export function useSearch() {
-  const router = useRouter(); // 取得路由器實例
-  const searchTerm = ref(''); // 用來儲存搜尋文字
-  // 處理搜尋事件的函式
+export function useSearch(initialValue = '') {
+  const router = useRouter()
+  const searchTerm = ref(initialValue)
+  
   const handleSearch = (query) => {
-    if (query) {
-      // 導航到名為 'search' 的路由，並傳入查詢參數
-
-      router.push({
-        name: 'search',
-        query: { q: query },
-      });
-    }
-  };
-
-  // 導出 searchTerm 和 handleSearch
+    searchTerm.value = query
+    // 導航到搜尋頁面，並將搜尋關鍵字作為 query 參數
+    router.push({
+      name: 'search', // 或你的搜尋頁面路由名稱
+      query: { q: query }
+    })
+  }
+  
   return {
     searchTerm,
-    handleSearch,
-  };
+    handleSearch
+  }
 }

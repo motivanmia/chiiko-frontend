@@ -55,6 +55,13 @@
     flex-wrap: wrap;
     gap: 10px;
     row-gap: 100px;
+    justify-content: center;
+    @include rwdmax(1200) {
+      row-gap: 80px;
+    }
+    @include rwdmax(768) {
+      row-gap: 60px;
+    }
 
     &__card {
       width: 292px;

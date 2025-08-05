@@ -19,12 +19,15 @@
   );
 
   const onCategoryClick = (value) => {
-    // console.log(value);
-    router.push({
-      query: {
-        category: value,
-      },
-    });
+    if (category.value === value) {
+      router.push({ query: {} });
+    } else {
+      router.push({
+        query: {
+          category: value,
+        },
+      });
+    }
   };
 </script>
 
@@ -54,6 +57,8 @@
     height: 80px;
     margin: 50px auto;
     justify-content: space-around;
+    gap: 10px;
+    padding: 0 10px;
 
     &__buttons {
       width: 494px;
@@ -83,13 +88,15 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: blur(2px);
-      transition: filter 0.3s ease;
+      filter: blur(4px);
+      transition: all 0.3s ease;
       &:hover {
-        filter: blur(2px) brightness(40%);
+        filter: blur(0px);
+        transform: scale(1.05);
       }
       &--active {
-        filter: blur(2px) brightness(40%);
+        filter: blur(0px);
+        transform: scale(1.05);
       }
     }
   }
