@@ -1,6 +1,10 @@
 <script setup>
+  import { useCartStore } from '@/stores/useCartStore';
   import Icon from '../common/Icon.vue';
   import QuantityControl from './QuantityControl.vue';
+
+  const cart = useCartStore();
+  const { removeProduct } = cart;
 
   defineProps({
     product: {
@@ -8,8 +12,6 @@
       required: true,
     },
   });
-
-  defineEmits(['increase-quantity', 'decrease-quantity', 'remove-product']);
 </script>
 
 <template>
@@ -30,8 +32,7 @@
     </div>
     <QuantityControl
       :quantity="product.quantity"
-      @increase="$emit('increase-quantity')"
-      @decrease="$emit('decrease-quantity')"
+      :product-id="product.id"
       class="cart-item__quantity"
     />
     <div class="cart-item__subtotal">
@@ -40,7 +41,7 @@
     </div>
     <button
       class="cart-item__remove"
-      @click="$emit('remove-product')"
+      @click="removeProduct(product.id)"
     >
       <Icon icon-name="remove" />
     </button>

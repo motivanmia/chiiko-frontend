@@ -1,14 +1,10 @@
 <script setup>
   import CartItem from './CartItem.vue';
+  import { useCartStore } from '@/stores/useCartStore';
+  import { storeToRefs } from 'pinia';
 
-  defineProps({
-    products: {
-      type: Array,
-      required: true,
-    },
-  });
-
-  defineEmits(['increase-quantity', 'decrease-quantity', 'remove-product']);
+  const cart = useCartStore();
+  const { products } = storeToRefs(cart);
 </script>
 
 <template>
@@ -26,9 +22,6 @@
         v-for="product in products"
         :key="product.id"
         :product="product"
-        @increase-quantity="$emit('increase-quantity', product.id)"
-        @decrease-quantity="$emit('decrease-quantity', product.id)"
-        @remove-product="$emit('remove-product', product.id)"
       />
     </div>
   </section>

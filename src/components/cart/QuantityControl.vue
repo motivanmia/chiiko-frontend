@@ -1,21 +1,27 @@
 <script setup>
+  import { useCartStore } from '@/stores/useCartStore';
   import Icon from '../common/Icon.vue';
 
+  const cart = useCartStore();
+  const { increaseQuantity, decreaseQuantity } = cart;
+
   defineProps({
+    productId: {
+      type: Number,
+      required: true,
+    },
     quantity: {
       type: Number,
       required: true,
     },
   });
-
-  defineEmits(['decrease', 'increase']);
 </script>
 
 <template>
   <div class="quantity-control">
     <button
       class="quantity-control__button quantity-control__button--decrease"
-      @click="$emit('decrease')"
+      @click="decreaseQuantity(productId)"
     >
       <Icon
         icon-name="minus"
@@ -31,7 +37,7 @@
     />
     <button
       class="quantity-control__button quantity-control__button--increase"
-      @click="$emit('increase')"
+      @click="increaseQuantity(productId)"
     >
       <Icon
         icon-name="plus"

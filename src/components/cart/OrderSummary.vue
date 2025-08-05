@@ -1,26 +1,11 @@
 <script setup>
+  import { useCartStore } from '@/stores/useCartStore';
+  import { storeToRefs } from 'pinia';
   import ConfirmButton from '../button/ConfirmButton.vue';
 
-  defineProps({
-    subtotal: {
-      type: Number,
-      required: true,
-    },
-    shippingCost: {
-      type: Number,
-      required: true,
-    },
-    total: {
-      type: Number,
-      required: true,
-    },
-  });
-
-  const emit = defineEmits(['submit-order']);
-
-  const submitOrder = () => {
-    emit('submit-order');
-  };
+  const cart = useCartStore();
+  const { subtotal, shippingCost, total } = storeToRefs(cart);
+  const { submitOrder } = cart;
 </script>
 
 <template>

@@ -1,11 +1,9 @@
 <script setup>
-  const props = defineProps({
-    currentStep: {
-      type: Number,
-      default: 1,
-      validator: (value) => [1, 2, 3].includes(value),
-    },
-  });
+  import { useCartStore } from '@/stores/useCartStore';
+  import { storeToRefs } from 'pinia';
+
+  const cart = useCartStore();
+  const { currentStep } = storeToRefs(cart);
 </script>
 
 <template>
@@ -13,14 +11,14 @@
     <ol class="cart-step__list">
       <li
         class="cart-step__item"
-        :class="{ 'cart-step__item--active': props.currentStep >= 1 }"
+        :class="{ 'cart-step__item--active': currentStep >= 1 }"
       >
         <div class="cart-step__number">1</div>
         <h2 class="cart-step__title">確認訂單明細</h2>
       </li>
       <li
         class="cart-step__dots"
-        :class="{ 'cart-step__dots--active': props.currentStep >= 1 }"
+        :class="{ 'cart-step__dots--active': currentStep >= 1 }"
       >
         <div
           v-for="dot in 8"
@@ -29,14 +27,14 @@
       </li>
       <li
         class="cart-step__item"
-        :class="{ 'cart-step__item--active': props.currentStep >= 2 }"
+        :class="{ 'cart-step__item--active': currentStep >= 2 }"
       >
         <div class="cart-step__number">2</div>
         <h2 class="cart-step__title">前往付款</h2>
       </li>
       <li
         class="cart-step__dots"
-        :class="{ 'cart-step__dots--active': props.currentStep >= 2 }"
+        :class="{ 'cart-step__dots--active': currentStep >= 2 }"
       >
         <div
           v-for="dot in 8"
@@ -45,7 +43,7 @@
       </li>
       <li
         class="cart-step__item"
-        :class="{ 'cart-step__item--active': props.currentStep >= 3 }"
+        :class="{ 'cart-step__item--active': currentStep >= 3 }"
       >
         <div class="cart-step__number">3</div>
         <h2 class="cart-step__title">訂單成立</h2>

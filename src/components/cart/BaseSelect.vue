@@ -21,16 +21,20 @@
     },
     id: {
       type: String,
+      default: null,
     },
   });
 
   const emit = defineEmits(['update:modelValue', 'change']);
 
+  // 生成唯一 ID
   const selectId = `select-${Math.random().toString(36).substr(2, 9)}`;
 
+  // 響應式狀態
   const isOpen = ref(false);
   const highlightedIndex = ref(-1);
 
+  // 計算屬性
   const displayText = computed(() => {
     const selectedOption = props.options.find((option) => option.value === props.modelValue);
     return selectedOption ? selectedOption.label : props.placeholder;
@@ -40,15 +44,24 @@
     return props.options.findIndex((option) => option.value === props.modelValue);
   });
 
-  const toggleDropdown = (event) => {
+  // 方法
+  const toggleDropdown = () => {
     if (props.disabled) return;
-    event?.stopPropagation();
+
+    if (!isOpen.value) {
+      // 關閉其他已打開的選單
+      document.querySelectorAll('.base-select--open').forEach((element) => {
+        if (element.dataset.selectId !== selectId) {
+          element.click(); // 觸發其他選單的關閉
+        }
+      });
+    }
+
     isOpen.value = !isOpen.value;
 
     if (isOpen.value) {
+      // 打開時高亮當前選中項
       highlightedIndex.value = selectedOptionIndex.value;
-    } else {
-      highlightedIndex.value = -1;
     }
   };
 
@@ -60,9 +73,11 @@
   };
 
   const handleBlur = (event) => {
+    // 延遲關閉，讓點擊選項有時間執行
+    const currentTarget = event.currentTarget;
+    const relatedTarget = event.relatedTarget;
+
     setTimeout(() => {
-      const currentTarget = event.currentTarget;
-      const relatedTarget = event.relatedTarget;
       if (!currentTarget || !relatedTarget || !currentTarget.contains(relatedTarget)) {
         isOpen.value = false;
         highlightedIndex.value = -1;
@@ -78,10 +93,9 @@
       case ' ':
         event.preventDefault();
         if (isOpen.value && highlightedIndex.value >= 0) {
-          const opt = props.options[highlightedIndex.value];
-          if (opt) selectOption(opt);
+          selectOption(props.options[highlightedIndex.value]);
         } else {
-          toggleDropdown(event);
+          toggleDropdown();
         }
         break;
 
@@ -114,9 +128,13 @@
     }
   };
 
+  // 全域點擊事件處理
   const handleGlobalClick = (event) => {
-    const clickedInside = event.target.closest(`[data-select-id="${selectId}"]`);
-    if (!clickedInside && isOpen.value) {
+    const clickedSelect = event.target.closest('.base-select');
+    const currentSelect = event.target.closest(`[data-select-id="${selectId}"]`);
+
+    // 如果點擊的不是當前選單且當前選單是打開的，則關閉它
+    if (!currentSelect && isOpen.value) {
       isOpen.value = false;
       highlightedIndex.value = -1;
     }
@@ -130,6 +148,7 @@
     document.removeEventListener('click', handleGlobalClick, true);
   });
 
+  // 監聽選項變化，重置高亮
   watch(
     () => props.options,
     () => {
@@ -279,7 +298,7 @@
       }
 
       &--selected {
-        background-color: color(backgroundColor, panel);
+        background: color(backgroundColor, panel);
         font-weight: 500;
 
         &:hover,

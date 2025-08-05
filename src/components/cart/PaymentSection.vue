@@ -1,60 +1,13 @@
 <script setup>
-  import { computed } from 'vue';
+  // import { computed } from 'vue';
   import { deliveryOptions, locationOptions, paymentOptions } from '@/constants/cartOption';
+  import { useCartStore } from '@/stores/useCartStore';
+  import { storeToRefs } from 'pinia';
   import PaymentOption from './PaymentOption.vue';
   import CreditCardForm from './CreditCardForm.vue';
 
-  const props = defineProps({
-    paymentForm: {
-      type: Object,
-      required: true,
-    },
-  });
-
-  const emit = defineEmits(['update:payment-form']);
-
-  // radio 雙向綁定
-  const selectedDelivery = computed({
-    get: () => props.paymentForm.delivery,
-    set: (val) => {
-      emit('update:payment-form', { ...props.paymentForm, delivery: val });
-    },
-  });
-
-  const selectedLocation = computed({
-    get: () => props.paymentForm.location,
-    set: (val) => {
-      emit('update:payment-form', { ...props.paymentForm, location: val });
-    },
-  });
-
-  const selectedPayment = computed({
-    get: () => props.paymentForm.paymentMethod,
-    set: (val) => {
-      emit('update:payment-form', { ...props.paymentForm, paymentMethod: val });
-    },
-  });
-
-  // 信用卡雙向綁定
-  const cardNumber = computed({
-    get: () => props.paymentForm.cardNumber,
-    set: (val) => emit('update:payment-form', { ...props.paymentForm, cardNumber: val }),
-  });
-
-  const expMonth = computed({
-    get: () => props.paymentForm.expMonth,
-    set: (val) => emit('update:payment-form', { ...props.paymentForm, expMonth: val }),
-  });
-
-  const cvv = computed({
-    get: () => props.paymentForm.cvv,
-    set: (val) => emit('update:payment-form', { ...props.paymentForm, cvv: val }),
-  });
-
-  const cardHolder = computed({
-    get: () => props.paymentForm.cardHolder,
-    set: (val) => emit('update:payment-form', { ...props.paymentForm, cardHolder: val }),
-  });
+  const cart = useCartStore();
+  const { paymentForm } = storeToRefs(cart);
 </script>
 
 <template>
@@ -66,31 +19,24 @@
     <div class="payment-section__list">
       <PaymentOption
         title="配送方式"
-        v-model="selectedDelivery"
+        v-model="paymentForm.delivery"
         name="location"
         :options="deliveryOptions"
         class="payment-section__delivery"
       />
       <PaymentOption
         title="配送地區"
-        v-model="selectedLocation"
+        v-model="paymentForm.location"
         name="location"
         :options="locationOptions"
       />
       <PaymentOption
         title="付款方式"
-        v-model="selectedPayment"
+        v-model="paymentForm.paymentMethod"
         name="paymentMethod"
         :options="paymentOptions"
       />
-
-      <CreditCardForm
-        v-if="selectedPayment === 'card'"
-        v-model:card-number="cardNumber"
-        v-model:exp-month="expMonth"
-        v-model:cvv="cvv"
-        v-model:card-holder="cardHolder"
-      />
+      <CreditCardForm v-if="paymentForm.paymentMethod === 'card'" />
     </div>
   </section>
 </template>

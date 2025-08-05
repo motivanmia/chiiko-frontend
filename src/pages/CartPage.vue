@@ -1,11 +1,11 @@
 <script setup>
-  import { ref, computed, watch } from 'vue';
   import CartStep from '@/components/cart/CartStep.vue';
-  import GoBackButton from '@/components/button/GoBackButton.vue';
   import CartList from '@/components/cart/CartList.vue';
   import PaymentSection from '@/components/cart/PaymentSection.vue';
   import RecipientSection from '@/components/cart/RecipientSection.vue';
   import OrderSummary from '@/components/cart/OrderSummary.vue';
+
+  import { ref, computed } from 'vue';
 
   const products = ref([
     {
@@ -75,26 +75,26 @@
     return subtotal.value + shippingCost.value;
   });
 
-  const increaseQuantity = (productId) => {
-    const product = products.value.find((p) => p.id === productId);
-    if (product) {
-      product.quantity++;
-    }
-  };
+  // const increaseQuantity = (productId) => {
+  //   const product = products.value.find((p) => p.id === productId);
+  //   if (product) {
+  //     product.quantity++;
+  //   }
+  // };
 
-  const decreaseQuantity = (productId) => {
-    const product = products.value.find((p) => p.id === productId);
-    if (product && product.quantity > 1) {
-      product.quantity--;
-    }
-  };
+  // const decreaseQuantity = (productId) => {
+  //   const product = products.value.find((p) => p.id === productId);
+  //   if (product && product.quantity > 1) {
+  //     product.quantity--;
+  //   }
+  // };
 
-  const removeProduct = (productId) => {
-    const index = products.value.findIndex((p) => p.id === productId);
-    if (index > -1) {
-      products.value.splice(index, 1);
-    }
-  };
+  // const removeProduct = (productId) => {
+  //   const index = products.value.findIndex((p) => p.id === productId);
+  //   if (index > -1) {
+  //     products.value.splice(index, 1);
+  //   }
+  // };
 
   const handleSubmitOrder = () => {
     console.log('提交訂單', {
@@ -109,31 +109,17 @@
 <template>
   <div class="cart-page__container container-large">
     <div class="cart-page container">
-      <CartStep :current-step="1" />
+      <CartStep />
       <div class="cart-page__wrap">
         <main class="cart-page__main">
-          <CartList
-            :products="products"
-            @increase-quantity="increaseQuantity"
-            @decrease-quantity="decreaseQuantity"
-            @remove-product="removeProduct"
-          />
+          <CartList />
 
-          <PaymentSection v-model:payment-form="paymentForm" />
+          <PaymentSection />
 
-          <RecipientSection
-            v-model:recipient-form="recipientForm"
-            v-model:same-as-recipient="sameAsRecipient"
-          />
+          <RecipientSection />
         </main>
 
-        <OrderSummary
-          class="cart-page__summary"
-          :subtotal="subtotal"
-          :shipping-cost="shippingCost"
-          :total="total"
-          @submit-order="handleSubmitOrder"
-        />
+        <OrderSummary class="cart-page__summary" />
       </div>
     </div>
   </div>
