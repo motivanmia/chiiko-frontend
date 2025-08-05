@@ -54,6 +54,8 @@
     height: 80px;
     margin: 50px auto;
     justify-content: space-around;
+    gap: 10px;
+    padding: 0 30px;
 
     &__buttons {
       width: 494px;

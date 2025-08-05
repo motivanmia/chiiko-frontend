@@ -55,6 +55,7 @@
     flex-wrap: wrap;
     gap: 10px;
     row-gap: 100px;
+    justify-content: center;
 
     &__card {
       width: 292px;
