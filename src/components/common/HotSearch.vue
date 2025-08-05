@@ -13,6 +13,7 @@ const hotSearches = ref([
 ]);
 
 // 處理點擊事件的函式
+// ✅ 修正：接收被點擊的關鍵字
 const handleHotSearchClick = (keyword) => {
   // 發出 'search' 事件，並傳遞點擊的關鍵字
   emits('search', keyword);
@@ -44,15 +45,14 @@ const handleHotSearchClick = (keyword) => {
   padding: 10px;
   font-size: 24px;
   letter-spacing: 1.2px;
-  // flex-wrap: nowrap;
 
-    text-shadow: var(--hot-search-text-shadow, none);
-    @media screen and (max-width: 1440px) {
-      font-size: 18px;
-    }
-    @media screen and (max-width: 768px) {
-      font-size: 14px;
-    }
+  text-shadow: var(--hot-search-text-shadow, none);
+  @media screen and (max-width: 1440px) {
+    font-size: 18px;
+  }
+  @media screen and (max-width: 768px) {
+    font-size: 14px;
+  }
 
   & > h3 {
     color: var(--hot-search-color, color(text, dark));

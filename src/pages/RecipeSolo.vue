@@ -20,7 +20,6 @@ const { searchTerm, handleSearch } = useSearch();
   <Category/>
   
   <div class="search-container">
-    <!-- ✅ 修正：將 v-model 和 @search 事件綁定上去 -->
     <SearchBar
       v-model="searchTerm" 
       @search="handleSearch"
@@ -64,7 +63,7 @@ const { searchTerm, handleSearch } = useSearch();
   box-sizing: border-box;
 }
 
-// 響應式調整
+
 @media (max-width: 768px) {
   .content-wrapper {
     padding: 0 15px;

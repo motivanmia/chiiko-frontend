@@ -31,6 +31,41 @@
   });
 
   const { searchTerm, handleSearch } = useSearch();
+
+  const filteredRecipes = computed(() => {
+  if (!searchQuery.value || searchQuery.value.trim() === '') {
+    return allRecipes.value;
+  }
+  
+  const query = searchQuery.value.toLowerCase().trim();
+  
+  return allRecipes.value.filter(recipe => {
+    // 檢查標題是否包含搜尋文字（支援部分匹配）
+    const titleMatch = recipe.title.toLowerCase().includes(query);
+    
+    // 檢查標籤是否包含搜尋文字（移除 # 符號後比較）
+    const tagMatch = recipe.tag.some(tag => 
+      tag.toLowerCase().replace('#', '').includes(query.replace('#', ''))
+    );
+    
+    return titleMatch || tagMatch;
+  });
+
+  const testSearches = [
+  '雞湯',      // 應該找到 "剝皮辣椒雞湯"
+  '炒飯',      // 應該找到 "黃金蝦仁蛋炒飯"
+  '拉麵',      // 應該找到 "經典日式叉燒拉麵"
+  '牛肉',      // 應該找到多個牛肉相關料理
+  '和風',      // 應該找到標籤為 #和風 的料理
+  '麵',        // 應該找到多個麵類料理
+  '輕食',      // 應該找到標籤為 #輕食 的料理
+];
+console.log('當前搜尋關鍵字:', searchQuery.value);
+console.log('過濾後的食譜數量:', filteredRecipes.value.length);
+console.log('過濾後的食譜:', filteredRecipes.value);
+
+});
+
 </script>
 
 <template>
