@@ -283,6 +283,13 @@
           </div>
         </li>
       </ul>
+      <div class="main-footer__copyright">
+        本網站為緯育TibaMe前端設計工程師班第 92 期學員專題成果作品，本平台僅供學習、展示之用。
+        <br />
+        若有侵權疑慮，您可以私訊［緯育TibaMe］，後續會由專人協助處理。
+        <br />
+        © 2025 Chiiko. All rights reserved.
+      </div>
     </div>
   </footer>
 </template>
@@ -578,6 +585,15 @@
         object-fit: cover;
         object-position: center;
         aspect-ratio: 100 / 150;
+      }
+    }
+
+    &__copyright {
+      text-align: center;
+      @include fontSet($basic-font, normal, px(14), 1.2, color(text, base), 0.1em);
+
+      @include rwdmax(768) {
+        @include fontSet($basic-font, normal, px(12), 1.2, color(text, base), 0.1em);
       }
     }
   }
