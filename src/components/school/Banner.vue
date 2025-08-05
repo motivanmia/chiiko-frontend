@@ -30,6 +30,7 @@
     height: 300px;
     display: flex;
     justify-content: center;
+    padding: 0 10px;
 
     & > img {
       border-radius: 20px;
