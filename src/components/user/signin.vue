@@ -24,6 +24,7 @@
   };
   const validations = [
     {
+      field: 'name',
       valid: () => name.value.trim() !== '',
       message: '請輸入姓名',
     },
@@ -293,6 +294,9 @@
         transform: translate(50%, -50%);
         font-size: clamp(18px, 1.56vw, 30px); //30px
         cursor: pointer;
+        &:hover {
+          background-color: #d6b59c;
+        }
         @include rwdmax(768) {
           transform: translate(-10%, 10%);
         }
@@ -399,6 +403,9 @@
           color: color(text, light);
           margin-top: px(10);
           cursor: pointer;
+          &:hover {
+          background-color: #d6b59c;
+        }
         }
       }
       #login {
@@ -408,9 +415,25 @@
       }
       .login {
         color: color(text, dark);
-      }
-      .login:hover {
+        position: relative;
         text-decoration: none;
+        display: inline-block;
+        margin-left: px(20);
+        &::after {
+            position: absolute;
+            content: '';
+            box-shadow: 0 0.5px 0 rgba(59, 55, 57);
+            width: 100%;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            transform: scaleX(1);
+            transform-origin: right;
+            transition: transform 0.5s ease;
+          }
+          &:hover::after {
+            transform: scaleX(0);
+          }
       }
     }
     .custom-checkbox {
@@ -425,6 +448,23 @@
       }
       a {
         color: color(text, dark);
+        position: relative;
+        text-decoration: none;
+        &::after {
+            position: absolute;
+            content: '';
+            box-shadow: 0 0.5px 0 rgba(59, 55, 57);
+            width: 100%;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            transform: scaleX(1);
+            transform-origin: right;
+            transition: transform 0.5s ease;
+          }
+          &:hover::after {
+            transform: scaleX(0);
+          }
       }
     }
     .custom-checkbox input[type='checkbox'] {
@@ -463,7 +503,8 @@
     }
     .error-msg {
       animation: shake 0.4s ease;
-      font-size: clamp(11px, 1.55vw, 16px);
+      font-size: clamp(11px, 1.55vw, 12px);
+      color: red;
     }
     @keyframes shake {
       0% {
