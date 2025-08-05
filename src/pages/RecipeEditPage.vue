@@ -1,211 +1,204 @@
 <script setup></script>
 
 <template>
-
-
-
   <div class="recipe-editor">
-      <div class="back-button-wrapper">
-    <button class="back-button">
-      <Icon
-        icon-name="leftA"
-        class="leftA"
-      />
-      回前頁
-    </button>
-  </div>
-  <div class="shit__css">
-    <div class="recipe-editortatale">
-      <h1 class="recipe-editor__title">編輯食譜</h1>
-
-      <!-- 拖曳上傳區 -->
-      <div
-        class="recipe-editor__upload-zone"
-        @dragover.prevent
-        @drop.prevent="handleDrop"
-      >
-        <!-- 預覽圖片 -->
-        <img
-          v-if="previewUrl"
-          :src="previewUrl"
-          class="recipe-editor__image-preview"
+    <div class="back-button-wrapper">
+      <button class="back-button">
+        <Icon
+          icon-name="leftA"
+          class="leftA"
         />
+        回前頁
+      </button>
+    </div>
+    <div class="shit__css">
+      <div class="recipe-editortatale">
+        <h1 class="recipe-editor__title">編輯食譜</h1>
 
-        <!-- 提示文字與按鈕 -->
-        <div class="recipe-editor__upload-content">
-          <p class="recipe-editor__upload-text"></p>
-          <button
-            type="button"
-            @click="triggerFile"
-            class="recipe-editor__button2"
-          >
-            新增食譜圖片
-          </button>
-        </div>
-
-        <!-- 隱藏檔案輸入 -->
-        <input
-          type="file"
-          ref="fileInput"
-          accept="image/*"
-          class="recipe-editor__file-input"
-          @change="handleFileChange"
-        />
-      </div>
-
-      <!-- 食譜名稱 -->
-      <div class="recipe-editor__field">
-        <label class="recipe-editor__name">輸入食譜名稱</label>
-        <div class="input-with-counter">
-        <input
-          v-model="form.title"
-          placeholder="例：香煎豆腐卷（最多15字）"
-          maxlength="15"
-          class="recipe-editor__input"
-        />
-              <span class="char-counter">
-            {{ form.title.length }} / 15
-          </span>
-        </div>
-        <p
-          v-if="titleWarning"
-          class="recipe-editor__warning"
+        <!-- 拖曳上傳區 -->
+        <div
+          class="recipe-editor__upload-zone"
+          @dragover.prevent
+          @drop.prevent="handleDrop"
         >
-          {{ titleWarning }}
-        </p>
+          <!-- 預覽圖片 -->
+          <img
+            v-if="previewUrl"
+            :src="previewUrl"
+            class="recipe-editor__image-preview"
+          />
+
+          <!-- 提示文字與按鈕 -->
+          <div class="recipe-editor__upload-content">
+            <p class="recipe-editor__upload-text"></p>
+            <button
+              type="button"
+              @click="triggerFile"
+              class="recipe-editor__button2"
+            >
+              新增食譜圖片
+            </button>
+          </div>
+
+          <!-- 隱藏檔案輸入 -->
+          <input
+            type="file"
+            ref="fileInput"
+            accept="image/*"
+            class="recipe-editor__file-input"
+            @change="handleFileChange"
+          />
+        </div>
+
+        <!-- 食譜名稱 -->
+        <div class="recipe-editor__field">
+          <label class="recipe-editor__name">輸入食譜名稱</label>
+          <div class="input-with-counter">
+            <input
+              v-model="form.title"
+              placeholder="例：香煎豆腐卷（最多15字）"
+              maxlength="15"
+              class="recipe-editor__input"
+            />
+            <span class="char-counter">{{ form.title.length }} / 15</span>
+          </div>
+          <p
+            v-if="titleWarning"
+            class="recipe-editor__warning"
+          >
+            {{ titleWarning }}
+          </p>
         </div>
       </div>
 
       <!-- 簡介 -->
 
-<div class="recipe-editor__description">
-  <label class="recipe-editor__label">簡介</label>
+      <div class="recipe-editor__description">
+        <label class="recipe-editor__label">簡介</label>
 
-  <!-- ✅ 定位容器 -->
-  <div class="input-with-counter">
-    <textarea
-      v-model="form.description"
-      placeholder="請輸入食譜描述（最多40字）"
-      maxlength="40"
-      class="recipe-editor__textarea"
-    ></textarea>
-    
-    <!-- ✅ 計數器會相對於這個容器定位 -->
-    <span class="recipe-editor__label-counter">
-      {{ form.description.length }} / 40
-    </span>
-  </div>
+        <!-- ✅ 定位容器 -->
+        <div class="input-with-counter">
+          <textarea
+            v-model="form.description"
+            placeholder="請輸入食譜描述（最多40字）"
+            maxlength="40"
+            class="recipe-editor__textarea"
+          ></textarea>
 
-  <!-- ⚠️ 額外警告文字 -->
-  <p
-    v-if="descriptionWarning"
-    class="recipe-editor__warninglabel"
-  >
-    {{ descriptionWarning }}
-  </p>
-</div>
+          <!-- ✅ 計數器會相對於這個容器定位 -->
+          <span class="recipe-editor__label-counter">{{ form.description.length }} / 40</span>
+        </div>
+
+        <!-- ⚠️ 額外警告文字 -->
+        <p
+          v-if="descriptionWarning"
+          class="recipe-editor__warninglabel"
+        >
+          {{ descriptionWarning }}
+        </p>
+      </div>
 
       <!-- 食譜標籤 -->
-<div class="recipe-editor__tatletag">
-  <div class="tag-label-row">
-    <label class="recipe-editor__treetag">食譜標籤</label>
-    <label class="recipe-editor__treetag2">最多可新增3個標籤</label>
-  </div>
+      <div class="recipe-editor__tatletag">
+        <div class="tag-label-row">
+          <label class="recipe-editor__treetag">食譜標籤</label>
+          <label class="recipe-editor__treetag2">最多可新增3個標籤</label>
+        </div>
 
-  <!-- ✅ 新增一層定位包裝 -->
-  <div class="input-with-counter">
-    <div class="recipe-editor__tag-container">
-      <!-- 顯示標籤 -->
-      <span
-        v-for="(tag, index) in form.tags"
-        :key="index"
-        class="recipe-editor__tag"
-      >
-        #{{ tag }}
-      </span>
+        <!-- ✅ 新增一層定位包裝 -->
+        <div class="input-with-counter">
+          <div class="recipe-editor__tag-container">
+            <!-- 顯示標籤 -->
+            <span
+              v-for="(tag, index) in form.tags"
+              :key="index"
+              class="recipe-editor__tag"
+            >
+              #{{ tag }}
+            </span>
 
-      <!-- ✅ tag 輸入欄 -->
-      <input
-        v-model="newTag"
-        @keydown.enter.prevent="addTag"
-        @keydown.backspace="handleBackspace"
-        placeholder="按下鍵盤上的 Enter鍵 或換行來新增 #標籤，每個標籤限6字"
-        class="recipe-editor__tag-input"
-        maxlength="6"
-      />
-    </div>
+            <!-- ✅ tag 輸入欄 -->
+            <input
+              v-model="newTag"
+              @keydown.enter.prevent="addTag"
+              @keydown.backspace="handleBackspace"
+              placeholder="按下鍵盤上的 Enter鍵 或換行來新增 #標籤，每個標籤限6字"
+              class="recipe-editor__tag-input"
+              maxlength="6"
+            />
+          </div>
 
-    <!-- ✅ tag 字數計數器 -->
-    <span class="char-counter">
-      {{ newTag.length }} / 6
-    </span>
-  </div>
-</div>
+          <!-- ✅ tag 字數計數器 -->
+          <span class="char-counter">{{ newTag.length }} / 6</span>
+        </div>
+      </div>
 
       <!-- 分類 / 時間 / 份數 -->
-<div class="recipe-editor__meta-row">
-  <!-- ✅ 分類 -->
-  <div class="recipe-editor__preferences-wrapper">
-    <label class="recipe-editor__label">食譜分類</label>
-    <select
-      v-model="form.category"
-      class="recipe-editor__preferences"
-    >
-      <option
-        v-for="categ in categories"
-        :key="categ.value"
-        :value="categ.value"
-        class="recipe-editor__yamipreferences"
-      >
-        {{ categ.label }}
-      </option>
-    </select>
-  </div>
+      <div class="recipe-editor__meta-row">
+        <!-- ✅ 分類 -->
+        <div class="recipe-editor__preferences-wrapper">
+          <label class="recipe-editor__label">食譜分類</label>
+          <select
+            v-model="form.category"
+            class="recipe-editor__preferences"
+          >
+            <option
+              v-for="categ in categories"
+              :key="categ.value"
+              :value="categ.value"
+              class="recipe-editor__yamipreferences"
+            >
+              {{ categ.label }}
+            </option>
+          </select>
+        </div>
 
-  <!-- ✅ 時間 -->
-  <div class="recipe-editor__tatletime-group">
-    <label class="recipe-editor__label">
-      烹調時間 <span class="unit-label">（分鐘）</span>
-    </label>
-    <select
-      v-model="form.time"
-      class="recipe-editor__time-group"
-    >
-      <option
-        v-for="time in timeOptions"
-        :key="time.value"
-        :value="time.value"
-      >
-        {{ time.label }}
-      </option>
-    </select>
-  </div>
+        <!-- ✅ 時間 -->
+        <div class="recipe-editor__tatletime-group">
+          <label class="recipe-editor__label">
+            烹調時間
+            <span class="unit-label">（分鐘）</span>
+          </label>
+          <select
+            v-model="form.time"
+            class="recipe-editor__time-group"
+          >
+            <option
+              v-for="time in timeOptions"
+              :key="time.value"
+              :value="time.value"
+            >
+              {{ time.label }}
+            </option>
+          </select>
+        </div>
 
-  <!-- ✅ 份數 -->
-  <div class="recipe-editor__tatleservings">
-    <label class="recipe-editor__label">
-      料理份數 <span class="unit-label">（人份）</span>
-    </label>
-    <select
-      v-model="form.servings"
-      class="recipe-editor__servings"
-    >
-      <option
-        v-for="serving in servingOptions"
-        :key="serving.value"
-        :value="serving.value"
-      >
-        {{ serving.label }}
-      </option>
-    </select>
-  </div>
-</div>
+        <!-- ✅ 份數 -->
+        <div class="recipe-editor__tatleservings">
+          <label class="recipe-editor__label">
+            料理份數
+            <span class="unit-label">（人份）</span>
+          </label>
+          <select
+            v-model="form.servings"
+            class="recipe-editor__servings"
+          >
+            <option
+              v-for="serving in servingOptions"
+              :key="serving.value"
+              :value="serving.value"
+            >
+              {{ serving.label }}
+            </option>
+          </select>
+        </div>
+      </div>
 
       <!-- 所需食材 -->
       <div class="recipe-editor__tatleingredientstatle">
         <div class="recipe-editor__ggingredients3">
-        <label class="recipe-editor__ggingredients">所需食材</label>
-        <label class="recipe-editor__ggingredients2">食材15字以內，份量10字以內</label>
+          <label class="recipe-editor__ggingredients">所需食材</label>
+          <label class="recipe-editor__ggingredients2">食材15字以內，份量10字以內</label>
         </div>
         <div class="recipe-editor__tatleingredients">
           <div
@@ -324,8 +317,7 @@
         </button>
       </div>
     </div>
-</div>
-
+  </div>
 
   <div class="recipe-editor__action-group">
     <button
@@ -341,7 +333,6 @@
       發布食譜
     </button>
   </div>
-
 </template>
 <!-- ──────────────────────────────────────────────────────────────────────── -->
 <script setup>
@@ -502,35 +493,32 @@
   }
 
   const numberToChinese = (num) => {
-  const units = ['', '十', '百', '千']
-  const chars = '零一二三四五六七八九'
+    const units = ['', '十', '百', '千'];
+    const chars = '零一二三四五六七八九';
 
-  if (num <= 10) return chars[num]
+    if (num <= 10) return chars[num];
 
-  let result = ''
-  const digits = String(num).split('').reverse()
+    let result = '';
+    const digits = String(num).split('').reverse();
 
-  for (let i = 0; i < digits.length; i++) {
-    const n = Number(digits[i])
-    if (n !== 0) {
-      result = chars[n] + units[i] + result
-    } else if (!result.startsWith('零')) {
-      result = '零' + result
+    for (let i = 0; i < digits.length; i++) {
+      const n = Number(digits[i]);
+      if (n !== 0) {
+        result = chars[n] + units[i] + result;
+      } else if (!result.startsWith('零')) {
+        result = '零' + result;
+      }
     }
-  }
 
-  // 處理特殊的「一十」→「十」
-  if (result.startsWith('一十')) {
-    result = result.slice(1)
-  }
+    if (result.startsWith('一十')) {
+      result = result.slice(1);
+    }
 
-  return result.replace(/零+$/, '') // 移除結尾多餘的零
-}
+    return result.replace(/零+$/, '');
+  };
 </script>
 <!-- ──────────────────────────────────────────────────────────────────────── -->
 <style scoped>
-
-
   .recipe-editor {
     position: relative;
     width: 1200px;
@@ -539,13 +527,11 @@
     padding-bottom: 60px;
   }
 
-
-
-.back-button-wrapper {
-  position: absolute;   /* ✅ 讓按鈕「黏」在 .recipe-editor 裡 */
-  top: 0px;           /* 看你想讓它浮多高 */
-  left: -183px;              /* 對齊 recipe-editor 左邊 */
-}
+  .back-button-wrapper {
+    position: absolute;
+    top: 0px;
+    left: -183px;
+  }
 
   .recipe-editortatale {
     padding: 32px;
@@ -558,21 +544,21 @@
   }
 
   .recipe-editor__upload-zone {
-    height: 400px; 
+    height: 400px;
     width: 480px;
-    background-color: #fff7ed; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
+    background-color: #fff7ed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 40px auto 50px auto;
     border-radius: 20px;
   }
 
   .recipe-editor__upload-content .recipe-editor__button--primary {
-    z-index: 2; /* 確保內容浮在預覽圖上方 */
-    text-align: center; /* 文字置中 */
-    color: #ea580c; /* 深橘文字，呼應整體色系 */
-    font-size: 16px; /* 文字大小 */
+    z-index: 2;
+    text-align: center;
+    color: #ea580c;
+    font-size: 16px;
   }
 
   .recipe-editor__button--primary,
@@ -584,13 +570,13 @@
 
   .recipe-editor__upload-content button,
   .recipe-editor__button {
-    margin-top: 8px; /* 與文字之間的間距 */
-    padding: 6px 12px; /* 內距讓按鈕看起來更舒適 */
-    border: none; /* 移除預設邊框 */
-    background-color: #D97C48; /* 按鈕底色（橘色） */
-    color: white; /* 文字為白色 */
-    border-radius: 20px; /* 圓角讓按鈕看起來柔和 */
-    cursor: pointer; /* 滑鼠移過去顯示為可點擊 */
+    margin-top: 8px;
+    padding: 6px 12px;
+    border: none;
+    background-color: #d97c48;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
   }
 
   .recipe-editor__upload-content button:hover,
@@ -601,18 +587,18 @@
   }
 
   .recipe-editor__image-preview {
-    position: absolute; /* 讓圖片覆蓋整個 upload-area */
-    inset: 0; /* 相當於 top, right, bottom, left 都為 0，填滿父元素 */
-    width: 100%; /* 寬度佔滿容器 */
-    height: 100%; /* 高度佔滿容器 */
-    object-fit: cover; /* 圖片等比例縮放填滿，不變形 */
-    border-radius: 20px; /* 與 upload-area 一致的圓角 */
-    opacity: 0.4; /* 降低透明度，讓上方內容清晰可見 */
-    pointer-events: none; /* 不影響滑鼠事件，讓底圖不能被點選 */
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    opacity: 0.4;
+    pointer-events: none;
   }
 
   .recipe-editor__file-input {
-    display: none; /* 隱藏 input[type="file"] 元素 */
+    display: none;
   }
 
   .recipe-editor__field {
@@ -633,8 +619,6 @@
     margin: 0 auto 30px;
   }
 
-
-
   .recipe-editor__tag-input {
     width: 800px;
   }
@@ -647,20 +631,20 @@
   .recipe-editor__button--primary,
   .recipe-editor__button--secondary {
     font-size: 32px;
-    border-radius: 20px; /* 圓角讓按鈕看起來柔和 */
-    cursor: pointer; /* 滑鼠移過去顯示為可點擊 */
+    border-radius: 20px;
+    cursor: pointer;
   }
   .recipe-editor__button--secondary {
     background-color: #fff;
   }
   .recipe-editor__button--primary {
-    border: none; /* 移除預設邊框 */
-    background-color: #D97C48; /* 按鈕底色（橘色） */
-    color: white; /* 文字為白色 */
+    border: none;
+    background-color: #d97c48;
+    color: white;
   }
   .recipe-editor__action-group {
-    display: flex; /* ✨ 關鍵：啟用 flex 排列 */
-    justify-content: space-between; /* ✨ 左右分開 */
+    display: flex;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 170px;
     margin-top: 90px;
@@ -676,8 +660,6 @@
     margin-bottom: 10px;
     font-size: 28px;
   }
-
-
 
   .recipe-editor__preferences {
     width: 260px;
@@ -698,7 +680,7 @@
   .recipe-editor__ingredient-amount,
   .recipe-editor__step-input {
     height: 60px;
-    padding: 0.75rem 2.5rem 0.75rem 1.5rem; /* 預留右側空間給字數提示 */
+    padding: 0.75rem 2.5rem 0.75rem 1.5rem;
     border: none;
     border-radius: 20px;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
@@ -727,9 +709,9 @@
   }
 
   .recipe-editor__ingredient-name {
-  flex-grow: 1; /* 讓食材名稱輸入框自動填滿剩餘空間 */
-  margin-right: 0; /* 移除舊的 margin */
-  margin-left: 0; /* 移除舊的 margin */
+    flex-grow: 1;
+    margin-right: 0;
+    margin-left: 0;
   }
   .recipe-editor__ingredient-amount {
     width: 300px;
@@ -762,24 +744,24 @@
   .recipe-editor__add-step {
     width: 800px;
     height: 60px;
-    padding: 0.75rem 2.5rem 0.75rem 1.5rem; /* 預留右側空間給字數提示 */
+    padding: 0.75rem 2.5rem 0.75rem 1.5rem;
     border: none;
     border-radius: 20px;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
-    margin-top: 8px; /* 與文字之間的間距 */
-    padding: 6px 12px; /* 內距讓按鈕看起來更舒適 */
-    border: none; /* 移除預設邊框 */
-    background-color: #D97C48; /* 按鈕底色（橘色） */
-    color: white; /* 文字為白色 */
-    cursor: pointer; /* 滑鼠移過去顯示為可點擊 */
+    margin-top: 8px;
+    padding: 6px 12px;
+    border: none;
+    background-color: #d97c48;
+    color: white;
+    cursor: pointer;
     font-size: 24px;
   }
 
   .recipe-editor__ingredients {
-  display: flex;
-  align-items: center; /* 關鍵：讓所有子元素垂直置中 */
-  gap: 12px;           /* 關鍵：用 gap 來控制元素間距，比 space-between 更穩定 */
-  margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
   }
 
   .recipe-editor__step-input {
@@ -789,21 +771,21 @@
 
   .recipe-editor__step-group {
     display: flex;
-    align-items: flex-start; /* 讓左欄和右欄從頂部對齊 */
-    gap: 56px; /* 左右欄之間的間距 */
+    align-items: flex-start;
+    gap: 56px;
     margin-bottom: 16px;
-    margin-top: 16px; /* 每一個步驟之間的間距 */
+    margin-top: 16px;
   }
 
   .recipe-editor__step-label {
     display: block;
-    margin-bottom: 0.5rem; /* 這樣會讓下面的 input 往下推開 */
+    margin-bottom: 0.5rem;
   }
 
   /* 文字輸入框 */
   .recipe-editor__step-input {
-    border: 1px solid #e0e0e0; /* 淺灰色邊框 */
-    border-radius: 20px; /* 圓角效果 */
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
     padding: 12px;
     font-size: 16px;
   }
@@ -825,7 +807,7 @@
 
   .recipe-editor__treetag2,
   .unit-label,
-  .recipe-editor__ggingredients2{
+  .recipe-editor__ggingredients2 {
     font-size: 20px;
     color: #828282;
     font-weight: normal;
@@ -833,45 +815,45 @@
 
   .tag-label-row,
   .recipe-editor__ggingredients3 {
-  display: flex;
-  align-items: center; /* 對齊字體底部會比較自然 */
-  gap: 16px; /* 標籤與說明之間留點間距 */
-  } 
-  
-  .recipe-editor__ggingredients3 {
-  display: flex;
-  align-items: baseline; /* 讓主標題和副標題文字底部對齊 */
-  gap: 16px;
-  margin-top: 20px;
-  margin-bottom: 10px; /* 與下方輸入框增加一點間距 */
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
 
-.page-container {
-  display: flex;             /* 關鍵：啟用 Flexbox 佈局，讓子元素水平排列 */
-  align-items: flex-start;   /* 關鍵：讓子元素從頂部對齊。這樣按鈕就會跟表單的頂部對齊 */
-  justify-content: center;   /* 讓整個內容（按鈕+表單）在頁面中水平居中 */
-  gap: 24px;                 /* 在返回按鈕和編輯食譜表單之間增加 24px 的間距 */
-  padding: 0 32px;           /* 避免內容在小螢幕時貼邊 */
-  max-width: 1440px;         /* 設定一個最大寬度，讓版面在大螢幕上不會過寬 */
-  margin: 0 auto;            /* 搭配 max-width，實現水平居中 */
-}
+  .recipe-editor__ggingredients3 {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
 
-.back-button {
-  display: flex;          /* 讓 icon 和文字在按鈕內對齊 */
-  align-items: center;
-  gap: 8px;               /* icon 和文字之間的間距 */
-  background-color: #D6B59C; /* 一個與背景協調的淺褐色 */
-  border: none;
-  border-radius: 20px;      /* 圓角風格與您的設計一致 */
-  padding: 12px 24px;       /* 按鈕的內邊距 */
-  
-  font-size: 16px;
-  font-weight: 600;
-  color: #ffffff;         /* 深褐色文字 */
-  
-  cursor: pointer;
-  transition: background-color 0.2s ease; /* 平滑的 hover 過渡效果 */
-}
+  .page-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
+    padding: 0 32px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #d6b59c;
+    border: none;
+    border-radius: 20px;
+    padding: 12px 24px;
+
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
 
   .recipe-editor__button2 {
     width: 225px;
@@ -879,155 +861,130 @@
     border-radius: 20px;
     font-size: 24px;
   }
-s
+  s .back-button:hover {
+    background-color: #d8c9b8;
+  }
 
-.back-button:hover {
-  background-color: #d8c9b8; /* 滑鼠懸停時加深一點顏色 */
-}
+  .recipe-editor {
+    width: 1200px;
+    background-color: #ead7c4;
+    margin: 32px auto;
+    border-radius: 20px;
+    margin-top: 226px;
+  }
 
-/*
- * 4. 調整您現有的 .recipe-editor
- *    - 移除舊的 margin-top，因為我們已經交給父容器管理
- */
-.recipe-editor {
-  width: 1200px;
-  background-color: #ead7c4;
-  margin: 32px auto;
-  border-radius: 20px;
-  margin-top: 226px; /* 將原有的 200px 減少，因為父容器已經幫忙處理了大部分的頂部空間 */
-}
+  .input-with-counter,
+  .recipe-editor__label,
+  .input-with-counter {
+    position: relative;
+    width: 100%;
+  }
 
+  .char-counter,
+  .recipe-editor__label-counter,
+  .char-counter {
+    position: absolute;
+    bottom: 12px;
+    right: 20px;
 
-
-.input-with-counter,
-.recipe-editor__label,
-.input-with-counter {
-  position: relative; /* 關鍵：設定為相對定位，作為絕對定位的子元素 (.char-counter) 的基準 */
-  width: 100%;        /* 讓容器寬度與父層 .recipe-editor__field 一致 */
-}
-
-/*
- * 2. 字數計數器本身的樣式
- */
-.char-counter,
-.recipe-editor__label-counter,
-.char-counter {
-  position: absolute; /* 關鍵：設定為絕對定位，相對於 .input-with-counter */
-  bottom: 12px;       /* 從容器底部向上推 12px */
-  right: 20px;        /* 從容器右側向左推 20px */
-  
-  font-size: 16px;    /* 字體大小 */
-  color: #888;       /* 字體顏色 (灰色) */
-  pointer-events: none; /* 讓滑鼠可以穿透這個計數器，點擊到它下方的輸入框 */
-}
-
+    font-size: 16px;
+    color: #888;
+    pointer-events: none;
+  }
 </style>
 
 <style lang="scss" scoped>
-@media (max-width: 768px) {
+  @media (max-width: 768px) {
+    .back-button-wrapper {
+      position: static;
+      left: 0;
+    }
 
+    .recipe-editor {
+      width: 100%;
+      margin: 0;
+    }
 
+    .recipe-editor__field,
+    .recipe-editor__description,
+    .recipe-editor__tatletag,
+    .recipe-editor__action-group,
+    .recipe-editor__meta-row,
+    .recipe-editor__tatleingredientstatle,
+    .tatlerecipe-editor__steps {
+      width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+    }
 
-  /* 2. 重新定位「返回按鈕」 */
-  .back-button-wrapper {
-    position: static; /* 關鍵：取消絕對定位，讓它回到正常的文檔流 */
-    left: 0; /* 重設 left */
-  }
+    .recipe-editor__input,
+    .recipe-editor__textarea,
+    .recipe-editor__tag-input,
+    .recipe-editor__add-ingredient,
+    .recipe-editor__add-step,
+    .recipe-editor__action-group .recipe-editor__button--primary,
+    .recipe-editor__action-group .recipe-editor__button--secondary {
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-  /* 3. 讓主編輯器容器滿版 */
-  .recipe-editor {
-    width: 100%;       /* 關鍵：從固定寬度 1200px 改為 100% */
-    margin: 0;         /* 移除所有的 margin */
-  }
+    .recipe-editor__upload-zone {
+      width: 340px;
+      height: 290px;
+      margin-left: 0;
+    }
 
-  /* 4. 調整標題和區塊的寬度 */
-  .recipe-editor__field,
-  .recipe-editor__description,
-  .recipe-editor__tatletag,
-  .recipe-editor__action-group,
-  .recipe-editor__meta-row,
-  .recipe-editor__tatleingredientstatle,
-  .tatlerecipe-editor__steps {
-    width: 100%; /* 關鍵：所有內部容器都從 800px 改為 100% */
-    margin-left: 0;  /* 移除 margin auto */
-    margin-right: 0; /* 移除 margin auto */
-  }
-  
-  /* 5. 調整輸入框和按鈕的寬度 */
-  .recipe-editor__input,
-  .recipe-editor__textarea,
-  .recipe-editor__tag-input,
-  .recipe-editor__add-ingredient,
-  .recipe-editor__add-step,
-  .recipe-editor__action-group .recipe-editor__button--primary,
-  .recipe-editor__action-group .recipe-editor__button--secondary {
-    width: 100%; /* 讓它們填滿容器 */
-    box-sizing: border-box; 
-  }
-  
-  /* 6. 調整圖片上傳區塊 */
-  .recipe-editor__upload-zone {
-    width: 340px;     /* ✅ 從 90% 改為 100%，讓它填滿父容器 */
-    height: 290px;   /* 維持縮小的合適高度 */
-    margin-left: 0;
-  }
+    .recipe-editor__meta-row {
+      flex-direction: column;
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+    .recipe-editor__preferences,
+    .recipe-editor__time-group,
+    .recipe-editor__servings {
+      width: 100%;
+    }
 
-  /* 7. 將水平排列的「食譜分類」等下拉選單改為垂直堆疊 */
-  .recipe-editor__meta-row {
-    flex-direction: column; /* 關鍵：改為垂直堆疊 */
-    gap: 24px; /* 增加堆疊後的間距 */
-    margin-bottom: 48px;
-  }
-  .recipe-editor__preferences,
-  .recipe-editor__time-group,
-  .recipe-editor__servings {
-    width: 100%; /* 讓每個下拉選單都滿版 */
-  }
+    .recipe-editor__ingredients {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .recipe-editor__ingredient-amount {
+      width: 100%;
+    }
 
-  /* 8. 將「食材」的輸入框從水平改為垂直堆疊 */
-  .recipe-editor__ingredients {
-    flex-direction: column; /* 關鍵：改為垂直堆疊 */
-    align-items: stretch;   /* 讓子元素寬度可以伸展 */
-  }
-  .recipe-editor__ingredient-amount {
-    width: 100%; /* 食材份量輸入框也滿版 */
-  }
+    .recipe-editor__step-group {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .recipe-editor__step-input {
+      width: 100%;
+    }
+    .recipe-editor__step-remove,
+    .recipe-editor__step-drag {
+      align-self: flex-end;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
 
-  /* 9. 將「步驟」的排版調整得更緊湊 */
-  .recipe-editor__step-group {
-    flex-direction: column; /* 垂直堆疊 */
-    align-items: flex-start; /* 從頂部開始對齊 */
-    gap: 8px; /* 縮小標題和輸入框的間距 */
-  }
-  .recipe-editor__step-input {
-    width: 100%;
-  }
-  .recipe-editor__step-remove,
-  .recipe-editor__step-drag {
-    align-self: flex-end; /* 將刪除按鈕移到右邊 */
-    margin-top: 0;
-    margin-bottom: 16px;
-  }
+    .recipe-editor__action-group {
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+      margin-top: 48px;
+    }
 
-  /* 10. 將底部的「暫存」、「發布」按鈕改為垂直堆疊 */
-  .recipe-editor__action-group {
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 24px;
-    margin-top: 48px;
+    .recipe-editor__title {
+      font-size: 28px;
+    }
+    .recipe-editor__treetag,
+    .recipe-editor__label,
+    .recipe-editor__tag,
+    .recipe-editor__steps,
+    .recipe-editor__name,
+    .recipe-editor__ggingredients {
+      font-size: 24px;
+    }
   }
-
-  /* 11. 微調字體大小，讓行動版更易讀 */
-  .recipe-editor__title {
-    font-size: 28px;
-  }
-  .recipe-editor__treetag,
-  .recipe-editor__label,
-  .recipe-editor__tag,
-  .recipe-editor__steps,
-  .recipe-editor__name,
-  .recipe-editor__ggingredients {
-    font-size: 24px;
-  }
-}
 </style>

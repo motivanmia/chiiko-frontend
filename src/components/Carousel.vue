@@ -1,273 +1,333 @@
-<!-- Carousel.vue (最終修正版) -->
 <template>
-  <div class="center-focus-carousel">
-    <!-- 輪播軌道 -->
-    <div class="carousel-track" :style="trackStyle">
+  <div class="carousel-container">
+    <div class="carousel-viewport">
       <div
-        class="carousel-item"
-        v-for="(item, index) in items"
-        :key="item.id"
-        :class="getItemClass(index)"
+        ref="trackRef"
+        class="carousel-track"
+        :style="trackStyle"
       >
-        <img :src="getImageUrl(item.imageUrl)" :alt="item.title" class="carousel-image">
-        <div class="carousel-caption">
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.description }}</p>
-          <span>{{ item.author }}</span>
+        <div
+          v-for="(item, index) in displayItems"
+          :key="item.id + '-' + index"
+          class="carousel-item"
+          :class="getItemClass(index)"
+        >
+          <img
+            :src="item.imageUrl"
+            :alt="item.title"
+            class="carousel-image"
+          />
+          <div class="carousel-caption">
+            <h3>{{ item.title }}</h3>
+            <p class="description">{{ item.description }}</p>
+            <span class="author">{{ item.author }}</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- 控制項容器 -->
     <div class="carousel-controls">
-      <!-- 進度條 -->
-      <div class="progress-bar-container">
-        <div class="progress-bar-thumb" :style="progressBarThumbStyle"></div>
+      <!-- 進度條容器 -->
+      <div class="progress-bar">
+        <div
+          v-for="(_, index) in recipeItems"
+          :key="index"
+          class="progress-segment"
+          :class="{ 'is-active': index === realCurrentIndex }"
+        ></div>
       </div>
 
       <!-- 按鈕組 -->
       <div class="button-group">
-        <button @click="prevSlide" class="carousel-button">❮</button>
-        <button @click="nextSlide" class="carousel-button">❯</button>
+        <button
+          @click="prevSlide"
+          class="carousel-button"
+          aria-label="上一張"
+        >
+          ❮
+        </button>
+        <button
+          @click="nextSlide"
+          class="carousel-button"
+          aria-label="下一張"
+        >
+          ❯
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+  import { ref, computed, onMounted, onUnmounted } from 'vue';
+  import avatarImage1 from '@/assets/image/NewRecipes/braised_chicken_thigh.png';
+  import avatarImage2 from '@/assets/image/NewRecipes/creamy_white_sauce_shell_pasta.png';
+  import avatarImage3 from '@/assets/image/NewRecipes/yuzu_pepper_chicken_soba.png';
+  import avatarImage4 from '@/assets/image/NewRecipes/lemon_glazed_pound_cake.png';
+  import avatarImage5 from '@/assets/image/NewRecipes/braised_tofu.png';
+  import avatarImage6 from '@/assets/image/NewRecipes/recipe031-min.png';
+  import avatarImage7 from '@/assets/image/NewRecipes/recipe051-min.png';
+  import avatarImage8 from '@/assets/image/NewRecipes/recipe056-min.png';
 
-const props = defineProps({
-  items: {
-    type: Array,
-    required: true,
-  },
-});
+  // --- 常數與設定 (保持不變) ---
+  const VISIBLE_ITEMS = 5;
+  const CLONE_COUNT = VISIBLE_ITEMS;
+  const TRANSITION_DURATION = 500;
 
-// --- 狀態管理 ---
-const currentIndex = ref(0);
-// 項目總佔寬 = 項目寬度(220px) + 左右 margin(10px * 2)
-const itemWidth = ref(240); 
-const visibleItemsCount = 5;
+  // --- 狀態管理 (保持不變) ---
+  const trackRef = ref(null);
+  const currentIndex = ref(CLONE_COUNT);
+  const isTransitioning = ref(false);
 
-// --- 計算屬性 ---
+  const recipeItems = ref([
+    {
+      id: 1,
+      title: '紅燒雞腿',
+      description: '奶油5g、貝殼麵......',
+      author: '鹹魚',
+      imageUrl: avatarImage1,
+    },
+    {
+      id: 2,
+      title: '奶油白醬小貝殼麵',
+      description: '奶油5g、貝殼麵......',
+      author: '鹹魚',
+      imageUrl: avatarImage2,
+    },
+    {
+      id: 3,
+      title: '柚子胡椒雞肉蕎麥麵',
+      description: '胡椒 些許、雞肉100g......',
+      author: '小胖子',
+      imageUrl: avatarImage3,
+    },
+    {
+      id: 4,
+      title: '檸檬糖霜磅蛋糕',
+      description: '雞蛋 2顆，低筋麵粉100g......',
+      author: '我只是愛吃',
+      imageUrl: avatarImage4,
+    },
+    {
+      id: 5,
+      title: '紅燒豆腐',
+      description: '雞蛋 2顆，低筋麵粉100g......',
+      author: '我只是愛吃',
+      imageUrl: avatarImage5,
+    },
+    {
+      id: 6,
+      title: '巧克力醬油炒泡麵',
+      description: '濃郁滑順，香氣十足。',
+      author: '黑暗料理人',
+      imageUrl: avatarImage6,
+    },
+    {
+      id: 7,
+      title: '香煎蘿蔔糕',
+      description: '台式好味道。',
+      author: '隔壁王媽媽',
+      imageUrl: avatarImage7,
+    },
+    {
+      id: 8,
+      title: '滷香筍絲肉片',
+      description: '偷情家常菜。',
+      author: '外遇的蔡媽媽',
+      imageUrl: avatarImage8,
+    },
+  ]);
 
-// 計算輪播軌道的位移
-const trackStyle = computed(() => {
-  return {
-    transform: `translateX(-${currentIndex.value * itemWidth.value}px)`,
+  // --- 計算屬性 ---
+  const displayItems = computed(() => {
+    if (recipeItems.value.length === 0) return [];
+    const headClones = recipeItems.value.slice(-CLONE_COUNT);
+    const tailClones = recipeItems.value.slice(0, CLONE_COUNT);
+    return [...headClones, ...recipeItems.value, ...tailClones];
+  });
+
+  const trackStyle = computed(() => {
+    const itemWidth = 420;
+    const centeringOffset = itemWidth * 2.5;
+    const scrollOffset = currentIndex.value * itemWidth;
+    const totalOffset = centeringOffset + scrollOffset;
+    return {
+      transform: `translateX(-${totalOffset}px)`,
+      transition: isTransitioning.value ? `transform ${TRANSITION_DURATION}ms ease-in-out` : 'none',
+    };
+  });
+
+  const realCurrentIndex = computed(() => {
+    return (currentIndex.value - CLONE_COUNT + recipeItems.value.length) % recipeItems.value.length;
+  });
+
+  const moveTo = (newIndex) => {
+    if (isTransitioning.value) return;
+    isTransitioning.value = true;
+    currentIndex.value = newIndex;
   };
-});
+  const nextSlide = () => moveTo(currentIndex.value + 1);
+  const prevSlide = () => moveTo(currentIndex.value - 1);
 
-// 計算進度條的樣式
-const progressBarThumbStyle = computed(() => {
-  const totalItems = props.items.length;
-  if (totalItems <= visibleItemsCount) return { width: '100%' };
-
-  const scrollableItems = totalItems - visibleItemsCount;
-  const thumbWidth = (visibleItemsCount / totalItems) * 100;
-  const thumbPosition = (currentIndex.value / scrollableItems) * (100 - thumbWidth);
-
-  return {
-    width: `${thumbWidth}%`,
-    transform: `translateX(${thumbPosition}%)`,
+  const handleTransitionEnd = () => {
+    const totalOriginalItems = recipeItems.value.length;
+    if (currentIndex.value < CLONE_COUNT) {
+      isTransitioning.value = false;
+      currentIndex.value += totalOriginalItems;
+      return;
+    }
+    if (currentIndex.value >= CLONE_COUNT + totalOriginalItems) {
+      isTransitioning.value = false;
+      currentIndex.value -= totalOriginalItems;
+      return;
+    }
+    isTransitioning.value = false;
   };
-});
 
-// --- 方法 ---
+  // --- 生命週期鉤子 (保持不變) ---
+  onMounted(() => {
+    trackRef.value.addEventListener('transitionend', handleTransitionEnd);
+  });
+  onUnmounted(() => {
+    if (trackRef.value) {
+      trackRef.value.removeEventListener('transitionend', handleTransitionEnd);
+    }
+  });
 
-const nextSlide = () => {
-  const maxIndex = props.items.length - visibleItemsCount;
-  if (currentIndex.value >= maxIndex) {
-    currentIndex.value = 0;
-  } else {
-    currentIndex.value++;
-  }
-};
-
-const prevSlide = () => {
-  const maxIndex = props.items.length - visibleItemsCount;
-  if (currentIndex.value <= 0) {
-    currentIndex.value = maxIndex;
-  } else {
-    currentIndex.value--;
-  }
-};
-
-// 核心邏輯：根據項目索引，決定它應該是哪種狀態
-const getItemClass = (index) => {
-  // 焦點區域的開始和結束索引 (第2、3、4個位置)
-  const focusStartIndex = currentIndex.value + 1;
-  const focusEndIndex = currentIndex.value + 3;
-
-  if (index >= focusStartIndex && index <= focusEndIndex) {
-    return 'is-active'; // 中間三張
-  }
-  
-  // 預覽區域的索引 (第1和第5個位置)
-  const sideStartIndex = currentIndex.value;
-  const sideEndIndex = currentIndex.value + 4;
-  
-  if(index === sideStartIndex || index === sideEndIndex) {
-    return 'is-side'; // 左右兩側
-  }
-  
-  // 其他完全在視窗外的卡片，可以給一個 'is-hidden' class
-  return 'is-hidden';
-};
-
-const getImageUrl = (path) => {
-  // 這裡使用更穩健的相對路徑解析方式
-  return new URL(path, import.meta.url).href;
-};
+  // --- 輔助函式 (保持不變) ---
+  const getItemClass = (index) => {
+    const centerPoint = currentIndex.value + 2;
+    const distance = Math.abs(index - centerPoint);
+    if (distance < 2) return 'is-active';
+    if (distance === 2) return 'is-side';
+    return 'is-hidden';
+  };
 </script>
 
 <style scoped>
-.center-focus-carousel {
-  /* 容器寬度 = 項目總佔寬 * 顯示數量 */
-  /* 240px * 5 = 1200px */
-  width: 100%;
-  max-width: 1200px;
-  margin: auto;
-  position: relative;
-  
-  /* --- 這是最關鍵的修改 --- */
-  /* 將容器變成一個「畫框」，隱藏所有超出範圍的內容 */
-  overflow: hidden;
-  
-  padding: 20px 0;
-}
+  .carousel-container {
+    width: 100%;
+    position: relative;
+    font-family: sans-serif;
+  }
+  .carousel-viewport {
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+    position: relative;
+  }
+  .carousel-track {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 50%;
+  }
+  .carousel-item {
+    width: 400px;
+    height: 480px;
+    margin: 0 10px;
+    flex-shrink: 0;
+    background-color: #d6b59c;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition:
+      opacity 0.5s ease-in-out,
+      transform 0.5s ease-in-out;
+    display: flex;
+    flex-direction: column;
+  }
+  .carousel-item.is-active {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .carousel-item.is-side {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+  .carousel-item.is-hidden {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  .carousel-image {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+  }
+  .carousel-caption {
+    padding: 18px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .carousel-caption h3 {
+    margin: 17px 12px auto 12px;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  .description {
+    margin: auto 12px auto 12px;
+    font-size: 20px;
+    color: #3b3739;
+  }
+  .author {
+    font-size: 20px;
+    color: #6b6e4f;
+    text-align: right;
+  }
 
-.carousel-track {
-  display: flex;
-  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
+  .carousel-controls {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 120px auto 210px auto;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 24px;
+  }
 
-.carousel-item {
-  width: 220px;
-  margin: 0 10px;
-  flex-shrink: 0;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  overflow: hidden;
-  
-  /* 過渡動畫，讓狀態變化更平滑 */
-  transition: opacity 0.5s, transform 0.5s;
-}
+  .progress-bar {
+    display: flex;
+    flex-grow: 1;
+  }
 
-/* 狀態：在兩側的預覽項目 */
-.carousel-item.is-side {
-  opacity: 0.4;
-  transform: scale(0.9);
-}
+  .progress-segment {
+    flex-grow: 1;
+    height: 4px;
+    background-color: #e0e0e0;
+    transition: background-color 0.5s ease;
+  }
+  .progress-segment.is-active {
+    background-color: #d97c48;
+  }
 
-/* 狀態：在中間的焦點項目 */
-.carousel-item.is-active {
-  opacity: 1;
-  transform: scale(1);
-}
+  .button-group {
+    display: flex;
+    gap: 150px;
+    margin-left: 80px;
+  }
 
-/* 狀態：完全在視窗外的項目 (雖然被 overflow 隱藏了，但以防萬一) */
-.carousel-item.is-hidden {
-  opacity: 0;
-}
+  .carousel-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
 
+    background-color: #d97c48;
+    color: #ffffff;
 
-/* --- 以下的圖片和控制項樣式保持不變 --- */
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s;
+  }
 
-.carousel-image {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  display: block;
-}
-
-.carousel-caption {
-  width: 100%;
-  padding: 15px;
-  text-align: center;
-  background-color: #f5eadd;
-}
-
-.carousel-caption h3, .carousel-caption p, .carousel-caption span {
-  margin: 0;
-  white-space: nowrap; /* 防止文字換行 */
-  overflow: hidden;    /* 隱藏超出的文字 */
-  text-overflow: ellipsis; /* 超出部分顯示省略號 */
-}
-
-.carousel-caption h3 {
-  margin-bottom: 10px;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.carousel-caption p, .carousel-caption span {
-  font-size: 0.8rem;
-  color: #666;
-}
-
-.carousel-caption span {
-  display: block;
-  margin-top: 10px;
-  font-style: italic;
-}
-
-.carousel-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 30px;
-  padding: 0 10px;
-}
-
-.progress-bar-container {
-  flex-grow: 1;
-  height: 4px;
-  background-color: #e0e0e0;
-  border-radius: 2px;
-  margin-right: 20px;
-  position: relative;
-}
-
-.progress-bar-thumb {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background-color: #E58A59;
-  border-radius: 2px;
-  transition: transform 0.5s, width 0.5s;
-}
-
-.button-group {
-  display: flex;
-  gap: 10px;
-}
-
-.carousel-button {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  cursor: pointer;
-  font-size: 1.2rem;
-  color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.2s, box-shadow 0.2s;
-}
-
-.carousel-button:hover {
-  background-color: #f7f7f7;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
+  .carousel-button:hover {
+    background-color: #e7e7e7;
+    border: 1px solid #e7e7e7;
+    transition: 0.2s ease;
+  }
 </style>

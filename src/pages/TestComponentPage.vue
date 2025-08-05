@@ -1,139 +1,70 @@
-
 <template>
-  <div class="related-products-wrapper">
-    <!-- 區塊主標題 -->
-    <h2 class="section-title">相關好物</h2>
+  <!-- 
+    一個簡單的頁面容器，用來提供背景色和一些基本的版面留白。
+  -->
+  <div class="page-container">
+    <!-- 頁面標題區 -->
+    <header class="page-header">
+      <h1>/最新投稿\</h1>
+    </header>
 
-    <!-- 商品卡片列表 -->
-    <div class="products-grid">
-      <!-- 使用 v-for 迴圈來渲染每一個商品 -->
-      <a 
-        href="#" 
-        v-for="product in relatedProducts" 
-        :key="product.id" 
-        class="product-card"
-        @click.prevent="goToProductPage(product.id)"
-      >
-        <img :src="product.image" :alt="product.name" class="product-image" />
-        <p class="product-name">{{ product.name }}</p>
-      </a>
-    </div>
+    <!-- 
+      ✨ 核心：直接使用您建立的輪播元件！ ✨
+      就這麼簡單，因為所有的資料和邏輯都已經封裝在元件內部了，
+      所以我們不需要傳遞任何 props (例如 :items="...") 給它。
+    -->
+    <Carousel />
 
-    <!-- 查看更多按鈕 -->
-    <div class="see-more-container">
-      <SeeMoreButton 
-        text="看更多好物"
-        @click="goToMoreProducts"
-      />
-    </div>
+    <!-- 您也可以在輪播下方加入其他內容，測試它與其他元素的互動 -->
   </div>
 </template>
 
-
 <script setup>
-import { ref } from 'vue';
-import SeeMoreButton from '../components/button/SeeMoreButton.vue';
+  // ✨ 核心：從您的 components 資料夾中，引入剛剛建立的 RecipeCarousel.vue 元件。
+  // 請確保路徑是正確的！
+  import Carousel from '@/components/Carousel.vue';
 
-const relatedProducts = ref([
-  { id: 1, name: '平底鍋', image: 'https://i.imgur.com/example1.jpg' },
-  { id: 2, name: '木柄菜刀', image: 'https://i.imgur.com/example2.jpg' },
-  { id: 3, name: '砧板', image: 'https://i.imgur.com/example3.jpg' },
-  { id: 4, name: '不鏽鋼平底鍋', image: 'https://i.imgur.com/example4.jpg' },
-]);
-
-// 點擊事件的處理函式
-function goToProductPage(productId) {
-  alert(`（模擬跳轉）前往商品 ID: ${productId} 的頁面...`);
-}
-
-function goToMoreProducts() {
-  alert('（模擬跳轉）前往「更多好物」的列表頁...');
-}
-
+  // 因為 RecipeCarousel 已經自己管理資料，
+  // 所以這個測試頁面的 <script> 區塊非常乾淨，
+  // 除了引入元件之外，不需要做任何其他事情。
 </script>
-<!-- ──────────────────────────────────────────────────────────────────────── -->
+
 <style scoped>
-
-/* ====================================================== */
-/*                      主要容器與標題                       */
-/* ====================================================== */
-.related-products-wrapper {
-  max-width: 1200px; /* 設定區塊的最大寬度 */
-  margin: 400px auto; /* 上下外距 60px，左右自動置中 */
-  padding: 40px;
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  border-radius: 24px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-}
-
-.section-title {
-  text-align: center;
-  font-size: 28px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 40px; /* 標題與商品列表之間的距離 */
-}
-
-/* ====================================================== */
-/*                      商品卡片列表                       */
-/* ====================================================== */
-
-/* 包裹四個商品的網格容器 */
-.products-grid {
-  display: grid;
-  /* 關鍵：創建一個有 4 個欄位的網格，每個欄位的寬度都平均分配 (1fr) */
-  grid-template-columns: repeat(4, 1fr); 
-  gap: 24px; /* 設定卡片之間的間距 */
-}
-
-/* 單一商品卡片 */
-.product-card {
-  text-decoration: none; /* 移除 a 標籤預設的底線 */
-  color: inherit; /* 讓文字顏色繼承父層 */
-  text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.product-card:hover {
-  transform: translateY(-5px); /* 滑鼠懸停時，卡片稍微向上移動 */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.product-image {
-  width: 100%;
-  height: 250px; /* 設定一個固定的高度 */
-  object-fit: cover; /* 讓圖片填滿容器，多餘部分會被裁切，不會變形 */
-  border-radius: 20px; /* 圖片圓角 */
-  margin-bottom: 16px; /* 圖片與下方文字的距離 */
-}
-
-.product-name {
-  font-size: 20px;
-  font-weight: 500;
-  color: #555;
-}
-
-/* ====================================================== */
-/*                    「查看更多」按鈕區塊                     */
-/* ====================================================== */
-
-.see-more-container {
-  display: flex;
-  justify-content: flex-end; /* 讓內容靠右對齊 */
-  align-items: center;
-  margin-top: 40px; /* 與上方商品列表的距離 */
-}
-
-/* 
-  針對 SeeMoreButton 元件進行微調 
-  使用 :deep() 偽選擇器，可以穿透 scoped 的限制，
-  去影響到子元件的【根元素】。
+  /* 
+  這些樣式只會作用於這個 TestComponentPage.vue 頁面，
+  用來美化版面，不會影響到您的輪播元件本身。
 */
-:deep(.see-more__button) {
-  /* 這裡可以覆寫或微調 SeeMoreButton 元件的樣式 */
-  font-size: 16px;
-}
+  .page-container {
+    /* 設定一個淺灰色背景，讓輪播元件的邊界更清晰 */
+    background-color: #f8f9fa;
+    /* 使用 Flexbox 讓內容垂直排列，並在垂直方向上給予一些間距 */
+    display: flex;
+    flex-direction: column;
+    gap: 50px; /* 區塊之間的間距 */
+  }
 
+  .page-header {
+    text-align: center;
+    padding-top: 80px; /* 讓標題離頁面頂部遠一點 */
+    padding-bottom: 100px;
+    color: #333;
+    font-weight: 600;
+  }
+
+  .page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .page-header p {
+    font-size: 1.1rem;
+    color: #6c757d;
+  }
+
+  .other-content {
+    text-align: center;
+    padding-bottom: 80px; /* 讓底部內容離頁面底部遠一點 */
+    color: #888;
+  }
 </style>
-<!-- ──────────────────────────────────────────────────────────────────────── -->
-<style lang="scss" scoped></style>
