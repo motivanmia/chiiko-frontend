@@ -2,7 +2,7 @@
   const props = defineProps({
     img: {
       type: String,
-      default: '/src/assets/image/School/banner.jpg',
+      default: new URL('@/assets/image/School/banner.jpg', import.meta.url).href,
     },
     title: {
       type: String,
