@@ -61,69 +61,46 @@
 </script>
 
 <!-- ──────────────────────────────────────────────────────────────────────── -->
+<!-- 在 ProductCard.vue 中 -->
 <style scoped>
   /* ====================================================== */
-  /*                      主要容器與標題                       */
+  /*                      預設樣式 (大螢幕)                   */
   /* ====================================================== */
   .related-products-wrapper {
     max-width: 1210px;
-    margin: 0px auto;
-    padding: 40px 90px 40px 90px;
-    background-color: #f9f9f9;
+    margin: 60px auto;
+    padding: 40px;
+    background-color: #fff;
     border: 1px solid #e0e0e0;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 24px;
   }
-
   .section-title {
     text-align: center;
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 600;
-    color: #333;
     margin-bottom: 40px;
   }
-
-  /* ====================================================== */
-  /*                      商品卡片列表                       */
-  /* ====================================================== */
   .products-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
   }
-
   .product-card {
     text-decoration: none;
     color: inherit;
     text-align: center;
-    transition:
-      transform 0.2s ease,
-      box-shadow 0.2s ease;
   }
-  .product-card:hover {
-    background-color: #e7e7e7;
-    border: 1px solid #e7e7e7;
-    transition: 0.2s ease;
-    border-radius: 20px;
-  }
-
   .product-image {
-    width: 220px;
-    height: 220px;
+    width: 100%;
+    height: 250px;
     object-fit: cover;
     border-radius: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
-
   .product-name {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 500;
-    color: #3b3739;
   }
-
-  /* ====================================================== */
-  /*                    「查看更多」按鈕區塊                     */
-  /* ====================================================== */
   .see-more-container {
     display: flex;
     justify-content: flex-end;
@@ -131,7 +108,49 @@
     margin-top: 40px;
   }
 
-  :deep(.see-more__button) {
-    font-size: 20px;
+  /* =================================================================== */
+  /*                      ✨ RWD 響應式設計 ✨                        */
+  /* =================================================================== */
+  @media (max-width: 768px) {
+    /* 容器：移除所有左右邊距/內距，讓它完全貼合父層 */
+    .related-products-wrapper {
+      max-width: none;
+      width: 100%;
+      margin: 30px 0;
+      padding: 24px 0; /* ✨ 只保留上下內距 */
+      border-radius: 16px;
+      border-left: none;
+      border-right: none;
+    }
+
+    /* 
+    ✅ 核心修正：
+    將網格容器的左右內距設定為 70px。
+    這樣網格內部的卡片就會距離白色容器的邊緣 70px。
+  */
+    .products-grid {
+      grid-template-columns: 1fr; /* 維持單欄佈局 */
+      gap: 70px;
+      padding: 0 70px;
+    }
+
+    /* 其他微調 */
+    .section-title {
+      font-size: 24px;
+      margin-top: 22px;
+      margin-bottom: 30px;
+    }
+    .product-image {
+      height: auto; /* 讓圖片高度自適應寬度 */
+    }
+    .product-name {
+      font-size: 18px;
+    }
+    .see-more-container {
+      margin-top: 50px;
+      display: flex;
+      justify-content: center; /* ⬅️ 水平置中整個內容 */
+      align-items: center; /* 可選：垂直置中 */
+    }
   }
 </style>

@@ -277,55 +277,47 @@
 </script>
 <!-- ──────────────────────────────────────────────────────────────────────── -->
 <style scoped>
-  .comment-image {
-    max-width: 160px;
-    max-height: 160px;
-    border-radius: 8px;
-    object-fit: cover;
-  }
+  /* =================================================================== */
+  /*                       主要容器與通用樣式 (預設)                       */
+  /* =================================================================== */
 
   .wrappertatle {
-    margin-top: 230px;
-    margin-bottom: 200px;
+    margin-top: 130px; /* 在手機上可以減少一點上方留白 */
+    margin-bottom: 100px;
   }
-
   .recipe-image {
     width: 800px;
     height: 640px;
     object-fit: cover;
     border-radius: 20px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+  }
+  .recipe-wrapper,
+  .step-ingredient-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* 增加一點預設間距 */
+  }
+  .step-ingredient-wrapper {
+    margin-top: 20px;
+    align-items: flex-start;
   }
 
-  .recipe-wrapper {
-    display: flex;
-    align-items: flex-start;
-    gap: 0px;
-    margin: 0px auto;
-  }
+  /* =================================================================== */
+  /*                          資訊卡片樣式 (預設)                         */
+  /* =================================================================== */
 
   .recipe-card {
     width: 393px;
     background-color: #ead7c4;
-    padding: 15px;
+    padding: 24px;
     border-radius: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
   }
-
-  /* =================================================================== */
-  /*                         卡片內部各區塊樣式                           */
-  /* =================================================================== */
-
-  .header {
-  }
   .recipe-card h1 {
     font-size: 32px;
     font-weight: 600;
-    margin-top: 10px;
     letter-spacing: 2px;
   }
   .recipe-card h2 {
@@ -334,154 +326,122 @@
     font-size: 16px;
     font-weight: normal;
     margin-top: 5px;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
   }
-
-  /* 介紹文字 */
   .description {
-    font-size: 24px;
-    line-height: 1.2;
-    letter-spacing: 2px;
+    font-size: 20px;
+    line-height: 1.5;
     color: #333;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
   }
-
   .tags {
     color: #888;
     font-size: 16px;
-    margin-bottom: 30px;
-    letter-spacing: 2px;
+    margin-bottom: 24px;
   }
-
   .meta {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
     font-size: 16px;
     color: #555;
-    margin-bottom: 50px;
+    margin-bottom: 24px;
   }
   .meta > div {
     display: flex;
     align-items: center;
     gap: 8px;
   }
-  .markL,
-  .comment {
-    font-size: 16px;
-  }
   .comment {
     transform: scaleX(-1);
   }
-
   .time-serving {
     display: flex;
     align-items: center;
     justify-content: space-around;
     padding: 16px 0;
-    font-size: 24px;
+    border-top: 1px solid #d4c0ab;
+    border-bottom: 1px solid #d4c0ab;
+    margin-bottom: 24px;
   }
   .info-block {
     text-align: center;
-    margin-bottom: 40px;
   }
   .top {
     display: flex;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
   }
   .label {
-    font-size: 24px;
+    font-size: 18px;
+    color: #555;
   }
   .value {
-    margin: 20px 0 0;
-    font-size: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
   }
-
   .divider {
     width: 1px;
     height: 48px;
-    background-color: #000000;
+    background-color: #d4c0ab;
   }
 
   /* =================================================================== */
-  /*                          按鈕區塊 (收藏 & 分享)                      */
+  /*                            按鈕樣式 (預設)                           */
   /* =================================================================== */
 
   .button-group {
     display: flex;
     justify-content: center;
-    gap: 14px;
-    margin-bottom: 25px;
+    gap: 16px;
   }
-
-  .btn-collect {
-    background-color: white;
-    color: #333;
-    border-color: #ddd;
-    width: 153px;
-    height: 47px;
-  }
-
-  .btn-collect:hover {
-    background-color: #e7e7e7;
-    border: 1px solid #e7e7e7;
-    transition: 0.2s ease;
-  }
-
-  .btn-share {
-    background-color: #d97c48;
-    color: white;
-    border: none;
-    width: 153px;
-    height: 47px;
-  }
-
-  .btn-share:hover {
-    background-color: #e7e7e7;
-    border: 1px solid #e7e7e7;
-    transition: 0.2s ease;
-  }
-
   .btn {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    flex-grow: 1;
     gap: 8px;
-    padding: 13px 0;
+    padding: 12px 0;
     border-radius: 999px;
-    font-size: 20px;
+    font-size: 18px;
     border: 2px solid transparent;
     cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-collect {
+    background-color: white;
+    color: #333;
+    border: 2px solid #ddd;
+  }
+  .btn-collect:hover {
+    background-color: #f0f0f0;
+  }
+  .btn-collect.is-collected {
+    background-color: #d97c48;
+    color: #fff;
+    border-color: #d97c48;
+  }
+  .btn-share {
+    background-color: #d97c48;
+    color: white;
+  }
+  .btn-share:hover {
+    background-color: #c86b37;
   }
 
   /* =================================================================== */
-  /*                      頁面主要區塊佈局 (圖片、步驟、食材)                */
+  /*                        食材與步驟區塊樣式 (預設)                      */
   /* =================================================================== */
-
-  .outer-wrapper {
-    display: flex;
-    justify-content: center;
-  }
-  .recipe-wrapper {
-    display: flex;
-    gap: 10px;
-  }
-
-  .step-ingredient-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 10px;
-    margin-top: 10px;
-  }
 
   .step-box,
   .ingredient-box {
-    padding: 35px;
+    padding: 32px;
     border-radius: 20px;
   }
-
   .step-box {
     width: 800px;
     background-color: #ead7c4;
@@ -490,48 +450,103 @@
     width: 393px;
     background-color: #fff;
     border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   }
-
   .section-ingredient-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 24px;
   }
-
   .section-ingredient-title {
-    font-size: 32px;
+    font-size: 28px;
+    margin: 0;
   }
   .copy-icon {
-    font-size: 20px;
+    font-size: 24px;
     cursor: pointer;
-    margin-bottom: 15px;
+    color: #888;
   }
-
-  .section-ingredient-title {
-    margin-bottom: 40px;
-  }
-
   .section-ingredient-item {
-    margin-bottom: 25px;
-    font-size: 24px;
-    color: #333;
+    margin-bottom: 16px;
+    font-size: 18px;
   }
-
-  .step-label {
+  .step-title {
     font-size: 28px;
-    margin-bottom: 15px;
+    margin: 0 0 24px 0;
   }
-
+  .step-label {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
   .step-text {
-    font-size: 24px;
-    margin-bottom: 70px;
-    margin-left: 70px;
+    font-size: 18px;
+    margin-bottom: 32px;
+    line-height: 1.6;
   }
 
-  /* RWD手機 */
+  /* =================================================================== */
+  /*                        留言與好物區塊 (預設)                        */
+  /* =================================================================== */
+  .comment-section-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
 
-  /* 電腦大螢幕維持原本排版 */
+  /* =================================================================== */
+  /*                      ✨ RWD 響應式設計 ✨                        */
+  /*     當螢幕寬度小於等於 1024px 時，以下樣式將會生效              */
+  /* =================================================================== */
+  @media (max-width: 1024px) {
+    /* 調整整體佈局和間距 */
+    .wrappertatle {
+      padding: 0 10px; /* ✨ 所有東西左右間距都是 10px */
+      margin-top: 80px;
+    }
+    .recipe-wrapper,
+    .step-ingredient-wrapper {
+      flex-direction: column; /* ✨ 改為垂直堆疊 */
+      align-items: center; /* 讓內容水平置中 */
+      gap: 16px; /* 調整垂直間距 */
+    }
+
+    /* 圖片：讓寬度 100% 填滿，高度自動調整 */
+    .recipe-image {
+      width: 100%;
+      height: auto;
+    }
+
+    /*
+    主要卡片、食材盒、步驟盒：
+    移除固定寬度，讓它們能 100% 填滿父容器
+  */
+    .recipe-card,
+    .ingredient-box,
+    .step-box {
+      width: 100%;
+      box-sizing: border-box; /* 確保 padding 不會撐爆寬度 */
+    }
+
+    /* 介紹文字和步驟文字：在手機上可以縮小一點 */
+    .description,
+    .step-text {
+      font-size: 16px;
+    }
+
+    /* 移除步驟文字的左側縮排 */
+    .step-text {
+      margin-left: 0;
+    }
+
+    /* 
+    ✨ 讓 CommentSection 和 ProductCard 也符合 10px 的左右間距
+    我們需要一個新的容器來包裹它們
+  */
+    .comment-section-container {
+      width: 100%;
+    }
+  }
 </style>
-<!-- ──────────────────────────────────────────────────────────────────────── -->
-<style lang="scss" scoped></style>
