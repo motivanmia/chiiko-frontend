@@ -1,13 +1,13 @@
 <script setup>
-  import { ref, computed, defineAsyncComponent } from 'vue';
+  import { ref, computed, onMounted, onUnmounted } from 'vue';
   import Icon from '@/components/common/Icon.vue';
   import LoginModal from '@/components/user/Login.vue';
   import SigninModal from '@/components/user/signin.vue';
 
   // nav選單項目
   const navLinks = ref([
-    { key: 'recipes', title: '靈感×食譜', isOpen: true },
-    { key: 'school', title: '學材食堂', isOpen: true },
+    { key: 'recipes', title: '靈感×食譜', path: '/recipe', isOpen: true },
+    { key: 'school', title: '學材食堂', path: '/school', isOpen: true },
     { key: 'prodouts', title: '好物精選', isOpen: false, path: '/product' },
   ]);
 
@@ -55,14 +55,67 @@
     { title: '訂單查詢', path: '/account/orders' },
   ];
 
-  // 子選單hover覆蓋背景
-  const overlayVisible = ref(false);
-  const showOverlay = () => {
-    overlayVisible.value = true;
+  // 判斷是否為1200px以下
+  const isMobile = ref(false);
+  // 子選單hover/click判定
+  const activeSubMenu = ref(null);
+  // 漢堡選單開關
+  const isHamMenuOpen = ref(false);
+  // 漢堡選單內摺疊選單
+  const openHamMenuItem = ref(null);
+  // 選單開啟覆蓋陰影
+  const overlayVisible = computed(() => activeSubMenu.value !== null && !isHamMenuOpen.value);
+
+  // 桌面板hover
+  const handleMouseOver = (menuKey) => {
+    if (!isMobile.value) {
+      activeSubMenu.value = menuKey;
+    }
   };
-  const hideOverlay = () => {
-    overlayVisible.value = false;
+  const handleMouseLeave = () => {
+    if (!isMobile.value) {
+      activeSubMenu.value = null;
+    }
   };
+
+  // 行動版會員click
+  const handleClick = (menuKey) => {
+    if (isMobile.value && menuKey === 'member') {
+      activeSubMenu.value = activeSubMenu.value === menuKey ? null : menuKey;
+    }
+  };
+
+  // 開關漢堡選單
+  const toggleHamMenu = () => {
+    isHamMenuOpen.value = !isHamMenuOpen.value;
+
+    if (isHamMenuOpen.value) {
+      activeSubMenu.value = null;
+    }
+  };
+
+  // 開關漢堡選單內部選項
+  const toggleHamItem = (key) => {
+    openHamMenuItem.value = openHamMenuItem.value === key ? null : key;
+  };
+
+  // 檢查螢幕寬度
+  const checkScreenWidth = () => {
+    isMobile.value = window.innerWidth <= 1200;
+    if (!isMobile.value) {
+      activeSubMenu.value = null;
+      isHamMenuOpen.value = false;
+    }
+  };
+
+  // 監聽視窗大小變化
+  onMounted(() => {
+    checkScreenWidth();
+    window.addEventListener('resize', checkScreenWidth);
+  });
+  onUnmounted(() => {
+    window.removeEventListener('resize', checkScreenWidth);
+  });
 
   // 登入/註冊彈窗
   const activeModal = ref(null);
@@ -108,16 +161,19 @@
     :class="{ active: overlayVisible }"
   ></div>
 
-  <header class="header">
-    <a
-      href="/home"
+  <header
+    class="header"
+    :class="{ 'hidden-up': isHamMenuOpen }"
+  >
+    <RouterLink
+      to="/home"
       class="logo__link"
     >
       <img
         src="@/assets/image/logo.svg"
         alt="logo"
       />
-    </a>
+    </RouterLink>
 
     <div class="menulist">
       <!-- 主導覽 -->
@@ -127,8 +183,8 @@
             v-for="item in navLinks"
             :key="item.key"
             class="nav__item"
-            @mouseover="item.isOpen && showOverlay()"
-            @mouseleave="item.isOpen && hideOverlay()"
+            @mouseover="handleMouseOver(item.key)"
+            @mouseleave="handleMouseLeave()"
           >
             <div
               v-if="item.isOpen"
@@ -152,6 +208,7 @@
             <div
               v-if="item.key === 'recipes'"
               class="nav__submenu"
+              :class="{ 'is-active': activeSubMenu === 'recipes' }"
             >
               <div class="submenu__title">
                 <RouterLink to="/recipe">靈感×食譜</RouterLink>
@@ -171,6 +228,7 @@
             <div
               v-if="item.key === 'school'"
               class="nav__submenu"
+              :class="{ 'is-active': activeSubMenu === 'school' }"
             >
               <div class="submenu__title">
                 <RouterLink to="/school">食材學堂</RouterLink>
@@ -194,8 +252,8 @@
       <div class="actions">
         <div
           class="actions__member"
-          @mouseover="showOverlay()"
-          @mouseleave="hideOverlay()"
+          @mouseover="handleMouseOver('member')"
+          @mouseleave="handleMouseLeave()"
         >
           <span class="actions__item">
             <Icon
@@ -204,7 +262,10 @@
             />
           </span>
           <!-- 會員子選單 -->
-          <div class="member__menu">
+          <div
+            class="member__menu"
+            :class="{ 'is-active': activeSubMenu === 'member' }"
+          >
             <template
               v-for="item in memberMenuItem"
               :key="item.title"
@@ -248,8 +309,173 @@
           />
         </RouterLink>
       </div>
+
+      <!-- 1200px以下 -->
+      <div class="ham__section">
+        <div
+          class="actions__member"
+          @click="handleClick('member')"
+        >
+          <span class="actions__item">
+            <Icon
+              icon-name="member"
+              class="actions__icon"
+            />
+          </span>
+          <!-- 會員子選單 -->
+          <div
+            class="member__menu"
+            :class="{ 'is-active': activeSubMenu === 'member' }"
+          >
+            <template
+              v-for="item in memberMenuItem"
+              :key="item.title"
+            >
+              <button
+                v-if="item.action"
+                type="button"
+                class="member__item"
+                @click="handleAction(item.action)"
+              >
+                {{ item.title }}
+                <Icon
+                  v-if="item.icon"
+                  :icon-name="item.icon"
+                  class="member__icon"
+                />
+              </button>
+              <RouterLink
+                v-else
+                :to="item.path"
+                class="member__item"
+              >
+                {{ item.title }}
+                <Icon
+                  v-if="item.icon"
+                  :icon-name="item.icon"
+                  class="member__icon"
+                />
+              </RouterLink>
+            </template>
+          </div>
+        </div>
+        <div
+          class="ham"
+          @click="toggleHamMenu"
+        ></div>
+      </div>
     </div>
   </header>
+
+  <div
+    class="ham__overlay"
+    :class="{ 'is-active': isHamMenuOpen }"
+  >
+    <nav class="ham__nav">
+      <div class="ham__header">
+        <RouterLink
+          to="/home"
+          class="logo__link"
+        >
+          <img
+            src="@/assets/image/logo.svg"
+            alt="logo"
+          />
+        </RouterLink>
+        <div
+          class="ham__close"
+          @click="toggleHamMenu"
+        ></div>
+      </div>
+
+      <div class="ham__body">
+        <ul class="ham__list">
+          <li
+            v-for="item in navLinks"
+            :key="item.key"
+            class="ham__item"
+          >
+            <div
+              v-if="item.isOpen"
+              class="ham__link has-submenu"
+            >
+              <RouterLink
+                :to="item.path"
+                class="ham__link-title"
+                @click="toggleHamMenu"
+              >
+                {{ item.title }}
+              </RouterLink>
+              <button
+                type="button"
+                class="ham__arrow-btn"
+                @click.stop="toggleHamItem(item.key)"
+              >
+                <Icon
+                  v-if="openHamMenuItem !== item.key"
+                  icon-name="downA"
+                  class="ham__arrow"
+                />
+                <Icon
+                  v-else
+                  icon-name="upA"
+                  class="ham__arrow"
+                />
+              </button>
+            </div>
+            <RouterLink
+              v-else
+              :to="item.path"
+              class="ham__link"
+              @click="toggleHamMenu"
+            >
+              {{ item.title }}
+            </RouterLink>
+
+            <!-- 子選單 -->
+            <div
+              v-if="item.isOpen"
+              class="ham__submenu"
+              :class="{ 'is-open': openHamMenuItem === item.key }"
+            >
+              <template v-if="item.key === 'recipes'">
+                <RouterLink
+                  v-for="recipe in navItemRecipes"
+                  :key="recipe.title"
+                  :to="recipe.path"
+                  class="ham__subitem"
+                  @click="toggleHamMenu"
+                >
+                  {{ recipe.title }}
+                </RouterLink>
+              </template>
+              <template v-if="item.key === 'school'">
+                <RouterLink
+                  v-for="school in navItemSchool"
+                  :key="school.title"
+                  :to="school.path"
+                  class="ham__subitem"
+                  @click="toggleHamMenu"
+                >
+                  {{ school.title }}
+                </RouterLink>
+              </template>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="ham__footer">
+        <RouterLink
+          to="/cart"
+          class="ham__cart"
+          @click="toggleHamMenu"
+        >
+          購物車
+          <span class="cart__count">3</span>
+        </RouterLink>
+      </div>
+    </nav>
+  </div>
 
   <teleport to="body">
     <transition name="modal-fade">
@@ -306,6 +532,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    transition:
+      transform 0.4s ease-out,
+      opacity 0.3s ease;
     @include rwdmax(1440) {
       height: 75px;
       padding: 10px 50px;
@@ -316,9 +545,14 @@
     @include rwdmax(1200) {
       height: 70px;
       padding: 8px 40px;
-      top: 8px;
+      top: 10px;
       left: 10px;
       right: 10px;
+      &.hidden-up {
+        transform: translateY(-150%);
+        opacity: 0;
+        pointer-events: none;
+      }
     }
     @include rwdmax(768) {
       height: 60px;
@@ -353,6 +587,9 @@
     @include rwdmax(1440) {
       gap: 150px;
     }
+    @include rwdmax(1200) {
+      gap: 0;
+    }
   }
   .nav {
     display: flex;
@@ -367,6 +604,9 @@
       list-style: none;
       @include rwdmax(1440) {
         gap: 50px;
+      }
+      @include rwdmax(1200) {
+        display: none;
       }
     }
   }
@@ -433,8 +673,9 @@
     transform: translateY(0);
     transition: 0.3s ease;
   }
-  .nav__item:hover > .nav__submenu,
-  .actions__member:hover > .member__menu {
+
+  .nav__submenu.is-active,
+  .member__menu.is-active {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
@@ -554,6 +795,9 @@
     @include rwdmax(1440) {
       gap: 35px;
     }
+    @include rwdmax(1200) {
+      display: none;
+    }
     .actions__member {
       position: relative;
       padding: 50px 0;
@@ -575,10 +819,6 @@
       @include rwdmax(1440) {
         @include font-size(25);
       }
-    }
-    .actions__member:hover > .overlay {
-      opacity: 1;
-      visibility: visible;
     }
     @include rwdmax(1200) {
       opacity: 0;
@@ -622,13 +862,11 @@
       width: 100%;
       text-decoration: none;
       color: color(text, dark);
-      @include rwdmax(1440) {
-        padding: 5px 20px;
-      }
       cursor: pointer;
       @include rwdmax(1440) {
-        @include font-size(16);
+        padding: 5px 20px;
         letter-spacing: 4px;
+        @include font-size(16);
       }
     }
     .member__item:hover {
@@ -643,6 +881,252 @@
       }
     }
   }
+
+  // 行動版右側選單
+  .ham__section {
+    display: flex;
+    position: relative;
+    gap: 30px;
+    @include rwdmin(1200) {
+      display: none;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .actions__icon {
+      @include font-size(25);
+      color: color(text, dark);
+    }
+    .member__menu {
+      width: 200px;
+      gap: 5px;
+      .member__item {
+        @include font-size(18);
+        padding: 10px 20px;
+      }
+      .member__icon {
+        @include font-size(20);
+      }
+    }
+    .ham {
+      position: relative;
+      width: 25px;
+      height: 13px;
+      display: block;
+      cursor: pointer;
+      margin: auto 0;
+
+      &::before,
+      &::after {
+        content: '';
+        height: 2px;
+        width: 100%;
+        background: color(text, dark);
+        position: absolute;
+        display: block;
+      }
+      &::before {
+        top: 0;
+      }
+      &::after {
+        bottom: 0;
+      }
+    }
+  }
+
+  // 漢堡選單
+  .ham__overlay {
+    z-index: 70;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    transition: opacity 0.4s ease;
+    &.is-active {
+      pointer-events: auto;
+      opacity: 1;
+      .ham__nav {
+        transform: translateY(0);
+      }
+    }
+  }
+  .ham__nav {
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-out;
+    background: color(backgroundColor, beige);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border-radius: 15px;
+    padding: 8px 40px;
+    overflow: auto;
+    @include rwdmax(768) {
+      padding: 8px 27px;
+    }
+  }
+  .ham__header {
+    display: flex;
+    justify-content: space-between;
+    .ham__close {
+      position: relative;
+      width: 25px;
+      height: 13px;
+      display: block;
+      cursor: pointer;
+      margin: auto 0;
+
+      &::before,
+      &::after {
+        content: '';
+        height: 2px;
+        width: 100%;
+        background: color(text, dark);
+        position: absolute;
+        display: block;
+        top: 50%;
+        right: 0;
+      }
+      &::before {
+        transform: rotate(30deg);
+      }
+      &::after {
+        transform: rotate(-30deg);
+      }
+    }
+  }
+  .ham__body {
+    flex-grow: 1;
+    padding: 25px 5px;
+    @include rwdmax(768) {
+      padding: 0px 5px;
+    }
+  }
+  .ham__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .ham__item {
+    text-decoration: none;
+  }
+  .ham__link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5px;
+    text-decoration: none;
+    cursor: pointer;
+    @include fontSet(
+      $font: $basic-font,
+      $fw: bold,
+      $size: px(20),
+      $color: color(text, dark),
+      $ls: 4.8px
+    );
+    @include rwdmax(768) {
+      @include fontSet(
+        $font: $basic-font,
+        $fw: bold,
+        $size: px(18),
+        $color: color(text, dark),
+        $ls: 4.8px
+      );
+    }
+    & {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    &.has-submenu {
+      padding: 0;
+    }
+  }
+  .ham__link-title {
+    padding: 15px 5px;
+    flex-grow: 1;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    color: inherit;
+  }
+  .ham__arrow-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 15px;
+    flex-shrink: 0;
+    .ham__arrow {
+      display: block;
+      @include font-size(30);
+    }
+  }
+  // 漢堡子選單
+  .ham__submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    padding-left: 15px;
+    &.is-open {
+      max-height: 500px;
+    }
+  }
+  .ham__subitem {
+    display: block;
+    padding: 10px 0;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    @include fontSet(
+      $font: $basic-font,
+      $fw: bold,
+      $size: px(16),
+      $color: color(text, base),
+      $ls: 4px
+    );
+  }
+  .ham__footer {
+    padding: 25px;
+    flex-shrink: 0;
+    @include rwdmax(768) {
+      padding: 25px 0;
+    }
+  }
+  .ham__cart {
+    display: flex;
+    background-color: color(backgroundColor, recipe);
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    text-decoration: none;
+    @include fontSet(
+      $font: $basic-font,
+      $fw: normal,
+      $size: px(18),
+      $color: color(text, light),
+      $ls: 4px
+    );
+    .cart__count {
+      display: inline-block;
+      width: 23px;
+      height: 23px;
+      border-radius: 50%;
+      background-color: color(orangeColor, base);
+      text-align: center;
+      line-height: 22px;
+      margin-left: 5px;
+      @include font-size(16);
+    }
+  }
+
   .modal-fade-enter-active,
   .modal-fade-leave-active {
     transition: 0.1s ease;

@@ -2,7 +2,6 @@
   import { ref } from 'vue';
   import { useSearch } from '@/constants/search';
 
-
   import SearchBar from '@/components/common/SearchBar.vue';
   import ShareRecipeButton from '@/components/button/ShareRecipeButton.vue';
   import delicious from '@/components/Delicious.vue';
@@ -33,7 +32,6 @@
   // }
 
   const { searchTerm, handleSearch } = useSearch();
-
 </script>
 
 <template>
@@ -49,8 +47,7 @@
         @search="handleSearch"
       />
       <div class="hot-search-wrapper">
-        <HotSearch
-        @search="handleSearch" />
+        <HotSearch @search="handleSearch" />
       </div>
     </div>
 
@@ -91,7 +88,7 @@
       height: 100%;
       object-fit: cover;
       z-index: -2;
-      @include rwdmax(1200) {
+      @include rwdmax(768) {
         object-position: px(-220);
       }
     }

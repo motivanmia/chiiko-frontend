@@ -23,7 +23,7 @@
 
 <style lang="scss" scoped>
   .banner-box {
-    margin: 50px auto;
+    margin: 0 auto 50px;
     border-radius: 20px;
     position: relative;
     width: 100%;
