@@ -4,7 +4,7 @@
   import SeeMoreButton from '../button/SeeMoreButton.vue';
   import SectionTitle from '../SectionTitle.vue';
   const ingredient = useIngredientStore();
-  console.log(ingredient.list[0]);
+  // console.log(ingredient.list[0]);
 
   const namesToFind = ['胡蘿蔔', '蛤蜊', '南瓜'];
   const result = computed(() => ingredient.list.filter((item) => namesToFind.includes(item.name)));
@@ -30,19 +30,23 @@
         </div>
         <div class="school__text">
           <h1>{{ item.lightbox[0].goodtitle }}</h1>
+          <br />
           <p>{{ item.lightbox[0].goodcontent }}</p>
         </div>
       </div>
     </div>
-    <SeeMoreButton class="SeeMoreButton" path="/school"/>
+    <SeeMoreButton
+      class="SeeMoreButton"
+      path="/school"
+    />
   </div>
 </template>
 
 <style lang="scss" scoped>
-#HomeSchool{
-  margin-top: 150px;
-  margin-bottom: 200px ;
-}
+  #HomeSchool {
+    margin-top: 150px;
+    margin-bottom: 200px;
+  }
   .subtitle {
     text-align: center;
     margin: 30px auto;
@@ -59,18 +63,23 @@
     margin: 50px auto 120px;
     max-width: 1200px;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    padding: 30px;
     &__card {
+      width: 900px;
       max-width: 900px;
       height: 200px;
-      margin: 20px;
+      margin: 30px 0;
       border-radius: 20px;
       background: rgba(70, 110, 38, 0.6);
       display: flex;
       filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
+      @include rwdmax(1050) {
+        height: 150px;
+      }
 
       &:nth-of-type(2) {
-        align-self: flex-end;
+        margin-left: auto;
         .school__imgbox {
           order: 1;
         }
@@ -99,13 +108,19 @@
         font-weight: 700;
         line-height: normal;
         letter-spacing: 8px;
+        @include rwdmax(768) {
+          font-size: 24px;
+          top: -45px;
+        }
       }
     }
 
     &__text {
       flex-grow: 1;
-      margin: auto 100px;
+      margin: auto 5.2vw;
       * {
+        display: inline-block;
+        max-width: 400px;
         color: var(--font-color-light, #fef9ec);
         font-size: 20px;
         font-style: normal;
