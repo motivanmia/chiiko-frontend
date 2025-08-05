@@ -18,6 +18,16 @@
   function handleShareRecipe() {
     router.push('/recipe-edit');
   }
+  import ShareRecipeButton from '../components/button/ShareRecipeButton.vue';
+
+  import delicious from '../components/Delicious.vue';
+
+  import section_title from '../components/SectionTitle.vue';
+
+  import login from '../components/user/Login.vue';
+
+  import ProductPage from './product/ProductPage.vue';
+
   // function ShareRecipe() {
   //   console.log('前往分享食譜');
   // }
@@ -69,6 +79,7 @@
       <template #share>分享食譜</template>
     </ShareRecipeButton>
   </div>
+  <!-- <RecipeOverview/> -->
 </template>
 
 <style lang="scss" scoped>
