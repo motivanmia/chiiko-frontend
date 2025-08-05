@@ -3,16 +3,8 @@
   import { watch, ref } from 'vue';
 
   const SchoolCategory = [
-    {
-      title: '植物性食材',
-      value: 'vegetable',
-      img: new URL('@/assets/image/School/vegetables.jpg', import.meta.url).href,
-    },
-    {
-      title: '動物性食材',
-      value: 'meat',
-      img: new URL('@/assets/image/School/meat.jpg', import.meta.url).href,
-    },
+    { title: '植物性食材', value: 'vegetable', img: '/src/assets/image/School/vegetables.jpg' },
+    { title: '動物性食材', value: 'meat', img: '/src/assets/image/School/meat.jpg' },
   ];
 
   const router = useRouter();
@@ -27,12 +19,15 @@
   );
 
   const onCategoryClick = (value) => {
-    // console.log(value);
-    router.push({
-      query: {
-        category: value,
-      },
-    });
+    if (category.value === value) {
+      router.push({ query: {} });
+    } else {
+      router.push({
+        query: {
+          category: value,
+        },
+      });
+    }
   };
 </script>
 
@@ -93,13 +88,15 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: blur(2px);
-      transition: filter 0.3s ease;
+      filter: blur(4px);
+      transition: all 0.3s ease;
       &:hover {
-        filter: blur(2px) brightness(40%);
+        filter: blur(0px);
+        transform: scale(1.05);
       }
       &--active {
-        filter: blur(2px) brightness(40%);
+        filter: blur(0px);
+        transform: scale(1.05);
       }
     }
   }
