@@ -164,7 +164,7 @@
       margin-right: auto;
       padding-bottom: 30px;
       width: 80%;
-      height: 50%;
+      height: 43%;
       border-bottom: 2px solid black;
       display: flex;
       justify-content: space-between;
@@ -334,6 +334,8 @@
       transform: scale(1.5);
       @include rwdmax(1440) {
         transform: scale(1);
+        right: 5%;
+        bottom: 5%;
       }
       @include rwdmax(1200) {
         transform: scale(1.2);
