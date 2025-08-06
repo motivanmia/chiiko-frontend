@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '@/pages/HomePage.vue';
 import AccountPage from '@/pages/AccountPage.vue';
-import TestComponentPage from '@/pages/TestComponentPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -58,7 +57,7 @@ const router = createRouter({
         {
           path: 'orders',
           name: 'orders',
-          component: () => import('@/components/member/MemberProfile.vue'),
+          component: () => import('@/components/member/MemberOrder.vue'),
           // 待更換新頁面
         },
       ],
@@ -118,11 +117,6 @@ const router = createRouter({
       path: '/none',
       name: 'none',
       component: () => import('@/pages/RecipeSearchNone.vue'),
-    },
-    {
-      path: '/TestComponent',
-      name: 'TestComponent',
-      component: TestComponentPage,
     },
   ],
 });

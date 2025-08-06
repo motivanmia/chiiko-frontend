@@ -186,7 +186,6 @@
     background-color: #b5c5a8;
     border-radius: 15px;
     width: 100%;
-    margin-top: 10px;
     padding: 50px;
     min-height: 600px;
 
@@ -495,7 +494,7 @@
       }
 
       &__delete-btn {
-        position: static;
+        // position: static;
         margin-left: 10px;
         font-size: px(18);
       }
@@ -519,7 +518,7 @@
   // 超小螢幕優化
   @media (max-width: 480px) {
     .recipe-management {
-      margin: 10px;
+      // margin: 10px;
       padding: 15px;
 
       &__image {

@@ -26,7 +26,7 @@
 
 <style lang="scss" scoped>
   .cancel__btn {
-    padding: 14px 100px;
+    padding: var(--btn-padding, 14px 100px);
     background-color: #fff;
     border: 1px solid color(backgroundColor, panel);
     border-radius: 20px;

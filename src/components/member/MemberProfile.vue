@@ -173,6 +173,9 @@
       $color: color(text, dark),
       $ls: 1.8px
     );
+    @include rwdmax(768) {
+      @include font-size(20);
+    }
     form {
       display: flex;
       flex-direction: column;
@@ -182,6 +185,10 @@
         flex-direction: row;
         justify-content: space-between;
         gap: 90px;
+        @include rwdmax(768) {
+          flex-direction: column;
+          gap: 30px;
+        }
       }
     }
     form.is-edit {
@@ -206,6 +213,15 @@
       display: flex;
       justify-content: space-around;
       margin-top: 30px;
+      @include rwdmax(1200) {
+        justify-content: space-between;
+        gap: 50px;
+      }
+      @include rwdmax(768) {
+        flex-direction: column;
+        gap: 25px;
+        --btn-padding: 12px 99px;
+      }
     }
   }
   .edit__btn {
@@ -258,6 +274,9 @@
         $color: color(text, dark),
         $ls: 1.8px
       );
+      @include rwdmax(768) {
+        @include font-size(20);
+      }
     }
   }
 </style>

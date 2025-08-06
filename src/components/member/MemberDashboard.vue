@@ -49,11 +49,26 @@
     width: 100%;
     padding: 20px 30px;
     @include fontSet($font: $basic-font, $fw: normal, $color: color(text, dark), $ls: 1.8px);
+    @include rwdmax(1200) {
+      max-width: 768px;
+    }
+    @include rwdmax(768) {
+      flex-direction: column;
+      gap: 15px;
+      padding: 15px 20px;
+    }
   }
   .stats {
     display: flex;
     gap: 65px;
     margin: auto 150px;
+    @include rwdmax(1200) {
+      margin: auto 70px;
+    }
+    @include rwdmax(768) {
+      gap: 35px;
+      margin: auto 0;
+    }
     .stats__item {
       display: flex;
       flex-direction: column;

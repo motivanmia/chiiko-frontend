@@ -215,6 +215,9 @@
     border-radius: 20px;
     background: #fff;
     box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
+    @include rwdmax(1200) {
+      max-width: 768px;
+    }
     p {
       margin-bottom: 40px;
       @include fontSet(
@@ -227,6 +230,13 @@
     }
   }
   .sidebar__list {
+    @include rwdmax(1200) {
+      padding-inline: 80px;
+      width: 100%;
+    }
+    @include rwdmax(768) {
+      padding-inline: 0;
+    }
     ul {
       display: flex;
       flex-direction: column;
@@ -240,6 +250,9 @@
         $color: color(text, dark),
         $ls: 2.4px
       );
+      @include rwdmax(1200) {
+        width: 100%;
+      }
       width: 240px;
       height: 47px;
       border: none;
@@ -301,10 +314,21 @@
   .sidebar__subMenu {
     align-items: end;
     padding-right: 30px;
+    @include rwdmax(1200) {
+      padding-right: 0;
+      padding-left: 1rem;
+      align-items: center;
+    }
     li a {
       width: 160px;
       border-radius: 2rem;
       text-align: center;
+      @include rwdmax(1200) {
+        width: 300px;
+      }
+      @include rwdmax(768) {
+        width: 200px;
+      }
     }
   }
   .sidebar__icon {

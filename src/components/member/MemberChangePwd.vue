@@ -153,6 +153,7 @@
         <div class="form__group">
           <label for="newPwd">
             新密碼
+            <!-- <p class="form__hint">請輸入6個字元以上的英文字母及數字，不可使用特殊符號</p> -->
             <p
               v-if="errors.newPassword"
               class="error-text"
@@ -223,20 +224,41 @@
       $color: color(text, dark),
       $ls: 1.8px
     );
+    @include rwdmax(768) {
+      padding: 30px 25px;
+      @include font-size(20);
+    }
     form {
       display: flex;
       flex-direction: column;
       gap: 60px;
+      .form__hint {
+        @include rwdmax(768) {
+          @include font-size(14);
+        }
+      }
       .form__wrap {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         gap: 90px;
       }
+      @include rwdmax(768) {
+        gap: 30px;
+      }
     }
     .form__action {
       display: flex;
       justify-content: space-around;
+      @include rwdmax(1200) {
+        justify-content: space-between;
+        gap: 50px;
+      }
+      @include rwdmax(768) {
+        flex-direction: column;
+        gap: 25px;
+        --btn-padding: 12px 99px;
+      }
     }
   }
   .form__newpwd {
@@ -268,6 +290,9 @@
         $color: color(text, dark),
         $ls: 1.8px
       );
+      @include rwdmax(768) {
+        @include font-size(20);
+      }
       &:focus {
         outline: none;
         border-color: color(button, main);
@@ -279,5 +304,12 @@
     @include font-size(18);
     margin-left: px(20);
     height: 1rem;
+    @include rwdmax(768) {
+      @include font-size(14);
+      margin-left: px(15);
+    }
+    @include rwdmax(560) {
+      max-width: px(210);
+    }
   }
 </style>

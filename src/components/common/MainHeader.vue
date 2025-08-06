@@ -7,7 +7,7 @@
   // nav選單項目
   const navLinks = ref([
     { key: 'recipes', title: '靈感×食譜', path: '/recipe', isOpen: true },
-    { key: 'school', title: '學材食堂', path: '/school', isOpen: true },
+    { key: 'school', title: '食材學堂', path: '/school', isOpen: true },
     { key: 'prodouts', title: '好物精選', isOpen: false, path: '/product' },
   ]);
 
