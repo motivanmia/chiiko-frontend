@@ -1,19 +1,53 @@
 <script setup>
-// import { categoryName } from '@/constants/recipeCategory';
+import { ref, computed, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 import MainHeader from '@/components/common/MainHeader.vue';
-
 import Banner from '@/components/recipe/Banner.vue';
-
 import Category from '@/components/recipe/Category.vue';
-
 import SectionTitle from '@/components/SectionTitle.vue';
-
 import RecipeCards from '@/components/recipe/RecipeCards.vue';
-
 import SearchBar from '@/components/common/SearchBar.vue';
-
 import HotSearch from '@/components/common/HotSearch.vue';
+
+import { soloMeal, popularRecipe } from '@/constants/recipes';
+
+// 初始化路由
+const route = useRoute();
+const router = useRouter();
+
+// 搜尋邏輯的狀態管理
+const currentSearchQuery = ref(route.query.q || '');
+
+// 合併模擬資料
+const allRecipes = ref([...soloMeal, ...popularRecipe]);
+
+// 核心搜尋函式，用於導航到搜尋結果頁
+const handleSearch = (query) => {
+  const newQuery = query.trim();
+  if (newQuery) { // 如果有搜尋關鍵字，就導航到搜尋頁面
+    router.push({
+      name: 'search', 
+      query: { q: newQuery }
+    });
+  }
+};
+
+// 監聽路由變化，如果使用者從搜尋頁面回來，更新搜尋框狀態
+watch(
+  () => route.query.q,
+  (newQuery) => {
+    currentSearchQuery.value = newQuery || '';
+  },
+  { immediate: true },
+);
+
+// 模擬資料 每個區塊9張
+const hotRecipes = allRecipes.value.slice(0, 9);
+const mostBookmarkedRecipes = allRecipes.value.slice(9, 18);
+const latestRecipes = allRecipes.value.slice(18, 27);
+
+
 
 
 
@@ -28,26 +62,18 @@ import HotSearch from '@/components/common/HotSearch.vue';
 <Category/>
 
 <div class="search-container">
-<SearchBar/>
-<HotSearch/>
+<SearchBar @search="handleSearch"/>
+<HotSearch @search="handleSearch"/>
 </div>
 
-<SectionTitle title="/當季熱門\" class="section"></SectionTitle>
+  <SectionTitle title="/當季熱門\" class="section"></SectionTitle>
+  <RecipeCards :recipes="hotRecipes" />
 
+  <SectionTitle title="/最多收藏\" class="section"></SectionTitle>
+  <RecipeCards :recipes="mostBookmarkedRecipes"/>
 
-<RecipeCards/>
-
-
-<SectionTitle title="/最多收藏\" class="section"></SectionTitle>
-
-
-<RecipeCards/>
-
-
-<SectionTitle title="/最新投稿\" class="section"></SectionTitle>
-
-
-<RecipeCards/>
+  <SectionTitle title="/最新投稿\" class="section"></SectionTitle>
+  <RecipeCards :recipes="latestRecipes"/>
 
 </template>
 

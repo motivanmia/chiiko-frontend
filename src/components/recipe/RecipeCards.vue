@@ -1,20 +1,29 @@
 <script setup>
   import Icon from '../common/Icon.vue';
 
-  import {popularRecipe} from '@/constants/recipes'
+  // import { popularRecipe } from '@/constants/recipes';
+
+  const props = defineProps({
+    recipes: {
+      type: Array,
+      default: () => [],
+    },
+  });
 </script>
 
 <template>
   <div class="recipe-card">
     <div
-      v-for="card in popularRecipe"
+      v-for="card in props.recipes"
       :key="card.id"
       class="recipe-card__box"
     >
       <div class="recipe-card__pic">
         <img
           class="recipe-card__img"
-          :src="card.image"  :alt="card.title"   />
+          :src="card.image"
+          :alt="card.title"
+        />
       </div>
 
       <div class="recipe-card__content">
@@ -23,7 +32,8 @@
           src="/src/assets/image/Recipes/graffiti.png"
           alt=""
         />
-        <h2>{{ card.title }}</h2>  </div>
+        <h2>{{ card.title }}</h2>
+      </div>
 
       <div class="icon-board">
         <div class="icon-board__left">
@@ -41,19 +51,23 @@
               icon-name="comment"
               class="comment-icon"
             />
-            {{ card.comments }}  </p>
-
+            {{ card.comments }}
+          </p>
           <p>
             <Icon
               icon-name="markL"
               class="markL-icon"
             />
-            {{ card.bookmarks }}  </p>
+            {{ card.bookmarks }}
+          </p>
         </div>
       </div>
-      
+
       <div class="icon-board__tag">
-        <p v-for="tag in card.tag" :key="tag">
+        <p
+          v-for="tag in card.tag"
+          :key="tag"
+        >
           {{ tag }}
         </p>
       </div>
@@ -85,6 +99,7 @@
         flex: 0 1 100%; // 手機：單欄
       }
     }
+
     &__pic {
       width: 100%;
       height: auto;
@@ -121,15 +136,21 @@
         position: absolute;
         left: 50%;
         transform: translateY(50%) translateX(-50%);
+
+        width: 100%;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        @media (max-width: 640px) {
+          font-size: 24px;
+        }
+
+        @media (max-width: 480px) {
+          font-size: 20px;
+        }
       }
     }
-
-    // &__textColor {
-    //   position: absolute;
-    //   bottom: 0;
-    //   left: 50%;
-    //   transform: translateY(-120%) translateX(-50%);
-    // }
 
     .time-icon {
       font-size: 25px;
@@ -180,5 +201,13 @@
         font-size: 16px;
       }
     }
+  }
+
+  .no-recipes {
+    width: 100%;
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 18px;
   }
 </style>

@@ -2,6 +2,8 @@
   import MemberSidebar from './MemberSidebar.vue';
   import MemberCard from './MemberCard.vue';
   import MemberDashboard from './MemberDashboard.vue';
+
+
 </script>
 
 <template>
@@ -15,11 +17,11 @@
           class="member-card__box"
         >
           <MemberCard
-            img-src="/src/assets/image/Member/spring-onion-soba.jpg"
-            img-alt="蔥花溫蕎麥麵"
-            title-text="蔥花溫蕎麥麵"
-            icon-name="mark"
-            icon-description="已收藏"
+            img-src="/src/assets/image/Product/kitchen-knife.jpg"
+            img-alt="不鏽鋼奶油刮刀"
+            title-text="不鏽鋼奶油刮刀"
+            icon-name="heart"
+            icon-description="已加入願望清單"
           ></MemberCard>
         </div>
       </div>
@@ -27,12 +29,10 @@
   </div>
 </template>
 
-
-
 <style lang="scss" scoped>
-  .member-main {
+  .member-main{
     display: flex;
-    gap: 10px;
+    gap:10px;
     justify-content: center;
     width: 100%;
     height: auto;
@@ -51,6 +51,21 @@
     display: flex;
     margin-top: 10px;
     flex-wrap: wrap;
-    gap: 25px;
+    gap:25px;
+    
   }
+
+
+.member-card__box {
+  // 這個選擇器會找到 .member-card__box 裡的所有元件
+  // 然後穿透進去找到 .mark-icon 或 .heart-icon
+
+  :deep(.heart-icon) {
+    color: red; // 願望清單 ICON 的顏色
+  }
+}
+
+
+
+
 </style>

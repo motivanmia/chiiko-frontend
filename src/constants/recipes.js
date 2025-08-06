@@ -244,7 +244,7 @@ export const soloMeal = [
     id: 18,
     title: '鮮肉蒸餃',
     image: '/src/assets/image/Recipes/solo-meal/steamed-dumplings.jpg',
-    comments:65,
+    comments: 65,
     bookmarks: 25,
     time: 15,
     tag: ['#豬肉'],

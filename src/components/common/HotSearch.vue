@@ -12,12 +12,13 @@ const hotSearches = ref([
   { keyItem: '甜甜圈', path: '#' },
 ]);
 
-// 處理點擊事件的函式
-// ✅ 修正：接收被點擊的關鍵字
+
+
 const handleHotSearchClick = (keyword) => {
-  // 發出 'search' 事件，並傳遞點擊的關鍵字
+  console.log('HotSearch: 點擊熱搜關鍵字', keyword);
   emits('search', keyword);
 };
+
 </script>
 
 <template>

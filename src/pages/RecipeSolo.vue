@@ -10,6 +10,9 @@ import BreadCrumb from '@/components/recipe/BreadCrumb.vue';
 import RecipeCardSolo from '@/components/recipe/RecipeCardSolo.vue';
 import Pagination from '@/components/Pagination.vue';
 
+
+import MemberCollect from '@/components/member/MemberCollect.vue';
+
 const { searchTerm, handleSearch } = useSearch();
 
 
@@ -35,6 +38,7 @@ const { searchTerm, handleSearch } = useSearch();
   </div>
   
   <Pagination/>
+
 </template>
 
 <style lang="scss" scoped>
@@ -63,7 +67,7 @@ const { searchTerm, handleSearch } = useSearch();
   box-sizing: border-box;
 }
 
-
+// 響應式調整
 @media (max-width: 768px) {
   .content-wrapper {
     padding: 0 15px;
