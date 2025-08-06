@@ -104,7 +104,7 @@
   const getItemClass = (index) => { if (isMobile.value) return 'is-active'; const centerPoint = currentIndex.value + 2; const distance = Math.abs(index - centerPoint); if (distance < 2) return 'is-active'; if (distance === 2) return 'is-side'; return 'is-hidden'; };
 </script>
 
-<style scoped>
+<style lang=scss scoped>
   /* FIX：為 wrapper 新增樣式 */
   .carousel-wrapper {
     width: 100%;
@@ -116,7 +116,8 @@
   .carousel-container { width: 100%; position: relative; font-family: sans-serif; }
   .carousel-viewport { width: 100%; height: 500px; /* 在手機版，這個 overflow 會被移除 */ overflow: hidden; position: relative; }
   .carousel-track { display: flex; position: absolute; top: 0; left: 50%; align-items: center; height: 100%; }
-  .carousel-item { width: 400px; height: 480px; margin: 0 10px; flex-shrink: 0; background-color: #d6b59c; border-radius: 16px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); overflow: hidden; transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; display: flex; flex-direction: column; }
+  .carousel-item { width: 400px; height: 480px; margin: 0 10px; flex-shrink: 0; background-color: #d6b59c; border-radius: 16px;
+    @include cardBoxShadow;overflow: hidden; transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; display: flex; flex-direction: column; }
   .carousel-item.is-active { opacity: 1; transform: scale(1); }
   .carousel-item.is-side { opacity: 0.5; transform: scale(0.9); }
   .carousel-item.is-hidden { opacity: 0; transform: scale(0.8); }
@@ -125,7 +126,7 @@
   .carousel-caption h3 { margin: 17px 12px auto 12px; font-size: 24px; font-weight: 600; }
   .description { margin: auto 12px auto 12px; font-size: 20px; color: #3b3739; }
   .author { font-size: 20px; color: #6b6e4f; text-align: right; }
-  .carousel-controls { position: relative; width: 100%; max-width: 800px; margin: 120px auto 210px auto; display: flex; justify-content: flex-start; align-items: center; gap: 24px; }
+  .carousel-controls { position: relative; width: 100%; max-width: 800px; margin: 120px auto 50px auto; display: flex; justify-content: flex-start; align-items: center; gap: 24px; }
   .progress-bar { display: flex; flex-grow: 1; }
   .progress-segment { flex-grow: 1; height: 4px; background-color: #e0e0e0; transition: background-color 0.5s ease; }
   .progress-segment.is-active { background-color: #d97c48; }
