@@ -3,8 +3,16 @@
   import { watch, ref } from 'vue';
 
   const SchoolCategory = [
-    { title: '植物性食材', value: 'vegetable', img: '/src/assets/image/School/vegetables.jpg' },
-    { title: '動物性食材', value: 'meat', img: '/src/assets/image/School/meat.jpg' },
+    {
+      title: '植物性食材',
+      value: 'vegetable',
+      img: new URL('@/assets/image/School/vegetables.jpg', import.meta.url).href,
+    },
+    {
+      title: '動物性食材',
+      value: 'meat',
+      img: new URL('@/assets/image/School/meat.jpg', import.meta.url).href,
+    },
   ];
 
   const router = useRouter();
