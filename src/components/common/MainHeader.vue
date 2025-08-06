@@ -478,12 +478,15 @@
   </div>
 
   <teleport to="body">
-    <transition name="modal-fade">
+    <transition name="modal-fade" mode="out-in">
       <component
+        :key="activeModal"
         v-if="activeModal"
         :is="currentModalComponent"
         @close="closeModal"
         @login-success="loginSuccess"
+        @switch-to-signin="openModal('signin')"
+        @switch-to-login="openModal('login')"
       />
     </transition>
   </teleport>
@@ -1161,4 +1164,20 @@
   .fade-leave-from {
     opacity: 1;
   }
+</style>
+
+<!-- //登入&註冊的燈箱轉換 -->
+<style lang="scss">
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity .8s ease;
+}
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+.modal-fade-enter-to,
+.modal-fade-leave-from {
+  opacity: 1;
+}
 </style>

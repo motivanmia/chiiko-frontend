@@ -89,12 +89,12 @@
       </div>
       <div id="signin">
         <span>還沒有帳號嗎?</span>
-        <a
-          href="#"
+        <button
           id="go_signin"
+          @click="$emit('switch-to-signin')"
         >
           點我註冊
-        </a>
+        </button>
       </div>
     </div>
     <transition name="fade">
@@ -245,12 +245,18 @@
       #signin {
         font-size: px(16);
         text-align: center;
-        a {
+        
+        #go_signin {
           color: color(text, dark);
           margin-left: px(20);
           text-decoration: none;
           position: relative;
           display: inline-block;
+          background-color: transparent;
+          border: none;
+          cursor: pointer;
+          font-size: 14px;
+          letter-spacing: 0.1rem;
           &::after {
             position: absolute;
             content: '';

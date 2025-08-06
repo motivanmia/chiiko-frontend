@@ -232,12 +232,12 @@
         </form>
         <div id="login">
           <span>已經有帳號了?</span>
-          <a
-            href="#"
-            class="login"
+          <button
+            id="go_login"
+            @click="$emit('switch-to-login')"
           >
             點我登入
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -404,8 +404,8 @@
           margin-top: px(10);
           cursor: pointer;
           &:hover {
-          background-color: #d6b59c;
-        }
+            background-color: #d6b59c;
+          }
         }
       }
       #login {
@@ -413,27 +413,32 @@
         text-align: center;
         font-size: 14px;
       }
-      .login {
+      #go_login {
         color: color(text, dark);
         position: relative;
         text-decoration: none;
         display: inline-block;
         margin-left: px(20);
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        letter-spacing: 0.1rem;
         &::after {
-            position: absolute;
-            content: '';
-            box-shadow: 0 0.5px 0 rgba(59, 55, 57);
-            width: 100%;
-            height: 1px;
-            bottom: -2px;
-            left: 0;
-            transform: scaleX(1);
-            transform-origin: right;
-            transition: transform 0.5s ease;
-          }
-          &:hover::after {
-            transform: scaleX(0);
-          }
+          position: absolute;
+          content: '';
+          box-shadow: 0 0.5px 0 rgba(59, 55, 57);
+          width: 100%;
+          height: 1px;
+          bottom: -2px;
+          left: 0;
+          transform: scaleX(1);
+          transform-origin: right;
+          transition: transform 0.5s ease;
+        }
+        &:hover::after {
+          transform: scaleX(0);
+        }
       }
     }
     .custom-checkbox {
@@ -451,20 +456,20 @@
         position: relative;
         text-decoration: none;
         &::after {
-            position: absolute;
-            content: '';
-            box-shadow: 0 0.5px 0 rgba(59, 55, 57);
-            width: 100%;
-            height: 1px;
-            bottom: -2px;
-            left: 0;
-            transform: scaleX(1);
-            transform-origin: right;
-            transition: transform 0.5s ease;
-          }
-          &:hover::after {
-            transform: scaleX(0);
-          }
+          position: absolute;
+          content: '';
+          box-shadow: 0 0.5px 0 rgba(59, 55, 57);
+          width: 100%;
+          height: 1px;
+          bottom: -2px;
+          left: 0;
+          transform: scaleX(1);
+          transform-origin: right;
+          transition: transform 0.5s ease;
+        }
+        &:hover::after {
+          transform: scaleX(0);
+        }
       }
     }
     .custom-checkbox input[type='checkbox'] {
