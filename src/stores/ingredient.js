@@ -13,7 +13,7 @@ export const useIngredientStore = defineStore('ingredient', () => {
   };
 
   watch(active, (val) => {
-    console.log(val);
+    // console.log(val);
     if (val) {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
