@@ -478,7 +478,10 @@
   </div>
 
   <teleport to="body">
-    <transition name="modal-fade" mode="out-in">
+    <transition
+      name="modal-fade"
+      mode="out-in"
+    >
       <component
         :key="activeModal"
         v-if="activeModal"
@@ -600,13 +603,13 @@
     .nav__list {
       display: flex;
       align-items: center;
-      gap: 65px;
+      gap: 25px;
       position: relative;
       padding: 0;
       margin: 0;
       list-style: none;
       @include rwdmax(1440) {
-        gap: 50px;
+        gap: 10px;
       }
       @include rwdmax(1200) {
         display: none;
@@ -615,7 +618,7 @@
   }
   .nav__item {
     position: relative;
-    padding: 50px 0;
+    padding: 50px 20px;
     a {
       text-decoration: none;
     }
@@ -794,16 +797,16 @@
   .actions {
     display: flex;
     align-items: center;
-    gap: 55px;
+    gap: 35px;
     @include rwdmax(1440) {
-      gap: 35px;
+      gap: 15px;
     }
     @include rwdmax(1200) {
       display: none;
     }
     .actions__member {
       position: relative;
-      padding: 50px 0;
+      padding: 50px 20px;
     }
     .actions__item {
       display: block;
@@ -1168,16 +1171,16 @@
 
 <!-- //登入&註冊的燈箱轉換 -->
 <style lang="scss">
-.modal-fade-enter-active,
-.modal-fade-leave-active {
-  transition: opacity .8s ease;
-}
-.modal-fade-enter-from,
-.modal-fade-leave-to {
-  opacity: 0;
-}
-.modal-fade-enter-to,
-.modal-fade-leave-from {
-  opacity: 1;
-}
+  .modal-fade-enter-active,
+  .modal-fade-leave-active {
+    transition: opacity 0.8s ease;
+  }
+  .modal-fade-enter-from,
+  .modal-fade-leave-to {
+    opacity: 0;
+  }
+  .modal-fade-enter-to,
+  .modal-fade-leave-from {
+    opacity: 1;
+  }
 </style>
