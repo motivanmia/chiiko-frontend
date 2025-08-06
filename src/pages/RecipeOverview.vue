@@ -2,7 +2,6 @@
 import { ref, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import MainHeader from '@/components/common/MainHeader.vue';
 import Banner from '@/components/recipe/Banner.vue';
 import Category from '@/components/recipe/Category.vue';
 import SectionTitle from '@/components/SectionTitle.vue';
@@ -22,7 +21,7 @@ const currentSearchQuery = ref(route.query.q || '');
 // 合併模擬資料
 const allRecipes = ref([...soloMeal, ...popularRecipe]);
 
-// 核心搜尋函式，用於導航到搜尋結果頁
+// 搜尋功能
 const handleSearch = (query) => {
   const newQuery = query.trim();
   if (newQuery) { // 如果有搜尋關鍵字，就導航到搜尋頁面

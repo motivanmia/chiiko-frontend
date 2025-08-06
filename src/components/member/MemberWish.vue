@@ -1,4 +1,20 @@
 <script setup>
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
+
+  const goToPage = () => {
+
+  router.push('/product-detail');
+};
+
+const imageUrl = new URL('@/assets/image/Product/kitchen-knife.jpg', import.meta.url).href;
+
+//上面後續要更改先用一張圖片示意
+
+
+
+
   import MemberSidebar from './MemberSidebar.vue';
   import MemberCard from './MemberCard.vue';
   import MemberDashboard from './MemberDashboard.vue';
@@ -7,17 +23,18 @@
 </script>
 
 <template>
-  <div class="member-main">
-    <MemberSidebar />
-    <div class="member-content">
-      <MemberDashboard />
+  <!-- <div class="member-main"> -->
+    <!-- <MemberSidebar /> -->
+    <!-- <div class="member-content"> -->
+      <!-- <MemberDashboard /> -->
       <div class="member-collect">
         <div
           v-for="card in 9"
           class="member-card__box"
         >
           <MemberCard
-            img-src="/src/assets/image/Product/kitchen-knife.jpg"
+            @click="goToPage"
+            :img-src="imageUrl"
             img-alt="不鏽鋼奶油刮刀"
             title-text="不鏽鋼奶油刮刀"
             icon-name="heart"
@@ -25,8 +42,8 @@
           ></MemberCard>
         </div>
       </div>
-    </div>
-  </div>
+    <!-- </div> -->
+  <!-- </div> -->
 </template>
 
 <style lang="scss" scoped>

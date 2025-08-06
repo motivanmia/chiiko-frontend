@@ -8,7 +8,7 @@
   import section_title from '@/components/SectionTitle.vue';
   import login from '@/components/user/Login.vue';
   import hot from '@/components/home/HomeHot.vue';
-  import IndexRecipeOverview from '@/components/home/IndexRecipeOverview.vue';
+  import IndexRecipeOverview from '@/components/home/HomeRecipeCategory.vue';
   import { useRouter } from 'vue-router';
   import HomeSchool from '@/components/home/HomeSchool.vue';
   import HotSearch from '@/components/common/HotSearch.vue';

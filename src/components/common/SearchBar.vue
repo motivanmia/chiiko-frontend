@@ -57,7 +57,6 @@ const search = () => {
     />
     <button
       @click="search"
-
       class="search__btn"
     >
       <Icon

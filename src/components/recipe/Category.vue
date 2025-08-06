@@ -1,11 +1,16 @@
 <script setup>
   import { categoryName } from '@/constants/recipeCategory';
+import { RouterLink } from 'vue-router';
 </script>
 
 <template>
   <div class="category">
-    <div
+    <RouterLink
       v-for="buttons in categoryName"
+      :key="buttons.id"
+      :to="{ 
+        name: 'solo', // 導向'solo' 
+      }"
       class="category-box"
     >
       <button class="category-box__button">
@@ -16,9 +21,10 @@
         />
         <span class="category-box__title">{{ buttons.title }}</span>
       </button>
-    </div>
+    </RouterLink>
   </div>
 </template>
+
 
 <style lang="scss" scoped>
   .category {

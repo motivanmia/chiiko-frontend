@@ -1,10 +1,8 @@
-// 當季熱門
-
 export const popularRecipe = [
   {
     id: 1,
     title: '味增馬鈴薯煎餅',
-    image: '/src/assets/image/Recipes/popular-season/miso-potato.jpg',
+    image: new URL('@/assets/image/Recipes/popular-season/miso-potato.jpg', import.meta.url).href,
     comments: 120,
     bookmarks: 90,
     time: 20,
@@ -13,7 +11,7 @@ export const popularRecipe = [
   {
     id: 2,
     title: '爆漿起司漢堡排',
-    image: '/src/assets/image/Recipes/popular-season/cheese-hamburger-steak.jpg',
+    image: new URL('@/assets/image/Recipes/popular-season/cheese-hamburger-steak.jpg', import.meta.url).href,
     comments: 90,
     bookmarks: 45,
     time: 15,
@@ -22,7 +20,7 @@ export const popularRecipe = [
   {
     id: 3,
     title: '日式照燒茄子丼',
-    image: '/src/assets/image/Recipes/popular-season/scrambled-egg -rice.jpg',
+    image: new URL('@/assets/image/Recipes/popular-season/scrambled-egg -rice.jpg', import.meta.url).href,
     comments: 120,
     bookmarks: 60,
     time: 20,
@@ -31,7 +29,7 @@ export const popularRecipe = [
   {
     id: 4,
     title: '奶油雞肉義大利麵',
-    image: '/src/assets/image/Recipes/popular-season/creamy-chicken -pasta.jpg',
+    image: new URL('@/assets/image/Recipes/popular-season/creamy-chicken -pasta.jpg', import.meta.url).href,
     comments: 105,
     bookmarks: 50,
     time: 20,
@@ -40,7 +38,7 @@ export const popularRecipe = [
   {
     id: 5,
     title: '覆盆莓開心果慕斯蛋糕',
-    image: '/src/assets/image/Recipes/popular-season/raspberry-mousse-cake.jpg',
+    image: new URL('@/assets/image/Recipes/popular-season/raspberry-mousse-cake.jpg', import.meta.url).href,
     comments: 90,
     bookmarks: 45,
     time: 15,
@@ -49,7 +47,7 @@ export const popularRecipe = [
   {
     id: 6,
     title: '日式滑蛋丼',
-    image: '/src/assets/image/Recipes/popular-season/eggplant-rice.jpg',
+    image: new URL('@/assets/image/Recipes/popular-season/eggplant-rice.jpg', import.meta.url).href,
     comments: 120,
     bookmarks: 60,
     time: 20,
@@ -58,7 +56,7 @@ export const popularRecipe = [
   {
     id: 7,
     title: '玫瑰鹽奶油蜂蜜布丁',
-    image: '/src/assets/image/Recipes/popular-season/honey-pudding.jpg',
+    image: new URL('@/assets/image/Recipes/popular-season/honey-pudding.jpg', import.meta.url).href,
     comments: 90,
     bookmarks: 45,
     time: 15,
@@ -67,7 +65,7 @@ export const popularRecipe = [
   {
     id: 8,
     title: '番茄薑香牛奶燉雞',
-    image: '/src/assets/image/Recipes/popular-season/chicken-milk.jpg',
+    image: new URL('@/assets/image/Recipes/popular-season/chicken-milk.jpg', import.meta.url).href,
     comments: 90,
     bookmarks: 45,
     time: 15,
@@ -76,7 +74,7 @@ export const popularRecipe = [
   {
     id: 9,
     title: '和風高麗菜炒豆皮絲',
-    image: '/src/assets/image/Recipes/popular-season/stir-fried-shredded-cabbage.jpg',
+    image: new URL('@/assets/image/Recipes/popular-season/stir-fried-shredded-cabbage.jpg', import.meta.url).href,
     comments: 120,
     bookmarks: 60,
     time: 20,
@@ -85,12 +83,11 @@ export const popularRecipe = [
 ];
 
 //一人料理
-
 export const soloMeal = [
   {
-    id:1,
+    id: 1,
     title: '剝皮辣椒雞湯',
-    image: '/src/assets/image/Recipes/solo-meal/peeled-chili- pepper-chicken -soup.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/peeled-chili- pepper-chicken -soup.jpg', import.meta.url).href,
     comments: 105,
     bookmarks: 90,
     time: 20,
@@ -99,7 +96,7 @@ export const soloMeal = [
   {
     id: 2,
     title: '黃金蝦仁蛋炒飯',
-    image: '/src/assets/image/Recipes/solo-meal/golden-fried-rice.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/golden-fried-rice.jpg', import.meta.url).href,
     comments: 90,
     bookmarks: 45,
     time: 15,
@@ -108,7 +105,7 @@ export const soloMeal = [
   {
     id: 3,
     title: '南洋風味海鮮叻沙麵',
-    image: '/src/assets/image/Recipes/solo-meal/laksa.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/laksa.jpg', import.meta.url).href,
     comments: 120,
     bookmarks: 60,
     time: 20,
@@ -117,52 +114,52 @@ export const soloMeal = [
   {
     id: 4,
     title: '酪梨太陽蛋吐司',
-    image: '/src/assets/image/Recipes/solo-meal/avocado-egg-toast.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/avocado-egg-toast.jpg', import.meta.url).href,
     comments: 85,
     bookmarks: 30,
     time: 15,
-    tag: ['#酪梨','#輕食'],
+    tag: ['#酪梨', '#輕食'],
   },
   {
     id: 5,
     title: '經典雙層牛肉起司堡',
-    image: '/src/assets/image/Recipes/solo-meal/double-cheeseburger.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/double-cheeseburger.jpg', import.meta.url).href,
     comments: 90,
     bookmarks: 45,
     time: 15,
-    tag: ['#美式','#牛肉'],
+    tag: ['#美式', '#牛肉'],
   },
   {
     id: 6,
     title: '楓糖藍莓鬆餅',
-    image: '/src/assets/image/Recipes/solo-meal/blueberry -muffins.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/blueberry -muffins.jpg', import.meta.url).href,
     comments: 75,
     bookmarks: 45,
     time: 10,
-    tag: ['#藍莓','#輕食'],
+    tag: ['#藍莓', '#輕食'],
   },
   {
     id: 7,
     title: '經典日式叉燒拉麵',
-    image: '/src/assets/image/Recipes/solo-meal/chashu-ramen.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/chashu-ramen.jpg', import.meta.url).href,
     comments: 85,
     bookmarks: 30,
     time: 15,
-    tag: ['#和風','#麵'],
+    tag: ['#和風', '#麵'],
   },
   {
     id: 8,
     title: '蔥花溫蕎麥麵',
-    image: '/src/assets/image/Recipes/solo-meal/soba.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/soba.jpg', import.meta.url).href,
     comments: 80,
     bookmarks: 20,
     time: 20,
-    tag: ['#和風','#麵'],
+    tag: ['#和風', '#麵'],
   },
   {
     id: 9,
     title: '時蔬牛肉炒麵',
-    image: '/src/assets/image/Recipes/solo-meal/beef-fried-noodles.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/beef-fried-noodles.jpg', import.meta.url).href,
     comments: 65,
     bookmarks: 25,
     time: 15,
@@ -171,7 +168,7 @@ export const soloMeal = [
   {
     id: 10,
     title: '薑絲牛肉湯麵',
-    image: '/src/assets/image/Recipes/solo-meal/beef-soup.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/beef-soup.jpg', import.meta.url).href,
     comments: 85,
     bookmarks: 30,
     time: 25,
@@ -180,7 +177,7 @@ export const soloMeal = [
   {
     id: 11,
     title: '越南生牛肉河粉',
-    image: '/src/assets/image/Recipes/solo-meal/raw-beef-pho.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/raw-beef-pho.jpg', import.meta.url).href,
     comments: 80,
     bookmarks: 20,
     time: 20,
@@ -189,7 +186,7 @@ export const soloMeal = [
   {
     id: 12,
     title: '香煎雞肉凱薩沙拉',
-    image: '/src/assets/image/Recipes/solo-meal/caesar-salad.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/caesar-salad.jpg', import.meta.url).href,
     comments: 65,
     bookmarks: 25,
     time: 15,
@@ -198,7 +195,7 @@ export const soloMeal = [
   {
     id: 13,
     title: '經典魯賓三明治',
-    image: '/src/assets/image/Recipes/solo-meal/reuben-sandwich.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/reuben-sandwich.jpg', import.meta.url).href,
     comments: 85,
     bookmarks: 30,
     time: 25,
@@ -207,7 +204,7 @@ export const soloMeal = [
   {
     id: 14,
     title: '爐烤羊排與季節時蔬',
-    image: '/src/assets/image/Recipes/solo-meal/oven-baked-pork-chops.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/oven-baked-pork-chops.jpg', import.meta.url).href,
     comments: 80,
     bookmarks: 20,
     time: 20,
@@ -216,16 +213,16 @@ export const soloMeal = [
   {
     id: 15,
     title: '鮭魚卵蓋飯',
-    image: '/src/assets/image/Recipes/solo-meal/salmon-roe-bowl.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/salmon-roe-bowl.jpg', import.meta.url).href,
     comments: 65,
     bookmarks: 25,
     time: 15,
-    tag: ['#海鮮','#飯'],
+    tag: ['#海鮮', '#飯'],
   },
   {
     id: 16,
     title: '黃金炸水餃',
-    image: '/src/assets/image/Recipes/solo-meal/fried-dumplings.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/fried-dumplings.jpg', import.meta.url).href,
     comments: 85,
     bookmarks: 30,
     time: 25,
@@ -234,16 +231,16 @@ export const soloMeal = [
   {
     id: 17,
     title: '台灣蚵仔麵線',
-    image: '/src/assets/image/Recipes/solo-meal/oyster-noodles.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/oyster-noodles.jpg', import.meta.url).href,
     comments: 80,
     bookmarks: 20,
     time: 20,
-    tag: ['#海鮮','#麵'],
+    tag: ['#海鮮', '#麵'],
   },
   {
     id: 18,
     title: '鮮肉蒸餃',
-    image: '/src/assets/image/Recipes/solo-meal/steamed-dumplings.jpg',
+    image: new URL('@/assets/image/Recipes/solo-meal/steamed-dumplings.jpg', import.meta.url).href,
     comments: 65,
     bookmarks: 25,
     time: 15,

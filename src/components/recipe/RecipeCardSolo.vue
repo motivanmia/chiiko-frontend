@@ -1,6 +1,10 @@
 <script setup>
 import Icon from '../common/Icon.vue';
 
+import { soloMeal } from '@/constants/recipes';
+
+// const soloRecipes = ref=([...soloMeal]);
+
 const props = defineProps({
   recipes: {
     type: Array,

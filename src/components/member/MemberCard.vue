@@ -4,8 +4,9 @@
 
   //宣告props
   const props = defineProps({
-    //圖片
+    
     imgSrc: {
+      //圖片
       type: String,
       required: true,
       default: '',
@@ -22,10 +23,12 @@
       default: '標題',
     },
     iconName: {
+      //icon名稱
       type: String,
       default: 'mark',
     },
     iconDescription: {
+      //內容
       type: String,
       default: '已收藏',
     },
@@ -47,7 +50,7 @@
         <Icon
           :icon-name="props.iconName"
           :class="[
-            'member-card__icon', // 添加一個基礎 class
+            'member-card__icon', 
             props.iconName === 'mark' ? 'mark-icon' : 'heart-icon', // 動態 class
           ]"
         />

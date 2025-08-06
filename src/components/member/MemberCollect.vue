@@ -1,21 +1,36 @@
 <script setup>
+import { useRouter } from 'vue-router';
+
+  const router = useRouter();
+
+  const goToPage = () => {
+
+  router.push('/recipe-detail');
+};
+
+const imageUrl = new URL('@/assets/image/Member/spring-onion-soba.jpg', import.meta.url).href;
+
+//上面後續要更改
+
+
   import MemberSidebar from './MemberSidebar.vue';
   import MemberCard from './MemberCard.vue';
   import MemberDashboard from './MemberDashboard.vue';
 </script>
 
 <template>
-  <div class="member-main">
-    <MemberSidebar />
-    <div class="member-content">
-      <MemberDashboard />
+  <!-- <div class="member-main"> -->
+    <!-- <MemberSidebar /> -->
+    <!-- <div class="member-content"> -->
+      <!-- <MemberDashboard /> -->
       <div class="member-collect">
         <div
-          v-for="card in 9"
+          v-for="cards in 9"
           class="member-card__box"
         >
           <MemberCard
-            img-src="/src/assets/image/Member/spring-onion-soba.jpg"
+            @click="goToPage"
+            :img-src="imageUrl"
             img-alt="蔥花溫蕎麥麵"
             title-text="蔥花溫蕎麥麵"
             icon-name="mark"
@@ -23,8 +38,8 @@
           ></MemberCard>
         </div>
       </div>
-    </div>
-  </div>
+    <!-- </div> -->
+  <!-- </div> -->
 </template>
 
 

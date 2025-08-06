@@ -65,12 +65,20 @@
         @click="isDraftExpanded = !isDraftExpanded"
       >
         <span class="recipe-management__toggle-text">草稿</span>
-        <Icon
+        <!-- <Icon
           icon-name="upA"
           :class="[
             'recipe-management__toggle-icon',
-            { 'recipe-management__toggle-icon--expanded': isDraftExpanded },
+            { 'recipe-management__toggle-icon--expanded': isDraftExpanded},
           ]"
+        /> -->
+        <Icon
+          icon-name="upA"
+          :style="{
+            transform: isDraftExpanded ? 'rotate(90deg)' : 'rotate(270deg)', //暫時先把style寫在裡面
+            transition: 'transform 0.3s ease',
+          }"
+          class="recipe-management__toggle-icon"
         />
       </button>
 

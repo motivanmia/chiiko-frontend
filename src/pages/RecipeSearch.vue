@@ -99,27 +99,6 @@ const handleSearch = (query) => {
     ];
   });
 
-  // 暴露給全域除錯
-  window.debugSearch = {
-    currentSearchQuery,
-    filteredRecipes,
-    allRecipes,
-    handleSearch,
-    testSearch: (keyword) => {
-      handleSearch(keyword);
-    },
-    testAllKeywords: () => {
-      testSearches.forEach((keyword) => {
-        const results = allRecipes.value.filter((recipe) => {
-          const titleMatch = recipe.title.toLowerCase().includes(keyword.toLowerCase());
-          const tagMatch = recipe.tag.some((tag) =>
-            tag.toLowerCase().replace('#', '').includes(keyword.toLowerCase()),
-          );
-          return titleMatch || tagMatch;
-        });
-      });
-    },
-  };
 
 </script>
 

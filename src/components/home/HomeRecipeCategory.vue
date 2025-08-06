@@ -9,28 +9,31 @@
 
 <template>
   <div class="recipe-all">
-    <!-- 上面的名稱待修改 -->
     <div class="recipe-category">
       <div class="recipe-category__section">
         <SectionTitle title="/靈感×食譜\"></SectionTitle>
       </div>
 
       <div class="recipe-category__box">
-        <div
+        <RouterLink 
           v-for="cards in card"
+          :key="cards.id"
+          :to="{
+            name: 'solo', // 導向'solo' 
+          }"
           class="recipe-category__card"
         >
-          <!-- cards是我們設立的變數 -->
           <img
             :src="cards.image"
             :alt="cards.title"
           />
           <button class="recipe-category__button">{{ cards.title }}</button>
-        </div>
+        </RouterLink>
       </div>
     </div>
   </div>
 </template>
+
 
 <style lang="scss" scoped>
   .recipe-category__section {
@@ -91,14 +94,6 @@
       &:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); // 卡片 hover 陰影
-
-        &::after {
-          // background-color: rgba(0, 0, 0, 0);
-        }
-
-        img {
-          // filter: brightness(0.8);
-        }
 
         .recipe-category__button {
           color: color(button, main);
