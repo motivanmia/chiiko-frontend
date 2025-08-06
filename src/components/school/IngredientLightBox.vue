@@ -121,9 +121,9 @@
     z-index: 999;
     position: fixed;
     width: 55vw;
-    height: 80vh;
+    height: 90vh;
     background-color: white;
-    top: 55%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     border-radius: 20px;
@@ -164,10 +164,11 @@
       margin-right: auto;
       padding-bottom: 30px;
       width: 80%;
-      height: 56%;
+      height: 50%;
       border-bottom: 2px solid black;
       display: flex;
       justify-content: space-between;
+
       @include rwdmax(768) {
         flex-wrap: wrap;
         height: unset;
@@ -217,6 +218,9 @@
       width: 80%;
       height: 25%;
       margin: 1vw auto;
+      @include rwdmax(1440) {
+        margin: 0.5vw auto;
+      }
       @include rwdmax(768) {
         width: 95%;
         height: unset;
@@ -328,6 +332,9 @@
       right: 10%;
       bottom: 5%;
       transform: scale(1.5);
+      @include rwdmax(1440) {
+        transform: scale(1);
+      }
       @include rwdmax(1200) {
         transform: scale(1.2);
       }
