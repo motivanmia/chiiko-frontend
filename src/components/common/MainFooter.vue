@@ -286,7 +286,16 @@
       <div class="main-footer__copyright">
         本網站為緯育TibaMe前端設計工程師班第 92 期學員專題成果作品，本平台僅供學習、展示之用。
         <br />
-        若有侵權疑慮，您可以私訊［緯育TibaMe］，後續會由專人協助處理。
+        若有抵觸有關著作權,或有第三人主張侵害智慧財產權等情事,均由學員負法律上責任,緯育公司概不負責。
+        <br />
+        若有侵權疑慮,您可以私訊
+        <a
+          href="https://www.facebook.com/TibaMe"
+          class="tibame__link"
+        >
+          緯育TibaMe
+        </a>
+        , 後續會由專人協助處理。
         <br />
         © 2025 Chiiko. All rights reserved.
       </div>
@@ -592,7 +601,12 @@
       text-align: center;
       @include fontSet($basic-font, normal, px(14), 1.2, color(text, base), 0.1em);
 
+      .tibame__link {
+        color: color(text, base);
+      }
+
       @include rwdmax(768) {
+        padding-inline: 10px;
         @include fontSet($basic-font, normal, px(12), 1.2, color(text, base), 0.1em);
       }
     }
