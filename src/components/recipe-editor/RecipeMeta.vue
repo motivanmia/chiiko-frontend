@@ -1,6 +1,6 @@
 <template>
   <div class="meta-row recipe-meta-component">
-    <div class="meta-item-full">
+    <div class="meta-item meta-item-full">
       <label class="form-label">食譜分類</label>
       <select
         :value="category"
@@ -16,7 +16,7 @@
         </option>
       </select>
     </div>
-    <div class="meta-item-half">
+    <div class="meta-item meta-item-half">
       <label class="form-label">
         烹調時間
         <span class="unit-label">（分鐘）</span>
@@ -35,7 +35,7 @@
         </option>
       </select>
     </div>
-    <div class="meta-item-half">
+    <div class="meta-item meta-item-half">
       <label class="form-label">
         料理份數
         <span class="unit-label">（人份）</span>
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-  // ... 您的 script 內容完全不需要修改 ...
+  // Script 內容完全不需修改
   defineProps(['category', 'time', 'servings']);
   defineEmits(['update:category', 'update:time', 'update:servings']);
   const categories = [
@@ -93,14 +93,34 @@
 </script>
 
 <style lang="scss" scoped>
-  /* 桌面版樣式 */
+  /* =================================================================== */
+  /*                      桌面版樣式 (含排版修正)                        */
+  /* =================================================================== */
   .meta-row {
     width: 800px;
     max-width: 100%;
     display: flex;
-    justify-content: space-between;
-    gap: 1rem;
+    /* ✨ 修改點：原本的 space-between 不再需要，改用 gap 控制間距 */
+    gap: 50px;
   }
+
+  /* 為下拉選單的「父層容器」加上相對定位 */
+  .meta-item {
+    position: relative;
+
+    /* ✨ 修改點：移除舊的、有問題的 flex 規則 */
+    /* &.meta-item-full { ... } */
+    /* &.meta-item-half { ... } */
+
+    /* ✨ 新增：定義 2:1:1 的比例 */
+    &.meta-item-full {
+      flex: 1.5; /* 佔據 2 個單位空間 */
+    }
+    &.meta-item-half {
+      flex: 1; /* 各佔據 1 個單位空間 */
+    }
+  }
+
   .form-label {
     display: block;
     margin-bottom: 15px;
@@ -110,41 +130,57 @@
     font-size: 20px;
     color: #828282;
   }
+
   .form-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     height: 60px;
-    padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 20px;
     font-size: 24px;
     background-color: white;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
-    width: 260px;
-  }
-  .form-select.short {
-    width: 192px;
+    padding: 0.75rem 48px 0.75rem 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  /* FIX: 手機版樣式 */
+  /* V 形箭頭的樣式 (保持不變) */
+  .meta-item::after {
+    content: '';
+    position: absolute;
+    right: 28px;
+    top: 70%;
+    width: 10px;
+    height: 10px;
+    border: solid #333;
+    border-width: 0 3px 3px 0;
+    transform: translateY(-50%) rotate(45deg);
+    pointer-events: none;
+  }
+
+  /* =================================================================== */
+  /*                      手機版樣式 (完全不受影響)                      */
+  /* =================================================================== */
   @media (max-width: 768px) {
     .meta-row {
-      flex-direction: row; /* 維持水平排列 */
-      flex-wrap: wrap; /* 允許換行 */
+      flex-direction: row;
+      flex-wrap: wrap;
       gap: 16px;
     }
 
-    .meta-row > div {
-      /* 關鍵！讓每個區塊佔據大約一半的寬度 (扣除 gap) */
-      flex: 1 1 calc(50% - 8px);
+    .meta-item {
+      /* 手機版：讓 full 恢復佔滿一行 */
+      &.meta-item-full {
+        flex-basis: 100%;
+      }
+      /* 手機版：讓 half 恢復各佔一半 */
+      &.meta-item-half {
+        flex-basis: calc(50% - 8px);
+      }
     }
 
-    /* 第一個分類區塊，讓它自己佔滿一行 */
-    .meta-row > div:first-child {
-      flex: 1 1 100%;
-    }
-
-    .form-select {
-      width: 100%;
-    }
     .form-label {
       font-size: 20px;
     }
