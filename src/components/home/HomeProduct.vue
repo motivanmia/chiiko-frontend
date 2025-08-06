@@ -1,31 +1,34 @@
 <script setup>
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import { Autoplay } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/pagination';
+  import { Swiper, SwiperSlide } from 'swiper/vue';
+  import { Autoplay } from 'swiper/modules';
+  import 'swiper/css';
+  import 'swiper/css/pagination';
 
-import Product1 from '@/assets/image/Product/Product-home/Product-home1.jpg';
-import Product2 from '@/assets/image/Product/Product-home/Product-home2.jpg';
-import Product3 from '@/assets/image/Product/Product-home/Product-home3.jpg';
-import Product4 from '@/assets/image/Product/Product-home/Product-home4.jpg';
-import Product5 from '@/assets/image/Product/Product-home/Product-home5.jpg';
+  import title_el from '@/components/SectionTitle.vue';
+  import Product1 from '@/assets/image/Product/Product-home/Product-home1.jpg';
+  import Product2 from '@/assets/image/Product/Product-home/Product-home2.jpg';
+  import Product3 from '@/assets/image/Product/Product-home/Product-home3.jpg';
+  import Product4 from '@/assets/image/Product/Product-home/Product-home4.jpg';
+  import Product5 from '@/assets/image/Product/Product-home/Product-home5.jpg';
+  import SeeMoreButton from '../button/SeeMoreButton.vue';
 
-const originalProducts = [
-  { name: '手沖壺', image: Product1 },
-  { name: '輕量玻璃湯鍋', image: Product2 },
-  { name: '不鏽鋼打蛋盆', image: Product3 },
-  { name: '折疊式蒸籠架', image: Product4 },
-  { name: '輕巧蔬果小刀', image: Product5 },
-];
+  const originalProducts = [
+    { name: '手沖壺', image: Product1 },
+    { name: '輕量玻璃湯鍋', image: Product2 },
+    { name: '不鏽鋼打蛋盆', image: Product3 },
+    { name: '折疊式蒸籠架', image: Product4 },
+    { name: '輕巧蔬果小刀', image: Product5 },
+  ];
 
-// 複製商品陣列，保持原始順序的交錯效果
-const products = originalProducts.concat(originalProducts);
+  // 複製商品陣列，保持原始順序的交錯效果
+  const products = originalProducts.concat(originalProducts);
 </script>
 
 <template>
   <section class="high-repeat-section">
     <div class="section-title">
-      <p class="title-main">/好物推薦\</p>
+      <!-- <p class="title-main">/好物推薦\</p> -->
+      <title_el title="/好物推薦\" />
       <p class="title-sub">用順手的器具，料理起來更輕鬆。</p>
     </div>
 
@@ -60,81 +63,94 @@ const products = originalProducts.concat(originalProducts);
         </div>
       </SwiperSlide>
     </Swiper>
+    <SeeMoreButton
+      id="SeeMoreButton"
+      path="/product"
+    />
   </section>
 </template>
 
-<style scoped>
-.high-repeat-section {
-  padding: 40px 16px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+<style lang="scss" scoped>
+  .high-repeat-section {
+    padding: 0 16px 40px 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
 
-.section-title {
-  text-align: center;
-  margin-bottom: 32px;
-}
-.title-main {
-  font-size: 40px;
-  font-weight: bold;
-  text-align: center;
-  color: #3b3739;
-  letter-spacing: 0.3em;
-  text-shadow: 0 4px 5px rgba(59, 55, 57, 0.4);
-}
-.title-sub {
-  font-size: 14px;
-  color: #666;
-  margin-top: 3%;
-}
+  .section-title {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .title-main {
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    color: #3b3739;
+    letter-spacing: 0.3em;
+    text-shadow: 0 4px 5px rgba(59, 55, 57, 0.4);
+  }
+  .title-sub {
+    font-size: 14px;
+    color: #666;
+    margin-top: 3%;
+  }
 
-.product-swiper {
-  padding-bottom: 24px;
-}
+  .product-swiper {
+    padding-bottom: 24px;
+  }
 
-.product-card {
-  background-color: transparent;
-  border-radius: 0;
-  box-shadow: none;
-  overflow: visible;
-  text-align: start;
-  transition: transform 0.2s ease;
-  cursor: pointer;
-}
-.product-card:hover {
-  transform: translateY(-4px);
-}
+  .product-card {
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+    text-align: start;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+  }
+  .product-card:hover {
+    transform: translateY(-4px);
+  }
 
-.product-card img {
-  width: 100%;
-  margin-top: 30px;
-  object-fit: cover;
-  display: block;
-  border-radius: 12px;
-}
+  .product-card img {
+    width: 100%;
+    margin-top: 30px;
+    object-fit: cover;
+    display: block;
+    border-radius: 12px;
+  }
 
-.product-name {
-  font-size: 24px;
-  font-weight: 500;
-  padding: 10px 8px;
-  color: #333;
-}
+  .product-name {
+    font-size: 24px;
+    font-weight: 500;
+    padding: 10px 8px;
+    color: #333;
+  }
 
-/* 控制一輪結束後的交錯效果 */
-.slide-up {
-  transform: translateY(-20px);
-}
+  /* 控制一輪結束後的交錯效果 */
+  .slide-up {
+    transform: translateY(-20px);
+  }
 
-.slide-down {
-  transform: translateY(20px);
-}
+  .slide-down {
+    transform: translateY(20px);
+  }
 
-/* hover 效果 */
-.slide-up:hover .product-card {
-  transform: translateY(-4px);
-}
+  /* hover 效果 */
+  .slide-up:hover .product-card {
+    transform: translateY(-4px);
+  }
 
-.slide-down:hover .product-card {
-  transform: translateY(-4px);
-}
+  .slide-down:hover .product-card {
+    transform: translateY(-4px);
+  }
+
+  #SeeMoreButton {
+    margin: 120px auto 40px;
+    transform: scale(1.5);
+    @include rwdmax(768) {
+      transform: scale(1);
+      margin: 50px auto 40px;
+    }
+  }
 </style>

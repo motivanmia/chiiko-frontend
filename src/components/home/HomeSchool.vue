@@ -46,6 +46,10 @@
   #HomeSchool {
     margin-top: 150px;
     margin-bottom: 200px;
+    @include rwdmax(768){
+      margin-top:110px;
+      margin-bottom: 150px;
+    }
   }
   .subtitle {
     text-align: center;
@@ -67,6 +71,8 @@
     padding: 30px;
     @include rwdmax(768) {
       padding: 10px;
+      margin-bottom: 20px;
+      margin-top: 20px;
     }
     &__card {
       width: 900px;
