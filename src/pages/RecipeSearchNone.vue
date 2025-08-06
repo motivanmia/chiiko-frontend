@@ -20,10 +20,18 @@ const breadcrumbItems = ref([
 
 const { searchTerm, handleSearch } = useSearch();
 
+
+// import product from '@/pages/ProductContent.vue'
+
+import ProductPage from './ProductPage.vue';
+
 </script>
 
 <template>
-  <Banner/>
+
+<product/>
+<ProductPage/>
+  <!-- <Banner/>
   <Category/>
   
   <div class="search-container">
@@ -44,7 +52,7 @@ const { searchTerm, handleSearch } = useSearch();
     <p>
       找不到符合搜尋字詞「123 」的食譜。
     </p>
-  </span>
+  </span> -->
 
 </template>
 

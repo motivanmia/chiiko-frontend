@@ -74,8 +74,7 @@ const imageUrl = new URL('@/assets/image/Product/kitchen-knife.jpg', import.meta
 
 
 .member-card__box {
-  // 這個選擇器會找到 .member-card__box 裡的所有元件
-  // 然後穿透進去找到 .mark-icon 或 .heart-icon
+
 
   :deep(.heart-icon) {
     color: red; // 願望清單 ICON 的顏色

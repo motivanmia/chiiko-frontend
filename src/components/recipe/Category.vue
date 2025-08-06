@@ -54,6 +54,12 @@ import { RouterLink } from 'vue-router';
       background: transparent;
       position: relative;
 
+        @media (max-width: 768px) {
+          width: 173px;
+          height: 65px;
+          
+        }
+
       &:hover {
       }
 
@@ -94,7 +100,6 @@ import { RouterLink } from 'vue-router';
       white-space: nowrap;
     }
 
-    // 當滑鼠懸停時 (hover)
     &:hover {
       // 給圖片移除模糊效果
       img {
@@ -102,7 +107,6 @@ import { RouterLink } from 'vue-router';
         transform: scale(1.05); 
       }
       
-      // 同時改變遮罩層的透明度
       &::after {
         background-color: rgba(0, 0, 0, 0); // 變成完全透明
       }

@@ -5,12 +5,11 @@
   const isDraftExpanded = ref(true);
   const activeTab = ref('published');
 
-  // 模擬資料
   const draftRecipe = {
     id: 1,
     title: '奶油雞肉義大利麵',
     lastEdit: '2025-07-01',
-    image: '/src/assets/image/Member/creamy-chicken-pasta.jpg',
+    image: new URL('@/assets/image/Member/creamy-chicken-pasta.jpg', import.meta.url).href,
   };
 
   const publishedRecipes = [
@@ -20,7 +19,7 @@
       publishDate: '2025-07-01',
       comments: 120,
       bookmarks: 60,
-      image: '/src/assets/image/Member/honey-pudding.jpg',
+      image: new URL('@/assets/image/Member/honey-pudding.jpg', import.meta.url).href,
     },
     {
       id: 2,
@@ -28,7 +27,7 @@
       publishDate: '2025-07-01',
       comments: 120,
       bookmarks: 60,
-      image: '/src/assets/image/Member/pesto-pasta.jpg',
+      image: new URL('@/assets/image/Member/pesto-pasta.jpg', import.meta.url).href,
     },
     {
       id: 3,
@@ -36,7 +35,7 @@
       publishDate: '2025-07-01',
       comments: 120,
       bookmarks: 60,
-      image: '/src/assets/image/Member/golden-egg.jpg',
+      image: new URL('@/assets/image/Member/golden-egg.jpg', import.meta.url).href,
     },
   ];
 
@@ -47,7 +46,7 @@
       publishDate: '2025-07-01',
       comments: 85,
       bookmarks: 42,
-      image: '/src/assets/image/Member/creamy-chicken-pasta.jpg',
+      image: new URL('@/assets/image/Member/creamy-chicken-pasta.jpg', import.meta.url).href,
     },
   ];
 
