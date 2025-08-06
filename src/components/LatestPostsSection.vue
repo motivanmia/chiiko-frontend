@@ -1,7 +1,8 @@
 <template>
   <div class="page-container">
     <header class="page-header">
-      <h1>/最新投稿\</h1>
+      <!-- <h1>/最新投稿\</h1> -->
+      <title_el />
     </header>
     <Carousel />
   </div>
@@ -9,19 +10,20 @@
 
 <script setup>
   import Carousel from '@/components/Carousel.vue';
+  import title_el from '@/components/SectionTitle.vue';
 </script>
 
 <style scoped>
   .page-container {
     display: flex;
     flex-direction: column;
-    gap: 50px;
+    gap: 100px;
   }
 
   .page-header {
     text-align: center;
-    padding-top: 80px;
-    padding-bottom: 100px;
+    padding-top: 200px;
+    /* padding-bottom: 100px; */
     color: #333;
     font-weight: 600;
   }
@@ -43,13 +45,13 @@
     color: #888;
   }
 
-    @media (max-width: 768px) {
-  .page-container {
-    gap: 30px;
-  }
-
-  .page-header {
-    padding-bottom: 20px;
-  }
+  @media (max-width: 768px) {
+    .page-container {
+      gap: 30px;
     }
+
+    .page-header {
+      padding-bottom: 20px;
+    }
+  }
 </style>
