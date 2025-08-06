@@ -13,7 +13,6 @@
 
 <style scoped>
   .page-container {
-    background-color: #f8f9fa;
     display: flex;
     flex-direction: column;
     gap: 50px;
@@ -43,4 +42,14 @@
     padding-bottom: 80px;
     color: #888;
   }
+
+    @media (max-width: 768px) {
+  .page-container {
+    gap: 30px;
+  }
+
+  .page-header {
+    padding-bottom: 20px;
+  }
+    }
 </style>

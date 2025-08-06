@@ -12,6 +12,7 @@
   import { useRouter } from 'vue-router';
   import HomeSchool from '@/components/home/HomeSchool.vue';
   import HotSearch from '@/components/common/HotSearch.vue';
+  import LatestPostsSection from '@/components/LatestPostsSection.vue'
 
   const router = useRouter();
   function handleShareRecipe() {
@@ -61,6 +62,8 @@
     <delicious id="delicious" />
 
     <IndexRecipeOverview />
+
+    <LatestPostsSection />
 
     <HomeSchool id="HomeSchool" />
 
