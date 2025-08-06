@@ -100,6 +100,16 @@ const handleSearch = (query) => {
   });
 
 
+
+// =======================================================
+
+  const goToPage = () => {
+
+  router.push('/recipe-detail');
+};
+// =======================================================
+
+
 </script>
 
 <template>
@@ -130,8 +140,9 @@ const handleSearch = (query) => {
       class="solo"
       :recipes="filteredRecipes"
       :key="currentSearchQuery"
+      @click="goToPage"
     />
-
+    <!-- goToPage後續要做移除改router -->
     <div
       v-if="currentSearchQuery && filteredRecipes.length === 0"
       class="no-results"

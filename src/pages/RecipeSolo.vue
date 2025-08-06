@@ -76,6 +76,16 @@ const handleSearch = (query) => {
   );
 
 
+
+
+// =======================================================
+
+  const goToPage = () => {
+
+  router.push('/recipe-detail');
+};
+// =======================================================
+
 </script>
 
 <template>
@@ -98,9 +108,12 @@ const handleSearch = (query) => {
   <div class="content-wrapper">
     <BreadCrumb class="bread-crumb" />
     <RecipeCardSolo
+      @click="goToPage" 
+
       :recipes="filteredRecipes"
       class="solo"
     />
+    <!-- Card的goToPage後面要刪掉暫時先示意 -->
   </div>
 
   <Pagination />

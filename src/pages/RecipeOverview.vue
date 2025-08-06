@@ -47,6 +47,13 @@ const mostBookmarkedRecipes = allRecipes.value.slice(9, 18);
 const latestRecipes = allRecipes.value.slice(18, 27);
 
 
+// =======================================================
+
+  const goToPage = () => {
+
+  router.push('/recipe-detail');
+};
+// =======================================================
 
 
 
@@ -66,13 +73,16 @@ const latestRecipes = allRecipes.value.slice(18, 27);
 </div>
 
   <SectionTitle title="/當季熱門\" class="section"></SectionTitle>
-  <RecipeCards :recipes="hotRecipes" />
+  <RecipeCards :recipes="hotRecipes" @click="goToPage"/>
 
   <SectionTitle title="/最多收藏\" class="section"></SectionTitle>
-  <RecipeCards :recipes="mostBookmarkedRecipes"/>
+  <RecipeCards :recipes="mostBookmarkedRecipes" @click="goToPage"/>
 
   <SectionTitle title="/最新投稿\" class="section"></SectionTitle>
-  <RecipeCards :recipes="latestRecipes"/>
+  <RecipeCards :recipes="latestRecipes" @click="goToPage"/>
+
+
+  <!-- goToPage後續要做刪除的動作 -->
 
 </template>
 
