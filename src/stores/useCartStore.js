@@ -1,7 +1,10 @@
 import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
+import { useRouter } from 'vue-router';
 
 export const useCartStore = defineStore('cart', () => {
+  const router = useRouter();
+
   // 購物車商品
   const products = ref([
     {
@@ -231,10 +234,10 @@ export const useCartStore = defineStore('cart', () => {
         ? {
             name: recipientForm.value.buyerName,
             phone: recipientForm.value.buyerPhone,
-            city: recipientForm.value.city,
-            district: recipientForm.value.district,
-            postal: recipientForm.value.postal,
-            address: recipientForm.value.address,
+            city: recipientForm.value.buyerCity,
+            district: recipientForm.value.buyerDistrict,
+            postal: recipientForm.value.buyerPostal,
+            address: recipientForm.value.buyerAddress,
           }
         : {
             name: recipientForm.value.recipientName,
@@ -250,6 +253,7 @@ export const useCartStore = defineStore('cart', () => {
       orderTime: new Date().toISOString(),
     };
 
+    router.push({ path: '/order-success' });
     console.log('提交訂單:', orderData);
 
     // 這裡可以調用 API 提交訂單
@@ -291,6 +295,14 @@ export const useCartStore = defineStore('cart', () => {
     sameAsRecipient.value = true;
     currentStep.value = 1;
   };
+
+  watch(
+    recipientForm,
+    (val) => {
+      console.log(val);
+    },
+    { deep: true, immediate: true },
+  );
 
   return {
     // 狀態

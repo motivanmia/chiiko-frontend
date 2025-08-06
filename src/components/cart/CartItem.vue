@@ -54,6 +54,14 @@
     grid-template-columns: px(110) 3fr 1fr 1fr px(30);
     padding: px(20) 0;
 
+    &:first-child {
+      padding-top: 0;
+    }
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+
     & + & {
       border-top: px(1) solid color(text, dark);
     }
