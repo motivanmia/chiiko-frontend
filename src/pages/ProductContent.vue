@@ -11,9 +11,15 @@
   const setThumbsSwiper = (swiper) => (thumbsSwiper.value = swiper);
 
   const images = [
-    '/src/assets/image/Product/Product-buy/product-knife1.png',
-    '/src/assets/image/Product/Product-buy/product-knife2.png',
-    '/src/assets/image/Product/Product-buy/product-knife3.png',
+    {
+      image: new URL('@/assets/image/Product/Product-buy/product-knife1.png', import.meta.url).href,
+    },
+    {
+      image: new URL('@/assets/image/Product/Product-buy/product-knife2.png', import.meta.url).href,
+    },
+    {
+      image: new URL('@/assets/image/Product/Product-buy/product-knife3.png', import.meta.url).href,
+    },
   ];
 
   const qty = ref(1);
@@ -53,7 +59,7 @@
           :key="i"
         >
           <img
-            :src="img"
+            :src="img.image"
             class="main-image"
             :alt="`商品主圖 ${i + 1}`"
           />
@@ -74,7 +80,7 @@
           :key="i"
         >
           <img
-            :src="img"
+            :src="img.image"
             class="thumb-image"
             :alt="`縮圖 ${i + 1}`"
           />
@@ -156,7 +162,10 @@
       navigation
     >
       <SwiperSlide>
-        <div class="related-card">
+        <RouterLink
+          to="/product-detail"
+          class="related-card"
+        >
           <img
             src="/src/assets/image/Product/product-pot.png"
             class="related-img"
@@ -166,10 +175,13 @@
             <p class="related-sub">可用於煮湯、熱牛奶、煮醬汁、煮粥</p>
             <p class="related-price">$329</p>
           </div>
-        </div>
+        </RouterLink>
       </SwiperSlide>
       <SwiperSlide>
-        <div class="related-card">
+        <RouterLink
+          to="/product-detail"
+          class="related-card"
+        >
           <img
             src="/src/assets/image/Product/product-fish.png"
             class="related-img"
@@ -179,10 +191,13 @@
             <p class="related-sub">用於括魚鱗</p>
             <p class="related-price">$29</p>
           </div>
-        </div>
+        </RouterLink>
       </SwiperSlide>
       <SwiperSlide>
-        <div class="related-card">
+        <RouterLink
+          to="/product-detail"
+          class="related-card"
+        >
           <img
             src="/src/assets/image/Product/product-chopsticks.png"
             class="related-img"
@@ -192,7 +207,7 @@
             <p class="related-sub">好筷架 不用嗎</p>
             <p class="related-price">$29</p>
           </div>
-        </div>
+        </RouterLink>
       </SwiperSlide>
     </Swiper>
   </section>
@@ -469,6 +484,7 @@
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
     transition: transform 0.2s ease;
+    text-decoration: none;
   }
 
   .related-card:hover {

@@ -13,11 +13,11 @@
   import SeeMoreButton from '../button/SeeMoreButton.vue';
 
   const originalProducts = [
-    { name: '手沖壺', image: Product1 },
-    { name: '輕量玻璃湯鍋', image: Product2 },
-    { name: '不鏽鋼打蛋盆', image: Product3 },
-    { name: '折疊式蒸籠架', image: Product4 },
-    { name: '輕巧蔬果小刀', image: Product5 },
+    { name: '手沖壺', image: Product1, path: '/product-detail' },
+    { name: '輕量玻璃湯鍋', image: Product2, path: '/product-detail' },
+    { name: '不鏽鋼打蛋盆', image: Product3, path: '/product-detail' },
+    { name: '折疊式蒸籠架', image: Product4, path: '/product-detail' },
+    { name: '輕巧蔬果小刀', image: Product5, path: '/product-detail' },
   ];
 
   // 複製商品陣列，保持原始順序的交錯效果
@@ -54,13 +54,16 @@
         :key="`${product.name}-${index}`"
         :class="{ 'slide-up': index % 2 === 0, 'slide-down': index % 2 === 1 }"
       >
-        <div class="product-card">
+        <RouterLink
+          :to="product.path"
+          class="product-card"
+        >
           <img
             :src="product.image"
             :alt="product.name"
           />
           <p class="product-name">{{ product.name }}</p>
-        </div>
+        </RouterLink>
       </SwiperSlide>
     </Swiper>
     <SeeMoreButton
@@ -90,9 +93,12 @@
     text-shadow: 0 4px 5px rgba(59, 55, 57, 0.4);
   }
   .title-sub {
-    font-size: 14px;
+    @include font-size(20);
     color: #666;
     margin-top: 3%;
+    @include rwdmax(768) {
+      @include font-size(18);
+    }
   }
 
   .product-swiper {
@@ -107,6 +113,7 @@
     text-align: start;
     transition: transform 0.2s ease;
     cursor: pointer;
+    text-decoration: none;
   }
   .product-card:hover {
     transform: translateY(-4px);

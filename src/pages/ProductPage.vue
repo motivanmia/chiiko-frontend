@@ -52,47 +52,65 @@
     <samp>/高回購率百元好物\</samp>
   </div>
   <div class="product-list">
-    <div class="product-item">
+    <RouterLink
+      to="/product-detail"
+      class="product-item"
+    >
       <img src="/src/assets/image/Product/product-knife.png" />
       <div class="product-name">不鏽鋼奶油刀</div>
       <div class="product-desc">適用於抹醬、攪拌、刮取</div>
       <div class="product-price">$29</div>
-    </div>
+    </RouterLink>
 
-    <div class="product-item">
+    <RouterLink
+      to="/product-detail"
+      class="product-item"
+    >
       <img src="/src/assets/image/Product/product-fish.png" />
       <div class="product-name">魚鱗刮刀</div>
       <div class="product-desc">用於刮除魚鱗</div>
       <div class="product-price">$29</div>
-    </div>
+    </RouterLink>
 
-    <div class="product-item">
+    <RouterLink
+      to="/product-detail"
+      class="product-item"
+    >
       <img src="/src/assets/image/Product/product-chopsticks.png" />
       <div class="product-name">日式和風筷架</div>
       <div class="product-desc">好筷架 不用嗎</div>
       <div class="product-price">$29</div>
-    </div>
+    </RouterLink>
 
-    <div class="product-item">
+    <RouterLink
+      to="/product-detail"
+      class="product-item"
+    >
       <img src="/src/assets/image/Product/product-pot.png" />
       <div class="product-name">韓式雪平鍋 18cm</div>
       <div class="product-desc">可用電磁爐、熱牛奶、煮醬汁、煮粥</div>
       <div class="product-price">$29</div>
-    </div>
+    </RouterLink>
 
-    <div class="product-item">
+    <RouterLink
+      to="/product-detail"
+      class="product-item"
+    >
       <img src="/src/assets/image/Product/product-grind.png" />
       <div class="product-name">刨絲器 / 磨泥器</div>
       <div class="product-desc">用於刨削食材成絲或碎屑</div>
       <div class="product-price">$29</div>
-    </div>
+    </RouterLink>
 
-    <div class="product-item">
+    <RouterLink
+      to="/product-detail"
+      class="product-item"
+    >
       <img src="/src/assets/image/Product/product-spoon.png" />
       <div class="product-name">量匙</div>
       <div class="product-desc">用於精準測量少量食材容量</div>
       <div class="product-price">$29</div>
-    </div>
+    </RouterLink>
   </div>
 
   <div class="section-title">
@@ -100,51 +118,69 @@
   </div>
 
   <div class="product-list">
-    <div class="product-item">
+    <RouterLink
+      to="/product-detail"
+      class="product-item"
+    >
       <img src="/src/assets/image/Product/product-spatula.png" />
       <div class="product-name">不鏽鋼鍋鏟</div>
       <div class="product-desc">用於翻炒食物、盛裝菜餚</div>
       <div class="product-price">$29</div>
-    </div>
+    </RouterLink>
 
-    <div class="product-item">
+    <RouterLink
+      to="/product-detail"
+      class="product-item"
+    >
       <img src="/src/assets/image/Product/products-beater.png" />
       <div class="product-name">不鏽鋼打蛋器</div>
       <div class="product-desc">用於攪拌雞蛋、麵糊、醬汁或打發奶油</div>
       <div class="product-price">$29</div>
-    </div>
+    </RouterLink>
 
-    <div class="product-item">
+    <RouterLink
+      to="/product-detail"
+      class="product-item"
+    >
       <img src="/src/assets/image/Product/product-spoon2.png" />
       <div class="product-name">湯勺</div>
       <div class="product-desc">用於盛裝湯品、粥類、醬汁或其他液體食物</div>
       <div class="product-price">$29</div>
-    </div>
+    </RouterLink>
 
-    <div class="product-item">
+    <RouterLink
+      to="/product-detail"
+      class="product-item"
+    >
       <img src="/src/assets/image/Product/products-stick.png" />
       <div class="product-name">擀麵棍</div>
       <div class="product-desc">用於將麵團、派皮等擀平</div>
       <div class="product-price">$29</div>
-    </div>
+    </RouterLink>
 
-    <div class="product-item">
+    <RouterLink
+      to="/product-detail"
+      class="product-item"
+    >
       <img src="/src/assets/image/Product/product-clip.png" />
       <div class="product-name">不鏽鋼夾子</div>
       <div class="product-desc">用於夾取、翻動或移動食物</div>
       <div class="product-price">$29</div>
-    </div>
+    </RouterLink>
 
-    <div class="product-item">
+    <RouterLink
+      to="/product-detail"
+      class="product-item"
+    >
       <img src="/src/assets/image/Product/product-peel.png" />
       <div class="product-name">削皮器</div>
       <div class="product-desc">用於去除水果和蔬菜的表皮</div>
       <div class="product-price">$29</div>
-    </div>
+    </RouterLink>
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
   .search-bar {
     display: flex;
     align-items: center;
@@ -254,6 +290,7 @@
   .product-item {
     text-align: left;
     font-family: Arial, sans-serif;
+    text-decoration: none;
   }
 
   .product-item img {
@@ -265,19 +302,20 @@
   .product-name {
     margin-top: 10px;
     font-size: 16px;
+    color: color(text, dark);
     font-weight: bold;
   }
 
   .product-desc {
     font-size: 14px;
-    color: #666;
+    color: color(text, base);
     margin-top: 4px;
   }
 
   .product-price {
     font-size: 16px;
     font-weight: bold;
-    color: #333;
+    color: color(text, dark);
     margin-top: 8px;
   }
 

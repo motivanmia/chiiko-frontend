@@ -46,8 +46,8 @@
   #HomeSchool {
     margin-top: 150px;
     margin-bottom: 200px;
-    @include rwdmax(768){
-      margin-top:110px;
+    @include rwdmax(768) {
+      margin-top: 110px;
       margin-bottom: 150px;
     }
   }
@@ -61,6 +61,9 @@
       font-style: normal;
       line-height: normal;
       letter-spacing: 2px;
+      @include rwdmax(768) {
+        @include font-size(18);
+      }
     }
   }
   .school {
@@ -152,7 +155,7 @@
   .SeeMoreButton {
     margin: auto;
     transform: scale(1.5);
-    @include rwdmax(768){
+    @include rwdmax(768) {
       transform: scale(1);
     }
   }
