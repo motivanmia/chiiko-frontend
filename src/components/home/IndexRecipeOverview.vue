@@ -45,7 +45,7 @@
   .recipe-category {
     display: flex;
     flex-direction: column;
-    margin: 0 auto 100px; //暫時設定
+    margin: 0 auto; //暫時設定
 
     &__section {
       margin-bottom: 50px;
