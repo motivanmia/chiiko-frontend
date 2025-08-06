@@ -65,6 +65,9 @@
     display: flex;
     flex-wrap: wrap;
     padding: 30px;
+    @include rwdmax(768) {
+      padding: 10px;
+    }
     &__card {
       width: 900px;
       max-width: 900px;
@@ -74,8 +77,10 @@
       background: rgba(70, 110, 38, 0.6);
       display: flex;
       filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
-      @include rwdmax(1050) {
+      @include rwdmax(768) {
         height: 150px;
+        margin: 15px 0;
+        height: 100px;
       }
 
       &:nth-of-type(2) {
@@ -91,6 +96,9 @@
       aspect-ratio: 1 / 1;
       position: relative;
       margin: 0 30px;
+      @include rwdmax(768) {
+        margin: 0;
+      }
 
       & > img {
         height: 100%;
@@ -109,8 +117,8 @@
         line-height: normal;
         letter-spacing: 8px;
         @include rwdmax(768) {
-          font-size: 24px;
-          top: -45px;
+          font-size: 20px;
+          top: -35px;
         }
       }
     }
@@ -118,6 +126,7 @@
     &__text {
       flex-grow: 1;
       margin: auto 5.2vw;
+
       * {
         display: inline-block;
         max-width: 400px;
@@ -127,6 +136,10 @@
         font-weight: 400;
         line-height: normal;
         letter-spacing: 2px;
+        @include rwdmax(768) {
+          font-size: 16px;
+          top: -45px;
+        }
       }
     }
   }
