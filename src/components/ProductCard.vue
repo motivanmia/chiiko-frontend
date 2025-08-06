@@ -68,11 +68,10 @@
   /* ====================================================== */
   .related-products-wrapper {
     max-width: 1210px;
-    margin: 60px auto;
-    padding: 40px;
+    padding: 40px 100px 40px 100px;
     background-color: #fff;
     border: 1px solid #e0e0e0;
-    border-radius: 24px;
+    border-radius: 20px;
   }
   .section-title {
     text-align: center;
