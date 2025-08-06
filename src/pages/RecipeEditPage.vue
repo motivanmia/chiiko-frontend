@@ -19,13 +19,9 @@
           v-model="form.title"
           :maxLength="15"
           :warning="titleWarning"
-        >
-          <input
-            v-model="form.title"
-            placeholder="例：香煎豆腐卷（最多15字）"
-            maxlength="15"
-          />
-        </FormField>
+          :placeholder-desktop="'例：香煎豆腐卷（最多15字）'"
+          :placeholder-mobile="'例：三色豆（15字內）'"
+        />
         <FormField
           label="簡介"
           v-model="form.description"
@@ -244,5 +240,9 @@
       width: 100%; /* 讓 flexbox 自動計算寬度 */
       font-size: 24px;
     }
+  }
+
+  .back-button {
+    text-decoration: none; /* 去掉底線 */
   }
 </style>

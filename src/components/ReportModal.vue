@@ -434,4 +434,73 @@
     border: 1px solid #e7e7e7;
     transition: 0.2s ease;
   }
+
+  @media (max-width: 768px) {
+    /* 1. 讓燈箱內容區塊變成全螢幕 */
+    .modal-content {
+      width: 100vw; /* 寬度佔滿整個視窗寬 */
+      height: 100vh; /* 高度佔滿整個視窗高 */
+      border-radius: 0; /* 移除圓角，使其看起來像一個完整的頁面 */
+      padding: 60px 24px 24px 24px; /* 調整內距：頂部多留空間給關閉按鈕，左右和底部縮小 */
+
+      /* 關鍵：讓內容可以滾動 */
+      overflow-y: auto; /* 當內容超過螢幕高度時，顯示垂直滾動條 */
+      -webkit-overflow-scrolling: touch; /* 在 iOS 上提供更流暢的滾動體驗 */
+    }
+
+    /* 2. 重新定位右上角的「X」關閉按鈕 */
+    .modal-container {
+      /* 在手機上，讓容器也變成全螢幕，確保定位基準正確 */
+      width: 100%;
+      height: 100%;
+    }
+
+    .close-btn {
+      /* 因為背景變成了全螢幕，我們不再需要用 transform 去「推出」角落 */
+      /* 讓它直接定位在右上角，並保留一些邊距 */
+      top: 16px;
+      right: 16px;
+      transform: none; /* 移除 transform，讓定位更直接 */
+
+      /* 可以稍微縮小按鈕尺寸以適應手機介面 */
+      width: 40px;
+      height: 40px;
+    }
+
+    /* 3. 調整內部元素的字體大小和間距 */
+    h2 {
+      font-size: 22px; /* 縮小標題字體 */
+      margin-bottom: 32px; /* 縮小與下方內容的間距 */
+    }
+
+    .options-list {
+      gap: 32px; /* 縮小選項之間的間距 */
+    }
+
+    .option-text strong {
+      font-size: 18px; /* 縮小選項標題字體 */
+    }
+
+    .option-text p {
+      font-size: 14px; /* 縮小選項描述字體 */
+      letter-spacing: 1.5px; /* 縮小字元間距 */
+    }
+
+    .custom-radio {
+      width: 28px; /* 稍微縮小 radio 按鈕 */
+      height: 28px;
+    }
+
+    /* 4. 調整提交按鈕的樣式 */
+    .submit-btn {
+      width: 100%; /* 讓按鈕寬度佔滿 */
+      font-size: 16px;
+      padding: 16px 20px; /* 增加按鈕的垂直內距，使其更容易點擊 */
+
+      /* 在手機上，讓提交按鈕「固定在底部」 */
+      position: sticky; /* 使用黏性定位 */
+      bottom: 24px; /* 距離底部 24px */
+      margin-top: 48px; /* 與上方內容的間距 */
+    }
+  }
 </style>

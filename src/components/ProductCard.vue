@@ -38,11 +38,15 @@
 
 <script setup>
   import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
   import SeeMoreButton from '@/components/button/SeeMoreButton.vue';
+
   import frying_pan from '@/assets/image/NewRecipes/frying_pan.png';
   import wooden_handle_knife from '@/assets/image/NewRecipes/wooden_handle_knife.png';
   import cutting_board from '@/assets/image/NewRecipes/cutting_board.png';
   import stainless_frying_pan from '@/assets/image/NewRecipes/stainless_frying_pan.png';
+
+  const router = useRouter();
 
   const relatedProducts = ref([
     { id: 1, name: '平底鍋', image: frying_pan },
@@ -51,17 +55,17 @@
     { id: 4, name: '不鏽鋼平底鍋', image: stainless_frying_pan },
   ]);
 
-  function goToProductPage(productId) {
-    alert(`（模擬跳轉）前往商品 ID: ${productId} 的頁面...`);
+  function goToProductPage() {
+    router.push('/product-detail'); // ✅ 點商品卡 → 詳情（購買頁）
   }
 
   function goToMoreProducts() {
-    alert('（模擬跳轉）前往「更多好物」的列表頁...');
+    router.push('/product'); // ✅ 點「看更多好物」→ 總覽（瀏覽頁）
   }
 </script>
 
 <!-- ──────────────────────────────────────────────────────────────────────── -->
-<!-- 在 ProductCard.vue 中 -->
+
 <style scoped>
   /* ====================================================== */
   /*                      預設樣式 (大螢幕)                   */

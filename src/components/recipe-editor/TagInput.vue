@@ -18,7 +18,7 @@
             v-model="newTag"
             @keydown.enter.prevent="addTag"
             @keydown.backspace="handleBackspace"
-            placeholder="按下 Enter 新增標籤，每個標籤限6字"
+            :placeholder="dynamicPlaceholder"
             class="tag-input"
             maxlength="6"
           />
@@ -28,18 +28,24 @@
     </div>
   </div>
 </template>
+
 <script setup>
-  import { ref, watch } from 'vue';
+  // ✨ 修改點：從 vue 引入更多需要的方法
+  import { ref, watch, computed, onMounted, onUnmounted } from 'vue';
+
+  // --- 您原有的程式碼 (完全保留) ---
   const props = defineProps({ modelValue: Array });
   const emit = defineEmits(['update:modelValue']);
   const newTag = ref('');
   const tags = ref(props.modelValue);
+
   watch(
     () => props.modelValue,
     (newValue) => {
       tags.value = newValue;
     },
   );
+
   const addTag = () => {
     const tag = newTag.value.trim();
     if (tags.value.length >= 3) {
@@ -52,14 +58,48 @@
       newTag.value = '';
     }
   };
+
   const handleBackspace = () => {
     if (newTag.value === '' && tags.value.length > 0) {
       const newTags = tags.value.slice(0, -1);
       emit('update:modelValue', newTags);
     }
   };
+
+  // --- ✨ 新增的 RWD placeholder 邏輯 ---
+
+  // 1. 建立一個 ref 來儲存當前視窗寬度
+  const windowWidth = ref(window.innerWidth);
+
+  // 2. 建立一個 computed 屬性，根據視窗寬度決定 placeholder 文字
+  const dynamicPlaceholder = computed(() => {
+    if (windowWidth.value <= 768) {
+      // 手機版 (RWD) 顯示的文字
+      return '按下輸入，每個標籤限6字';
+    } else {
+      // 桌面版顯示的文字
+      return '按下 Enter 新增標籤，每個標籤限6字';
+    }
+  });
+
+  // 3. 定義一個更新視窗寬度的方法
+  const handleResize = () => {
+    windowWidth.value = window.innerWidth;
+  };
+
+  // 4. 在元件掛載時，新增 resize 事件監聽
+  onMounted(() => {
+    window.addEventListener('resize', handleResize);
+  });
+
+  // 5. 在元件卸載時，移除監聽，避免記憶體洩漏
+  onUnmounted(() => {
+    window.removeEventListener('resize', handleResize);
+  });
 </script>
+
 <style lang="scss" scoped>
+  /* 您的 CSS 樣式完全不需要修改 */
   .form-section {
     width: 800px;
     margin: 0 auto 45px;

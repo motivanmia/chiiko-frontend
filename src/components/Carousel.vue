@@ -314,8 +314,8 @@
     // --- 1. 設定基礎狀態 (加入 transition) ---
     // 讓 transform 和 box-shadow 的變化都有 0.3 秒的平滑過渡動畫
     transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
+      transform 0.5s ease,
+      box-shadow 0.5s ease;
     cursor: pointer; // 讓滑鼠移上去時顯示為「手形」指標
   }
 
