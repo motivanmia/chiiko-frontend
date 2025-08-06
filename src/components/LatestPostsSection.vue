@@ -2,7 +2,7 @@
   <div class="page-container">
     <header class="page-header">
       <!-- <h1>/最新投稿\</h1> -->
-      <title_el />
+      <title_el title="/最新投稿\"/>
     </header>
     <Carousel />
   </div>

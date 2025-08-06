@@ -15,7 +15,7 @@ const props = defineProps({
 });
 
 // 使用 defineEmits 宣告會發出的事件
-// 'update:modelValue' 是 v-model 約定好的事件名稱
+// 'update:modelValue' 是v-model的事件名稱
 // 'search' 是自訂的事件，用於通知父元件執行搜尋
 const emits = defineEmits(['update:modelValue', 'search']);
 
@@ -43,7 +43,7 @@ const search = () => {
   // 執行搜尋，發出 'search' 事件，讓父元件處理導航
   console.log('Searching for:', inputValue.value);
   emits('search', inputValue.value);
-};
+};  
 </script>
 
 <template>
@@ -53,9 +53,11 @@ const search = () => {
       v-model="inputValue"
       :placeholder="props.placeholder"
       class="search__input"
+
     />
     <button
       @click="search"
+
       class="search__btn"
     >
       <Icon
@@ -71,6 +73,7 @@ const search = () => {
     position: relative;
     width: 490px;
     margin: 0 auto;
+    padding: 10px;
     @include rwdmax(1440) {
       width: 400px;
     }
