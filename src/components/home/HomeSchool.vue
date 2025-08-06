@@ -8,7 +8,7 @@
 
   const namesToFind = ['胡蘿蔔', '蛤蜊', '南瓜'];
   const result = computed(() => ingredient.list.filter((item) => namesToFind.includes(item.name)));
-  console.log(result);
+  // console.log(result);
 </script>
 
 <template>
