@@ -105,6 +105,11 @@ const router = createRouter({
       component: () => import('@/pages/CartPage.vue'),
     },
     {
+      path: '/order-success',
+      name: 'order-success',
+      component: () => import('@/pages/OrderSuccessPage.vue'),
+    },
+    {
       path: '/solo',
       name: 'solo',
       component: () => import('@/pages/RecipeSolo.vue'),
