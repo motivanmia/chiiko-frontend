@@ -164,10 +164,13 @@
       margin-right: auto;
       padding-bottom: 30px;
       width: 80%;
-      height: 43%;
+      height: 50%;
       border-bottom: 2px solid black;
       display: flex;
       justify-content: space-between;
+      @include rwdmax(1440) {
+        height: 45%;
+      }
 
       @include rwdmax(768) {
         flex-wrap: wrap;
