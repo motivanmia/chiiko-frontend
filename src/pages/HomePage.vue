@@ -13,6 +13,8 @@
   import HomeSchool from '@/components/home/HomeSchool.vue';
   import HotSearch from '@/components/common/HotSearch.vue';
   import LatestPostsSection from '@/components/LatestPostsSection.vue'
+  import HomeProduct from '@/components/home/HomeProduct.vue'
+
 
   const router = useRouter();
   function handleShareRecipe() {
@@ -66,6 +68,8 @@
     <LatestPostsSection />
 
     <HomeSchool id="HomeSchool" />
+
+    <HomeProduct/>
 
     <ShareRecipeButton
       id="ShareRecipeButton"

@@ -76,6 +76,7 @@
       @media screen and (max-width: 768px) {
         gap: 50px;
         justify-content: center;
+        margin-top: 0;
       }
     }
     &__card {
