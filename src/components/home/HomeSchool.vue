@@ -133,5 +133,8 @@
   .SeeMoreButton {
     margin: auto;
     transform: scale(1.5);
+    @include rwdmax(768){
+      transform: scale(1);
+    }
   }
 </style>
