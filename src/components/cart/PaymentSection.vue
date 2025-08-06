@@ -1,5 +1,4 @@
 <script setup>
-  // import { computed } from 'vue';
   import { deliveryOptions, locationOptions, paymentOptions } from '@/constants/cartOption';
   import { useCartStore } from '@/stores/useCartStore';
   import { storeToRefs } from 'pinia';

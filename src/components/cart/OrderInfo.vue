@@ -1,6 +1,7 @@
 <script setup>
   import { useCartStore } from '@/stores/useCartStore';
   import { useRouter } from 'vue-router';
+  import { paymentOptions } from '@/constants/cartOption';
   import CancelButton from '../button/CancelButton.vue';
   import ConfirmButton from '../button/ConfirmButton.vue';
   const cart = useCartStore();
@@ -8,6 +9,11 @@
 
   const { submitOrder } = cart;
   const { recipient, payment } = submitOrder();
+
+  function getPaymentLabel(value) {
+    const option = paymentOptions.find((opt) => opt.value === value);
+    return option ? option.label : value;
+  }
 
   const goHome = () => {
     router.push({ path: '/home' });
@@ -35,7 +41,7 @@
           {{ recipient.postal }} {{ recipient.city }}{{ recipient.district }}{{ recipient.address }}
         </span>
         <div class="order-info__label">付款方式</div>
-        <span class="order-info__desc">{{ payment.paymentMethod }}</span>
+        <span class="order-info__desc">{{ getPaymentLabel(payment.paymentMethod) }}</span>
       </div>
 
       <div class="order-info__button-container">

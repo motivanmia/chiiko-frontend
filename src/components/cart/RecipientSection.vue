@@ -1,5 +1,4 @@
 <script setup>
-  import { watch } from 'vue';
   import { useCartStore } from '@/stores/useCartStore';
   import { storeToRefs } from 'pinia';
   import RecipientInfo from './RecipientInfo.vue';

@@ -7,9 +7,10 @@
   import OrderSummary from '@/components/cart/OrderSummary.vue';
 
   const cart = useCartStore();
-  const { setCurrentStep } = cart;
+  const { setCurrentStep, resetForms } = cart;
 
   setCurrentStep(1);
+  resetForms();
 </script>
 
 <template>

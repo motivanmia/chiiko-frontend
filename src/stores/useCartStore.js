@@ -12,21 +12,21 @@ export const useCartStore = defineStore('cart', () => {
       name: '不鏽鋼防夾刀',
       price: 200,
       quantity: 1,
-      image: new URL('../assets/image/footer/01.png', import.meta.url).href,
+      image: new URL('@/assets/image/footer/01.png', import.meta.url).href,
     },
     {
       id: 2,
       name: '魚鱗刮刀',
       price: 1350,
       quantity: 1,
-      image: new URL('../assets/image/footer/01.png', import.meta.url).href,
+      image: new URL('@/assets/image/footer/01.png', import.meta.url).href,
     },
     {
       id: 3,
       name: '日式長麵條板',
       price: 1150,
       quantity: 1,
-      image: new URL('../assets/image/footer/01.png', import.meta.url).href,
+      image: new URL('@/assets/image/footer/01.png', import.meta.url).href,
     },
   ]);
 
@@ -254,7 +254,7 @@ export const useCartStore = defineStore('cart', () => {
     };
 
     router.push({ path: '/order-success' });
-    console.log('提交訂單:', orderData);
+    // console.log('提交訂單:', orderData);
 
     // 這裡可以調用 API 提交訂單
     return orderData;
@@ -269,7 +269,7 @@ export const useCartStore = defineStore('cart', () => {
   const resetForms = () => {
     paymentForm.value = {
       delivery: 'home',
-      shippingFee: 'free',
+      location: 'mainIsland',
       paymentMethod: 'card',
       cardNumber: '',
       expMonth: '',
@@ -278,31 +278,23 @@ export const useCartStore = defineStore('cart', () => {
     };
 
     recipientForm.value = {
-      buyerName: '',
-      buyerPhone: '',
-      city: '桃園市',
-      district: '中壢區',
-      postal: '320',
-      address: '',
+      buyerName: '小胖子',
+      buyerPhone: '0912345678',
+      buyerCity: '桃園市',
+      buyerDistrict: '中壢區',
+      buyerPostal: '320',
+      buyerAddress: '復興路46號9樓',
       recipientName: '',
       recipientPhone: '',
-      recipientCity: '臺南市',
-      recipientDistrict: '歸仁區',
-      recipientPostal: '歸仁區',
+      recipientCity: '',
+      recipientDistrict: '',
+      recipientPostal: '',
       recipientAddress: '',
     };
 
-    sameAsRecipient.value = true;
+    sameAsRecipient.value = false;
     currentStep.value = 1;
   };
-
-  watch(
-    recipientForm,
-    (val) => {
-      console.log(val);
-    },
-    { deep: true, immediate: true },
-  );
 
   return {
     // 狀態
