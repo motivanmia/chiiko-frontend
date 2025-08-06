@@ -23,14 +23,14 @@ const { searchTerm, handleSearch } = useSearch();
 
 // import product from '@/pages/ProductContent.vue'
 
-import ProductPage from './ProductPage.vue';
+import Product from './Product.vue';
 
 </script>
 
 <template>
 
 <product/>
-<ProductPage/>
+
   <!-- <Banner/>
   <Category/>
   
