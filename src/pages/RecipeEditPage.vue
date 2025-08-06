@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <RouterLink
-      to="/home"
+      to="/"
       tag="button"
       class="back-button"
       @click="goBack"

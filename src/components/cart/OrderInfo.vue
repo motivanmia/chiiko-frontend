@@ -16,7 +16,7 @@
   }
 
   const goHome = () => {
-    router.push({ path: '/home' });
+    router.push({ path: '/' });
   };
 
   const goToOrder = () => {

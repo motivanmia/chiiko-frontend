@@ -166,7 +166,7 @@
     :class="{ 'hidden-up': isHamMenuOpen }"
   >
     <RouterLink
-      to="/home"
+      to="/"
       class="logo__link"
     >
       <img
@@ -374,7 +374,7 @@
     <nav class="ham__nav">
       <div class="ham__header">
         <RouterLink
-          to="/home"
+          to="/"
           class="logo__link"
         >
           <img

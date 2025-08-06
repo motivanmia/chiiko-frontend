@@ -14,11 +14,6 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      component: () => import('@/pages/Portal.vue'),
-      meta: { requiresLayout: false },
-    },
-    {
-      path: '/home',
       name: 'home',
       component: HomePage,
     },
