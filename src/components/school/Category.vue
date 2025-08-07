@@ -22,7 +22,13 @@
     () => route.query.category,
     (newVal, oldVal) => {
       category.value = newVal;
-      // console.log(category.value);
+
+      setTimeout(() => {
+        window.scrollTo({
+          top: 390,
+          behavior: 'smooth',
+        });
+      }, 100);
     },
   );
 
@@ -70,7 +76,7 @@
 
     &__buttons {
       width: 494px;
-      background-color: aqua;
+      // background-color: aqua;
       border-radius: 20px;
       text-align: center;
       position: relative;
