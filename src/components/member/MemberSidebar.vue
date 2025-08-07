@@ -243,16 +243,6 @@
       gap: 20px;
     }
     li a {
-      @include fontSet(
-        $font: $basic-font,
-        $fw: normal,
-        $size: px(24),
-        $color: color(text, dark),
-        $ls: 2.4px
-      );
-      @include rwdmax(1200) {
-        width: 100%;
-      }
       width: 240px;
       height: 47px;
       border: none;
@@ -264,6 +254,16 @@
       transition:
         background-color 0.2s ease,
         color 0.2s ease;
+      @include fontSet(
+        $font: $basic-font,
+        $fw: normal,
+        $size: px(24),
+        $color: color(text, dark),
+        $ls: 2.4px
+      );
+      @include rwdmax(1200) {
+        width: 100%;
+      }
     }
     li a:hover {
       color: color(button, main);
