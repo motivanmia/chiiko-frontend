@@ -108,6 +108,7 @@
     <SeeMore
       text="查看相關食譜"
       class="lightbox__seemore"
+      @click="ingredient.updateActive(null)"
     />
   </div>
   <div
