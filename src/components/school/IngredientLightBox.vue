@@ -96,7 +96,7 @@
       <h2>保存方法</h2>
       <p>{{ ingredient.active.preservation }}</p>
     </pre>
-    <!-- <div
+    <div
       class="lightbox__close"
       @click="ingredient.updateActive(null)"
     >
@@ -104,7 +104,7 @@
         icon-name="close"
         class="lightbox__close--icon"
       />
-    </div> -->
+    </div>
     <SeeMore
       text="查看相關食譜"
       class="lightbox__seemore"
@@ -261,12 +261,13 @@
       @include rwdmax(768) {
         display: inline-flex;
         width: 50%;
-        height: 50%;
+        height: unset;
+        row-gap: 10px;
       }
 
       &--box {
         width: 100%;
-        height: 25%;
+        height: 33%;
         display: flex;
       }
       &--item {
@@ -325,9 +326,17 @@
       }
       &--icon {
         font-size: 3.125vw;
+        @include rwdmax(768) {
+          font-size: 7vw;
+        }
       }
       @include rwdmax(1200) {
         font-size: 4vw;
+      }
+      @include rwdmax(768) {
+        right: 2.5vw;
+        top: 2.5vw;
+        background-color: unset;
       }
     }
     &__seemore {
