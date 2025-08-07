@@ -114,4 +114,13 @@
       padding: px(30) px(20);
     }
   }
+
+  @include rwdmax(768) {
+    .recipient-info {
+      &__header {
+        flex-direction: column;
+        row-gap: px(15);
+      }
+    }
+  }
 </style>

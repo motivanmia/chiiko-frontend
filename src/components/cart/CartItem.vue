@@ -124,8 +124,11 @@
     .cart-item {
       position: relative;
       grid-template-columns: px(95) 1fr;
+      // border-bottom: 1px solid #f0f0f0;
 
-      border-bottom: 1px solid #f0f0f0;
+      &:first-child &__remove {
+        top: px(10);
+      }
 
       &__info {
         @include flex($d: column, $jc: space-evenly, $ai: flex-start);
@@ -151,7 +154,7 @@
 
       &__remove {
         position: absolute;
-        top: 0;
+        top: px(30);
         right: 0;
         width: fit-content;
       }
