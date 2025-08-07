@@ -1,49 +1,56 @@
 <script setup>
-import Icon from './Icon.vue';
-import { defineProps, defineEmits, ref, watch } from 'vue';
+  import Icon from './Icon.vue';
+  import { defineProps, defineEmits, ref, watch } from 'vue';
 
-// 使用 defineProps 接收來自父元件的屬性
-const props = defineProps({
-  placeholder: {
-    type: String,
-    default: '想找什麼食譜？',
-  },
-  modelValue: {
-    type: String,
-    default: '',
-  },
-});
+  // 使用 defineProps 接收來自父元件的屬性
+  const props = defineProps({
+    placeholder: {
+      type: String,
+      default: '想找什麼食譜？',
+    },
+    modelValue: {
+      type: String,
+      default: '',
+    },
+  });
 
-// 使用 defineEmits 宣告會發出的事件
-// 'update:modelValue' 是v-model的事件名稱
-// 'search' 是自訂的事件，用於通知父元件執行搜尋
-const emits = defineEmits(['update:modelValue', 'search']);
+  // 使用 defineEmits 宣告會發出的事件
+  // 'update:modelValue' 是v-model的事件名稱
+  // 'search' 是自訂的事件，用於通知父元件執行搜尋
+  const emits = defineEmits(['update:modelValue', 'search']);
 
-// 將 inputValue 的初始值設定為 props.modelValue 的實際值
-const inputValue = ref(props.modelValue);
+  // 將 inputValue 的初始值設定為 props.modelValue 的實際值
+  const inputValue = ref(props.modelValue);
 
-// 監聽父元件傳入的 modelValue 變化，並同步到 inputValue
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (newValue !== inputValue.value) {
-      inputValue.value = newValue;
+  // 監聽父元件傳入的 modelValue 變化，並同步到 inputValue
+  watch(
+    () => props.modelValue,
+    (newValue) => {
+      if (newValue !== inputValue.value) {
+        inputValue.value = newValue;
+      }
+    },
+    { immediate: true },
+  );
+
+  // 監聽 inputValue 的改變，並發出事件給父元件
+  watch(inputValue, (newValue) => {
+    emits('update:modelValue', newValue);
+  });
+
+  // 搜尋按鈕的點擊事件處理函式
+  const search = () => {
+    // 執行搜尋，發出 'search' 事件，讓父元件處理導航
+    console.log('Searching for:', inputValue.value);
+    emits('search', inputValue.value);
+  };
+
+  //  Enter鍵事件
+  const handleKeyup = (event) => {
+    if (event.key === 'Enter') {
+      search();
     }
-  },
-  { immediate: true }
-);
-
-// 監聽 inputValue 的改變，並發出事件給父元件
-watch(inputValue, (newValue) => {
-  emits('update:modelValue', newValue);
-});
-
-// 搜尋按鈕的點擊事件處理函式
-const search = () => {
-  // 執行搜尋，發出 'search' 事件，讓父元件處理導航
-  console.log('Searching for:', inputValue.value);
-  emits('search', inputValue.value);
-};  
+  };
 </script>
 
 <template>
@@ -52,8 +59,8 @@ const search = () => {
       type="text"
       v-model="inputValue"
       :placeholder="props.placeholder"
+      @keyup="handleKeyup"
       class="search__input"
-
     />
     <button
       @click="search"
@@ -141,5 +148,4 @@ const search = () => {
     color: color(search, placeholder);
     @include font-size(35);
   }
-
 </style>
