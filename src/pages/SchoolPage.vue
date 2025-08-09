@@ -63,12 +63,16 @@
   .fade-leave-from {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
-
-    .search-container {
-      margin-top: 80px;
-      @include rwdmax(768) {
-        margin-top: 30px;
-      }
+  }
+  .search-container {
+    margin-top: 80px;
+    @include rwdmax(768) {
+      margin-top: 30px;
     }
+  }
+  .search-container > * {
+    width: 100%; // 讓子元素的寬度都佔父容器的 60%
+    max-width: 800px; // 避免在寬螢幕下過長
+    box-sizing: border-box;
   }
 </style>
