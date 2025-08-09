@@ -31,9 +31,12 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    margin: 30px auto 0 auto;
+    margin: 0 auto;
     flex-wrap: wrap;
-    gap: 40px;
+    gap: 20px;
+    @include rwdmax(768) {
+      gap: 10px;
+    }
   }
 
   .category-box {
@@ -41,7 +44,7 @@
 
     &__button {
       border-radius: 20px;
-      width: 270px;
+      width: 285px;
       height: 80px; //暫時先寫
       font-size: 24px;
       letter-spacing: 1.2px;
@@ -53,7 +56,7 @@
       background: transparent;
       position: relative;
 
-      @media (max-width: 768px) {
+      @include rwdmax(768) {
         width: 173px;
         height: 65px;
       }
@@ -98,6 +101,9 @@
       font-size: 24px;
       font-weight: bold;
       white-space: nowrap;
+      @include rwdmax(768) {
+        font-size: 20px;
+      }
     }
 
     &:hover {

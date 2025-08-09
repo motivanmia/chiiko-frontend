@@ -33,6 +33,7 @@
     padding: 0 10px;
     @include rwdmax(768) {
       height: 180px;
+      margin-bottom: 30px;
     }
 
     & > img {

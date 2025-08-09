@@ -69,10 +69,13 @@
     max-width: 1000px;
     width: 100%;
     height: 80px;
-    margin: 50px auto;
+    margin: 0 auto;
     justify-content: space-around;
-    gap: 10px;
+    gap: 20px;
     padding: 0 10px;
+    @include rwdmax(768) {
+      gap: 10px;
+    }
 
     &__buttons {
       width: 494px;
@@ -82,6 +85,10 @@
       position: relative;
       overflow: hidden;
       cursor: pointer;
+      @include rwdmax(768) {
+        width: 173px;
+        height: 65px;
+      }
 
       & > h2 {
         position: absolute;
@@ -96,6 +103,9 @@
         font-weight: larger;
         white-space: nowrap;
         font-weight: 700;
+        @include rwdmax(768) {
+          font-size: 20px;
+        }
       }
     }
     &__img {
