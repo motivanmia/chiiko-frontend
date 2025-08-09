@@ -1,6 +1,6 @@
 <script setup>
   import { categoryName } from '@/constants/recipeCategory';
-import { RouterLink } from 'vue-router';
+  import { RouterLink } from 'vue-router';
 </script>
 
 <template>
@@ -8,8 +8,8 @@ import { RouterLink } from 'vue-router';
     <RouterLink
       v-for="buttons in categoryName"
       :key="buttons.id"
-      :to="{ 
-        name: 'solo', // 導向'solo' 
+      :to="{
+        name: 'solo', // 導向'solo'
       }"
       class="category-box"
     >
@@ -24,7 +24,6 @@ import { RouterLink } from 'vue-router';
     </RouterLink>
   </div>
 </template>
-
 
 <style lang="scss" scoped>
   .category {
@@ -54,11 +53,10 @@ import { RouterLink } from 'vue-router';
       background: transparent;
       position: relative;
 
-        @media (max-width: 768px) {
-          width: 173px;
-          height: 65px;
-          
-        }
+      @media (max-width: 768px) {
+        width: 173px;
+        height: 65px;
+      }
 
       &:hover {
       }
@@ -67,22 +65,24 @@ import { RouterLink } from 'vue-router';
         width: 100%;
         height: 100%; // 確保圖片填滿按鈕
         object-fit: cover; // 讓圖片填滿空間但不變形
-      transition: filter 0.3s ease, transform 0.3s ease;
-      // ✅ 預設狀態就是模糊的
-      filter: blur(5px); 
-      transform: scale(1); // 預設沒有縮放
+        transition:
+          filter 0.3s ease,
+          transform 0.3s ease;
+        // ✅ 預設狀態就是模糊的
+        filter: blur(5px);
+        transform: scale(1); // 預設沒有縮放
       }
 
-      &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.1); // 預設透明
-      transition: background-color 0.3s ease; // 過渡效果
-      z-index: 1;
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.1); // 預設透明
+        transition: background-color 0.3s ease; // 過渡效果
+        z-index: 1;
       }
     }
 
@@ -96,7 +96,7 @@ import { RouterLink } from 'vue-router';
       color: color(text, light);
       text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
       font-size: 24px;
-      font-weight: larger;
+      font-weight: bold;
       white-space: nowrap;
     }
 
@@ -104,16 +104,12 @@ import { RouterLink } from 'vue-router';
       // 給圖片移除模糊效果
       img {
         filter: blur(0px); // 變清晰
-        transform: scale(1.05); 
+        transform: scale(1.05);
       }
-      
+
       &::after {
         background-color: rgba(0, 0, 0, 0); // 變成完全透明
       }
     }
   }
-
-
-
-  
 </style>

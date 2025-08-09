@@ -23,30 +23,39 @@
 
 <style lang="scss" scoped>
   .banner-box {
+    margin: 0 auto 50px;
     border-radius: 20px;
     position: relative;
     width: 100%;
-    height: auto;
+    height: 300px;
     display: flex;
     justify-content: center;
+    padding: 0 10px;
+    @include rwdmax(768) {
+      height: 180px;
+    }
 
     & > img {
+      border-radius: 20px;
       max-width: 1200px;
       width: 100%;
       height: auto;
+      object-fit: cover;
     }
     & > h2 {
       font-size: 40px;
       letter-spacing: 1.2px;
       color: color(text, light);
       position: absolute;
-      bottom: 5%;
+      bottom: 10%;
       left: 50%;
       transform: translateX(-50%);
-        
-        @media screen and (max-width:768px){
-          font-size: 28px; 
-        }
+      font-weight: bold;
+      letter-spacing: 8px;
+
+      @include rwdmax(768) {
+        @include font-size(28);
+      }
     }
   }
 </style>

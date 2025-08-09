@@ -31,6 +31,9 @@
     display: flex;
     justify-content: center;
     padding: 0 10px;
+    @include rwdmax(768) {
+      height: 180px;
+    }
 
     & > img {
       border-radius: 20px;
@@ -44,11 +47,15 @@
       letter-spacing: 1.2px;
       color: color(text, light);
       position: absolute;
-      bottom: 5%;
+      bottom: 10%;
       left: 50%;
       transform: translateX(-50%);
-      font-weight: 700;
+      font-weight: bold;
       letter-spacing: 8px;
+
+      @include rwdmax(768) {
+        @include font-size(28);
+      }
     }
   }
 </style>

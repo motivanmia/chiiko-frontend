@@ -185,19 +185,20 @@
             v-for="item in navLinks"
             :key="item.key"
             class="nav__item"
-            @mouseover="handleMouseOver(item.key)"
             @mouseleave="handleMouseLeave()"
           >
-            <div
+            <RouterLink
+              :to="item.path"
               v-if="item.isOpen"
               class="nav__link"
+              @mouseover="handleMouseOver(item.key)"
             >
               {{ item.title }}
               <Icon
                 icon-name="downA"
                 class="nav__arrow"
               />
-            </div>
+            </RouterLink>
             <RouterLink
               v-else
               :to="item.path"
@@ -254,13 +255,13 @@
       <div class="actions">
         <div
           class="actions__member"
-          @mouseover="handleMouseOver('member')"
           @mouseleave="handleMouseLeave()"
         >
           <span class="actions__item">
             <Icon
               icon-name="member"
               class="actions__icon"
+              @mouseover="handleMouseOver('member')"
             />
           </span>
           <!-- 會員子選單 -->
@@ -660,13 +661,23 @@
     }
     .nav__arrow {
       @include font-size(30);
+      color: color(text, dark);
       @include rwdmax(1440) {
         @include font-size(20);
+        color: color(text, dark);
       }
     }
   }
   .nav__link:hover {
     color: color(button, main);
+    .nav__arrow {
+      @include font-size(30);
+      color: color(button, main);
+      @include rwdmax(1440) {
+        @include font-size(20);
+        color: color(button, main);
+      }
+    }
   }
 
   //子選單
@@ -1072,6 +1083,7 @@
     cursor: pointer;
     padding: 15px;
     flex-shrink: 0;
+    color: color(text, dark);
     .ham__arrow {
       display: block;
       @include font-size(30);

@@ -83,7 +83,7 @@
 
 <style lang="scss" scoped>
   .banner__container {
-    height: 950px;
+    height: 100vh;
     overflow: hidden;
     position: relative;
     img {
@@ -98,14 +98,8 @@
         object-position: px(-220);
       }
     }
-    @include rwdmax(1440) {
-      height: 625px;
-    }
-    @include rwdmax(1200) {
-      height: 600px;
-    }
     @include rwdmax(768) {
-      height: 600px;
+      height: 85vh;
     }
   }
   .scoll-down {
