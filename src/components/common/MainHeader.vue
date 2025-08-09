@@ -3,6 +3,7 @@
   import Icon from '@/components/common/Icon.vue';
   import LoginModal from '@/components/user/Login.vue';
   import SigninModal from '@/components/user/signin.vue';
+  import ForgetPswModal from '@/components/user/ForgetPsw.vue';
 
   // nav選單項目
   const navLinks = ref([
@@ -122,6 +123,7 @@
   const ModalComponents = {
     login: LoginModal,
     signin: SigninModal,
+    forgetpsw:ForgetPswModal,
   };
   const currentModalComponent = computed(() => {
     return activeModal.value ? ModalComponents[activeModal.value] : null;
@@ -490,6 +492,7 @@
         @login-success="loginSuccess"
         @switch-to-signin="openModal('signin')"
         @switch-to-login="openModal('login')"
+        @switch-to-forgetpsw="openModal('forgetpsw')"
       />
     </transition>
   </teleport>
