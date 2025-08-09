@@ -25,10 +25,10 @@
 
       setTimeout(() => {
         window.scrollTo({
-          top: 390,
+          top: 392,
           behavior: 'smooth',
         });
-      }, 100);
+      }, 0);
     },
   );
 
