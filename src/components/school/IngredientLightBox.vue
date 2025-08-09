@@ -4,27 +4,12 @@
 
   import Icon from '@/components/common/Icon.vue';
   import SeeMore from '@/components/button/SeeMoreButton.vue';
-  import { computed, watch, onMounted } from 'vue';
-  // watch(
-  //   active, // 這裡的 ingredient.active 已經是 ref
-  //   (val) => {
-  //     console.log(val);
-  //     if (val) {
-  //       document.body.style.overflow = 'hidden';
-  //       document.documentElement.style.overflow = 'hidden';
-  //     } else {
-  //       document.body.style.overflow = '';
-  //       document.documentElement.style.overflow = '';
-  //     }
-  //   },
-  //   { immediate: true, deep: true },
-  // );
 </script>
 
 <template>
   <div
-    class="lightbox"
     v-if="ingredient.active"
+    :class="['lightbox', { 'lightbox-active': ingredient.active }]"
   >
     <div class="lightbox__name">
       <h1>{{ ingredient.active.name }}</h1>
@@ -101,7 +86,7 @@
       @click="ingredient.updateActive(null)"
     >
       <Icon
-        icon-name="close"
+        icon-name="remove"
         class="lightbox__close--icon"
       />
     </div>
@@ -112,6 +97,7 @@
     />
   </div>
   <div
+    v-if="ingredient.active"
     class="overlay"
     @click="ingredient.updateActive(null)"
   ></div>
@@ -128,6 +114,11 @@
     left: 50%;
     transform: translate(-50%, -50%);
     border-radius: 20px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    &-active {
+      opacity: 1;
+    }
     @include rwdmax(1200) {
       width: 80%;
       height: 80%;
@@ -308,7 +299,6 @@
         }
       }
     }
-
     &__close {
       background-color: color(button, main);
       border-radius: 50%;
@@ -321,14 +311,18 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      color: color(text, light);
+      &:hover {
+        background-color: #d6b59c;
+      }
       @include rwdmax(1200) {
         height: 4vw;
         width: 4vw;
       }
       &--icon {
-        font-size: 3.125vw;
+        font-size: 2vw;
         @include rwdmax(768) {
-          font-size: 7vw;
+          font-size: 5vw;
         }
       }
       @include rwdmax(1200) {
@@ -338,6 +332,7 @@
         right: 2.5vw;
         top: 2.5vw;
         background-color: unset;
+        color: unset;
       }
     }
     &__seemore {

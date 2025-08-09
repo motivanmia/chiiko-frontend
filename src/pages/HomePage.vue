@@ -1,7 +1,8 @@
 <script setup>
   import { ref } from 'vue';
   import { useSearch } from '@/constants/search';
-
+  import { useIngredientStore } from '@/stores/ingredient';
+  const ingredient = useIngredientStore();
   import SearchBar from '@/components/common/SearchBar.vue';
   import ShareRecipeButton from '@/components/button/ShareRecipeButton.vue';
   import delicious from '@/components/Delicious.vue';
@@ -12,17 +13,14 @@
   import { useRouter } from 'vue-router';
   import HomeSchool from '@/components/home/HomeSchool.vue';
   import HotSearch from '@/components/common/HotSearch.vue';
-  import LatestPostsSection from '@/components/LatestPostsSection.vue'
-  import HomeProduct from '@/components/home/HomeProduct.vue'
-
+  import LatestPostsSection from '@/components/LatestPostsSection.vue';
+  import HomeProduct from '@/components/home/HomeProduct.vue';
+  import IngredientLightBox from '@/components/school/IngredientLightBox.vue';
 
   const router = useRouter();
   function handleShareRecipe() {
     router.push('/recipe-edit');
   }
-
-
-
 
   // import ProductPage from './product/ProductPage.vue';
 
@@ -68,8 +66,9 @@
     <LatestPostsSection />
 
     <HomeSchool id="HomeSchool" />
+    <IngredientLightBox v-if="ingredient.active" />
 
-    <HomeProduct/>
+    <HomeProduct />
 
     <ShareRecipeButton
       id="ShareRecipeButton"

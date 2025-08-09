@@ -3,8 +3,14 @@
   import { ref, computed } from 'vue';
   import SeeMoreButton from '../button/SeeMoreButton.vue';
   import SectionTitle from '../SectionTitle.vue';
+  import { useRouter } from 'vue-router';
+  const router = useRouter();
   const ingredient = useIngredientStore();
   // console.log(ingredient.list[0]);
+  function handleCardClick(item) {
+    router.push({ path: '/school' });
+    ingredient.updateActive(item);
+  }
 
   const namesToFind = ['胡蘿蔔', '蛤蜊', '南瓜'];
   const result = computed(() => ingredient.list.filter((item) => namesToFind.includes(item.name)));
@@ -14,12 +20,13 @@
 <template>
   <div id="HomeSchool">
     <SectionTitle title="/食材學堂\" />
-    <div class="subtitle"><p>不知道怎麼挑選和保存嗎? 看看小百科吧!</p></div>
+    <div class="subtitle"><p>不知道怎麼挑選和保存嗎? 點卡片看看小百科吧!</p></div>
     <div class="school">
       <div
         class="school__card"
         v-for="item in result"
         :key="item.id"
+        @click="handleCardClick(item)"
       >
         <div class="school__imgbox">
           <img
@@ -86,6 +93,14 @@
       background: rgba(70, 110, 38, 0.6);
       display: flex;
       filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
+      cursor: pointer;
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); // 卡片 hover 陰影
+      }
       @include rwdmax(768) {
         height: 150px;
         margin: 15px 0;

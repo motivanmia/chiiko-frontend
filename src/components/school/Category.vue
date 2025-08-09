@@ -102,7 +102,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: blur(4px);
+      filter: blur(4px) brightness(0.7);
       transition: all 0.3s ease;
       &:hover {
         filter: blur(0px);

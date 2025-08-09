@@ -15,7 +15,7 @@
     <Category />
     <SearchBar placeholder="輸入想要了解的食材" />
     <IngredientsCards />
-    <IngredientLightBox v-if="ingredient.active" />
+    <IngredientLightBox v-show="ingredient.active" />
     <Pagination />
   </div>
 </template>
