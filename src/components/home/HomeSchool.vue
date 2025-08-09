@@ -8,8 +8,8 @@
   const ingredient = useIngredientStore();
   // console.log(ingredient.list[0]);
   function handleCardClick(item) {
-    router.push({ path: '/school' });
     ingredient.updateActive(item);
+    // router.push({ path: '/school' });
   }
 
   const namesToFind = ['胡蘿蔔', '蛤蜊', '南瓜'];
@@ -20,7 +20,7 @@
 <template>
   <div id="HomeSchool">
     <SectionTitle title="/食材學堂\" />
-    <div class="subtitle"><p>不知道怎麼挑選和保存嗎? 點卡片看看小百科吧!</p></div>
+    <div class="subtitle"><p>不知道怎麼挑選和保存嗎? 看看小百科吧!</p></div>
     <div class="school">
       <div
         class="school__card"

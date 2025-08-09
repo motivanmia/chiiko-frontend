@@ -78,9 +78,9 @@
       </div>
     </div>
     <pre class="lightbox__foot">
-      <h2>保存方法</h2>
-      <p>{{ ingredient.active.preservation }}</p>
-    </pre>
+        <h2>保存方法</h2>
+        <p>{{ ingredient.active.preservation }}</p>
+      </pre>
     <div
       class="lightbox__close"
       @click="ingredient.updateActive(null)"
@@ -96,11 +96,11 @@
       @click="ingredient.updateActive(null)"
     />
   </div>
-  <div
+  <!-- <div
     v-if="ingredient.active"
     class="overlay"
     @click="ingredient.updateActive(null)"
-  ></div>
+  ></div> -->
 </template>
 
 <style lang="scss" scoped>
@@ -114,11 +114,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     border-radius: 20px;
-    transition: all 0.3s ease;
-    opacity: 0;
-    &-active {
-      opacity: 1;
-    }
+
     @include rwdmax(1200) {
       width: 80%;
       height: 80%;

@@ -66,7 +66,17 @@
     <LatestPostsSection />
 
     <HomeSchool id="HomeSchool" />
-    <IngredientLightBox v-if="ingredient.active" />
+    <Transition name="fade">
+      <IngredientLightBox v-if="ingredient.active" />
+    </Transition>
+    <!-- <Transition name="fade"> -->
+    <div
+      v-if="ingredient.active"
+      class="overlay"
+      @click="ingredient.updateActive(null)"
+    ></div>
+    <!-- </Transition> -->
+    <Pagination />
 
     <HomeProduct />
 
@@ -172,5 +182,34 @@
       right: 0;
       bottom: 10px;
     }
+  }
+  .overlay {
+    position: fixed;
+    z-index: 998;
+    height: 150vh;
+    width: 150%;
+    opacity: 0.6;
+    background-color: black;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .fade-enter-active,
+  .fade-leave-active {
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+
+  .fade-enter-to,
+  .fade-leave-from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 </style>
