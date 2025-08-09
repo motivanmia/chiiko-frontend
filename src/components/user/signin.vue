@@ -280,7 +280,7 @@
         margin: 0;
         padding: clamp(18px, 1.56vw, 30px);
         overflow-y: scroll;
-        max-height: 95vh;
+        max-height: 70vh;
       }
       #close {
         background-color: color(button, main);

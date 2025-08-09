@@ -1,34 +1,6 @@
 <script setup>
   import InputField from '@/components/user/InputField.vue';
   import Icon from '@/components/common/Icon.vue';
-  import { ref } from 'vue';
-
-  const emit = defineEmits(['close', 'login-success']);
-
-  // 假帳號密碼
-  const FAKE_ACCOUNT = 'test123@1.1';
-  const FAKE_PASSWORD = 'test123';
-
-  const account = ref('');
-  const password = ref('');
-
-  // 控制 toast 顯示
-  // const showSuccess = ref(false);
-
-  const noSuccess = ref(false);
-
-  // 範例 login 函式：驗證是否與假帳密吻合
-  const login = () => {
-    if (account.value === FAKE_ACCOUNT && password.value === FAKE_PASSWORD) {
-      emit('login-success');
-      emit('close');
-    } else {
-      noSuccess.value = true;
-      setTimeout(() => {
-        noSuccess.value = false;
-      }, 1000);
-    }
-  };
 </script>
 
 <template>
@@ -43,58 +15,25 @@
           id="icon-remove"
         />
       </div>
-      <h1>會員登入</h1>
-      <form @submit.prevent="login">
+      <h1>忘記密碼</h1>
+      <p id="forget__massage">請輸入您的註冊電子郵件或手機號碼，<br>我們將會寄送『重新設定密碼』連結給您進行密碼設定。</p>
+      <form>
         <InputField
           v-model="account"
-          label="電子信箱"
-          placeholder="請輸入您的電子郵件地址"
+          label="註冊信箱"
+          placeholder="請輸入您註冊的電子郵件地址"
           class="account"
         />
-        <InputField
-          v-model="password"
-          label="密碼"
-          type="password"
-          placeholder="請輸入密碼"
-        />
-        <a
-          id="forget-password"
-          @click="$emit('switch-to-forgetpsw')"
-        >
-          忘記密碼
-        </a>
-
-        <button id="btn_login">登入</button>
+        <button id="btn_login">確認送出</button>
       </form>
 
-      <p>快速登入</p>
-      <div id="icon">
-        <a
-          href="#"
-          id="google"
-        >
-          <Icon icon-name="google" />
-        </a>
-        <a
-          href="#"
-          id="fb"
-        >
-          <Icon icon-name="fb" />
-        </a>
-        <a
-          href="#"
-          id="line"
-        >
-          <Icon icon-name="line" />
-        </a>
-      </div>
       <div id="signin">
-        <span>還沒有帳號嗎?</span>
+        <span>返回</span>
         <button
           id="go_signin"
-          @click="$emit('switch-to-signin')"
+          @click="$emit('switch-to-login')"
         >
-          點我註冊
+          會員登入
         </button>
       </div>
     </div>
@@ -135,7 +74,7 @@
       padding: px(30);
       position: relative;
       // min-width: 280px;
-      width: 30%;
+      width: 40%;
       @include rwdmax(1200) {
         width: 40%;
       }
@@ -170,6 +109,10 @@
           font-size: px(20);
         }
       }
+      #forget__massage {
+        font-size: 14px;
+        line-height: 1.5em;
+      }
       form {
         display: inline-block;
         font-size: px(20);
@@ -184,7 +127,6 @@
           margin-top: px(10);
           text-decoration: none;
           position: relative;
-          cursor: pointer;
 
           &::after {
             position: absolute;
@@ -210,7 +152,7 @@
           border: none;
           background-color: color(button, main);
           color: color(text, light);
-          margin-top: 10%;
+          margin-top: 50px;
           cursor: pointer;
           &:hover {
             background-color: #d6b59c;
@@ -247,7 +189,8 @@
       #signin {
         font-size: px(16);
         text-align: center;
-        
+        margin-top: 30px;
+
         #go_signin {
           color: color(text, dark);
           margin-left: px(20);

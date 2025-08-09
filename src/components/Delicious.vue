@@ -55,6 +55,9 @@
     font-family: Serif Tamil;
     font-style: italic;
     letter-spacing: 0.2em;
+    @include rwdmax(768) {
+      font-size: 40px;
+    }
   }
 
   @keyframes marquee {
