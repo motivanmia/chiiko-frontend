@@ -89,6 +89,12 @@
         width: 173px;
         height: 65px;
       }
+      &:hover {
+        .category__img {
+          filter: blur(0px);
+          transform: scale(1.05);
+        }
+      }
 
       & > h2 {
         position: absolute;
@@ -114,10 +120,7 @@
       object-fit: cover;
       filter: blur(4px) brightness(0.7);
       transition: all 0.3s ease;
-      &:hover {
-        filter: blur(0px);
-        transform: scale(1.05);
-      }
+
       &--active {
         filter: blur(0px);
         transform: scale(1.05);
