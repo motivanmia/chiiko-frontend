@@ -13,7 +13,9 @@
   <div>
     <Banner />
     <Category />
-    <SearchBar placeholder="輸入想要了解的食材" />
+    <div class="search-container">
+      <SearchBar placeholder="輸入想要了解的食材" />
+    </div>
     <IngredientsCards />
     <Transition name="fade">
       <IngredientLightBox v-if="ingredient.active" />
@@ -61,5 +63,12 @@
   .fade-leave-from {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+
+    .search-container {
+      margin-top: 80px;
+      @include rwdmax(768) {
+        margin-top: 30px;
+      }
+    }
   }
 </style>

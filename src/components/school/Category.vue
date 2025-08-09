@@ -68,7 +68,6 @@
     display: flex;
     max-width: 1000px;
     width: 100%;
-    height: 80px;
     margin: 0 auto;
     justify-content: space-around;
     gap: 20px;
@@ -79,6 +78,7 @@
 
     &__buttons {
       width: 494px;
+      height: 80px;
       // background-color: aqua;
       border-radius: 20px;
       text-align: center;

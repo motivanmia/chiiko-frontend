@@ -30,14 +30,14 @@
     align-items: center;
     gap: 5px;
     justify-content: center;
-    margin: 100px 0;
+    margin: 100px auto 0;
 
     & > button {
       background-color: white;
       width: 50px;
       height: 50px;
       border-radius: 25px;
-      border: 1px solid color(button,main);
+      border: 1px solid color(button, main);
       cursor: pointer;
       font-size: 20px;
     }
@@ -53,12 +53,12 @@
     .right {
       transform: rotate(180deg);
       font-size: 40px;
-      color:color(button,main);
+      color: color(button, main);
       cursor: pointer;
     }
     .left {
       font-size: 40px;
-      color:color(button,main);
+      color: color(button, main);
       cursor: pointer;
     }
   }

@@ -55,7 +55,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 100px;
+    margin-top: 80px;
+    @include rwdmax(768) {
+      margin-top: 30px;
+    }
   }
 
   .search-container > * {
@@ -65,7 +68,10 @@
   }
 
   .section {
-    margin: px(200) auto px(100);
+    margin: px(150) auto px(100);
+    @include rwdmax(768) {
+      margin: px(80) auto px(50);
+    }
   }
 
   .content-wrapper {

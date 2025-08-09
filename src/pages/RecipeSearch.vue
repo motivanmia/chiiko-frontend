@@ -18,26 +18,23 @@
 
   const currentSearchQuery = ref(route.query.q || '');
 
-const handleSearch = (query) => {
-  const newQuery = query.trim();
-  if (currentSearchQuery.value !== newQuery) {
-    router.push({
-      name: route.name,
-      query: { q: newQuery }
-    });
-  }
-};
-
+  const handleSearch = (query) => {
+    const newQuery = query.trim();
+    if (currentSearchQuery.value !== newQuery) {
+      router.push({
+        name: route.name,
+        query: { q: newQuery },
+      });
+    }
+  };
 
   const { searchTerm } = useSearch(currentSearchQuery.value);
 
   // 合併兩個模擬資料
   const allRecipes = ref([...soloMeal, ...popularRecipe]);
 
-
   const filteredRecipes = computed(() => {
     const query = currentSearchQuery.value;
-
 
     if (!query || query.trim() === '') {
       return allRecipes.value;
@@ -85,9 +82,7 @@ const handleSearch = (query) => {
   watch(
     filteredRecipes,
     (newRecipes) => {
-
-      nextTick(() => {
-      });
+      nextTick(() => {});
     },
     { deep: true },
   );
@@ -99,17 +94,12 @@ const handleSearch = (query) => {
     ];
   });
 
-
-
-// =======================================================
+  // =======================================================
 
   const goToPage = () => {
-
-  router.push('/recipe-detail');
-};
-// =======================================================
-
-
+    router.push('/recipe-detail');
+  };
+  // =======================================================
 </script>
 
 <template>
@@ -135,7 +125,6 @@ const handleSearch = (query) => {
       :items="breadcrumbItems"
     />
 
-
     <RecipeCardSolo
       class="solo"
       :recipes="filteredRecipes"
@@ -146,11 +135,10 @@ const handleSearch = (query) => {
     <div
       v-if="currentSearchQuery && filteredRecipes.length === 0"
       class="no-results"
-    >
-    </div>
+    ></div>
   </div>
 
-  <Pagination />
+  <!-- <Pagination /> -->
 </template>
 
 <style lang="scss" scoped>
@@ -158,7 +146,10 @@ const handleSearch = (query) => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 100px;
+    margin-top: 80px;
+    @include rwdmax(768) {
+      margin-top: 30px;
+    }
   }
 
   .search-container > * {
@@ -168,7 +159,10 @@ const handleSearch = (query) => {
   }
 
   .section {
-    margin: px(200) auto px(100);
+    margin: px(150) auto px(100);
+    @include rwdmax(768) {
+      margin: px(80) auto px(50);
+    }
   }
 
   .content-wrapper {
