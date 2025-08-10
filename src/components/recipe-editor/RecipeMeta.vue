@@ -101,7 +101,7 @@
     max-width: 100%;
     display: flex;
     /* ✨ 修改點：原本的 space-between 不再需要，改用 gap 控制間距 */
-    gap: 50px;
+    gap: 30px;
   }
 
   /* 為下拉選單的「父層容器」加上相對定位 */

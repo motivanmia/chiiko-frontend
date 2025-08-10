@@ -14,26 +14,28 @@
       <div class="form-content-wrapper">
         <h1 class="recipe-editor__title">編輯食譜</h1>
         <ImageUploader />
-        <FormField
+
+        <!-- ⭐️ 關鍵 1: 將 FormField 替換為【InputSingleline】 -->
+        <!-- 這個組件是固定高度、不換行的 -->
+        <InputSingleline
           label="輸入食譜名稱"
           v-model="form.title"
           :maxLength="15"
           :warning="titleWarning"
-          :placeholder-desktop="'例：香煎豆腐卷（最多15字）'"
-          :placeholder-mobile="'例：三色豆（15字內）'"
+          :placeholder="'例：香煎豆腐卷（最多15字）'"
         />
-        <FormField
+
+        <!-- ⭐️ 關鍵 2: 將 FormField 替換為【TextareaAutosize】 -->
+        <!-- 這個組件是可自動增高、會自動折行的，並且不再需要 slot -->
+        <TextareaAutosize
           label="簡介"
           v-model="form.description"
           :maxLength="40"
+          :initial-height="135"
           :warning="descriptionWarning"
-        >
-          <textarea
-            v-model="form.description"
-            placeholder="請輸入食譜描述（最多40字）"
-            maxlength="40"
-          ></textarea>
-        </FormField>
+          :placeholder="'請輸入食譜描述（最多40字）'"
+        />
+
         <TagInput v-model="form.tags" />
         <RecipeMeta
           v-model:category="form.category"
@@ -65,16 +67,25 @@
 </template>
 
 <script setup>
-  // 您的 script 內容完全不需要修改
   import { reactive, computed } from 'vue';
+  import { useRouter } from 'vue-router';
   import Icon from '@/components/common/Icon.vue';
   import BaseButton from '@/components/common/BaseButton.vue';
   import ImageUploader from '@/components/recipe-editor/ImageUploader.vue';
-  import FormField from '@/components/recipe-editor/FormField.vue';
   import TagInput from '@/components/recipe-editor/TagInput.vue';
   import RecipeMeta from '@/components/recipe-editor/RecipeMeta.vue';
   import IngredientsManager from '@/components/recipe-editor/IngredientsManager.vue';
   import StepsManager from '@/components/recipe-editor/StepsManager.vue';
+
+  // ⭐️ 關鍵 3: 引入兩個全新的、獨立的組件，並移除舊的 FormField
+  import InputSingleline from '@/components/recipe-editor/InputSingleline.vue';
+  import TextareaAutosize from '@/components/recipe-editor/TextareaAutosize.vue';
+
+  // --- 以下您的 Script 邏輯完全不需要修改 ---
+
+  const router = useRouter();
+  const goBack = () => router.back();
+
   const form = reactive({
     title: '',
     description: '',
@@ -85,11 +96,15 @@
     ingredients: [{ name: '', amount: '' }],
     steps: [''],
   });
+
   const titleWarning = computed(() => (form.title.length > 15 ? '標題不能超過 15 字喔！' : ''));
+
   const descriptionWarning = computed(() =>
     form.description.length > 40 ? '內文太長囉，麻煩請幫我濃縮在40字以內！' : '',
   );
+
   const saveDraft = () => alert('草稿已儲存');
+
   const publishRecipe = () => {
     const errors = [];
     if (!form.title.trim()) {
@@ -116,17 +131,21 @@
 </script>
 
 <style lang="scss" scoped>
-  /* This style block contains the complete and final layout logic. */
+  /* 
+  您所有的頁面樣式都【無需修改】，因為新組件的 class 結構與舊的一致，
+  所以您寫的 :deep() 樣式會繼續正常運作。
+*/
   .page-container {
     position: relative;
     padding: 100px 32px 180px 32px;
+    letter-spacing: 1.2px;
   }
 
   .back-button {
     position: absolute;
     top: 100px;
     left: 50%;
-    transform: translateX(calc(-600px - 150px)); /* (Card Width / 2) + Gap */
+    transform: translateX(calc(-600px - 150px));
     display: flex;
     align-items: center;
     gap: 8px;
@@ -139,6 +158,7 @@
     color: #ffffff;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    text-decoration: none;
 
     &:hover {
       background-color: #d8c9b8;
@@ -194,7 +214,6 @@
     font-size: 32px;
   }
 
-  /* This is the complete and final RWD block */
   @media (max-width: 1500px) {
     .page-container {
       padding: 20px 10px 80px 10px;
@@ -226,23 +245,15 @@
       max-width: 100% !important;
     }
 
-    /* 
-      FIX: 這裡是唯一的修改點
-      我們將 flex-direction 改為 row，並讓按鈕平分寬度
-    */
     .action-group {
-      flex-direction: row; /* 改回水平排列 */
+      flex-direction: row;
       width: 100%;
-      gap: 16px; /* 按鈕之間的間距 */
+      gap: 16px;
       margin-top: 40px;
     }
     .action-button-override {
-      width: 100%; /* 讓 flexbox 自動計算寬度 */
+      width: 100%;
       font-size: 24px;
     }
-  }
-
-  .back-button {
-    text-decoration: none; /* 去掉底線 */
   }
 </style>
