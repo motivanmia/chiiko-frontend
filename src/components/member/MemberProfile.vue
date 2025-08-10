@@ -16,7 +16,7 @@
     name: '張小花',
     nickname: '花媽媽烹飪教室',
     phone: '0912-345-678',
-    birthdate: '1911-01-01',
+    birthdate: '1981-01-01',
     email: 'flower@gmail.com',
     address: '320 桃園市中壢區復興路46號9樓',
   });
@@ -161,8 +161,8 @@
 <style lang="scss" scoped>
   .member__info {
     width: 100%;
-    margin-top: 10px;
     background: color(backgroundColor, panel);
+    box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
     border-radius: 15px;
     padding: 65px 45px;
     position: relative;
@@ -173,8 +173,8 @@
       $color: color(text, dark),
       $ls: 1.8px
     );
-    @include rwdmax(768) {
-      @include font-size(20);
+    @include rwdmax(1200) {
+      @include font-size(22);
     }
     form {
       display: flex;
@@ -185,6 +185,9 @@
         flex-direction: row;
         justify-content: space-between;
         gap: 90px;
+        @include rwdmax(1200) {
+          gap: 20px;
+        }
         @include rwdmax(768) {
           flex-direction: column;
           gap: 30px;
@@ -216,6 +219,7 @@
       @include rwdmax(1200) {
         justify-content: space-between;
         gap: 50px;
+        --btn-padding: 12px 90px;
       }
       @include rwdmax(768) {
         flex-direction: column;
@@ -274,7 +278,7 @@
         $color: color(text, dark),
         $ls: 1.8px
       );
-      @include rwdmax(768) {
+      @include rwdmax(1200) {
         @include font-size(20);
       }
     }

@@ -38,7 +38,8 @@
   .member-collect {
     background-color: color(backgroundColor, panel);
     padding: 40px 20px;
-    border-radius: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
     display: flex;
     flex-wrap: wrap;
     gap: 25px;

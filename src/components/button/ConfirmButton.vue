@@ -32,6 +32,9 @@
       $color: color(text, light),
       $ls: 1.8px
     );
+    @include rwdmax(1200) {
+      @include font-size(20);
+    }
   }
   .confirm__btn:hover {
     background-color: color(orangeColor, base);
