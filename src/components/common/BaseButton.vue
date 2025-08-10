@@ -52,8 +52,7 @@
     border: none;
 
     &:hover {
-      background-color: #e7e7e7;
-      border: 1px solid #e7e7e7;
+      background-color: color(orangeColor, base);
       transition: 0.2s ease;
     }
   }
