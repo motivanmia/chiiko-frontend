@@ -50,7 +50,7 @@
   .Ingredients {
     max-width: 1200px;
     width: 100%;
-    margin: 100px auto;
+    margin: 150px auto 0;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
@@ -60,7 +60,8 @@
       row-gap: 80px;
     }
     @include rwdmax(768) {
-      row-gap: 60px;
+      margin-top: 80px;
+      row-gap: 50px;
     }
 
     &__card {
@@ -73,6 +74,10 @@
       transition:
         transform 0.3s ease,
         box-shadow 0.3s ease;
+      @include rwdmax(768) {
+        width: 173px;
+        height: 142px;
+      }
       &:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -86,7 +91,7 @@
 
       & > h3 {
         display: block;
-        width: 200px;
+        width: 150px;
         height: 50px;
         position: absolute;
         background-color: color(button, main);
@@ -95,7 +100,6 @@
         text-align: center;
         line-height: 48px;
         border-radius: 20px;
-        position: absolute;
         z-index: 1;
         letter-spacing: 1.2px;
         font-size: 24px;
@@ -104,6 +108,13 @@
         color: color(text, light);
         box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
         transition: background-color 0.3s ease;
+        @include rwdmax(768) {
+          width: 130px;
+          height: 30px;
+          font-size: 16px;
+          line-height: 30px;
+          bottom: -5%;
+        }
       }
 
       &-imgbox {
@@ -111,6 +122,11 @@
         height: 180px;
         margin: auto;
         margin-top: 20px;
+        @include rwdmax(768) {
+          width: 120px;
+          height: 120px;
+          margin-top: 10px;
+        }
 
         & > img {
           width: 100%;
