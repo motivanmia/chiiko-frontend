@@ -204,6 +204,8 @@
     border-radius: 15px;
     overflow: hidden;
     text-align: center;
+    letter-spacing: 0.2em;
+    // transition: background-color 0.3s ease;
   }
 
   .card__title-txt {
@@ -219,6 +221,10 @@
     z-index: 1;
     cursor: pointer;
   }
+
+  // .card__title:hover {
+    
+  // }
 
   .card__title img {
     position: relative;

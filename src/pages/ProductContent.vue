@@ -1,7 +1,7 @@
 <script setup>
   import { ref } from 'vue';
   import { Swiper, SwiperSlide } from 'swiper/vue';
-  import { Navigation, Thumbs } from 'swiper/modules';
+  import { Navigation, Thumbs, Pagination, Virtual } from 'swiper/modules';
 
   import 'swiper/css';
   import 'swiper/css/navigation';
