@@ -63,6 +63,7 @@
     width: 100%;
     background: color(backgroundColor, panel);
     border-radius: 15px;
+    box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
     padding: 20px 45px;
     position: relative;
     @include fontSet(
@@ -81,7 +82,7 @@
       border-radius: 20px;
       margin: 30px auto;
       background-color: white;
-      box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
+      box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
       padding: 5px 30px;
       @include rwdmax(768) {
         margin: 15px auto;

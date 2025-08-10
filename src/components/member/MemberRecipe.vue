@@ -184,6 +184,7 @@
   // Block: recipe-management
   .recipe-management {
     background-color: #b5c5a8;
+    box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
     border-radius: 15px;
     width: 100%;
     padding: 50px;
@@ -199,7 +200,7 @@
       background-color: color(button, main);
       color: color(text, light);
       border: none;
-      border-radius: 20px;
+      border-radius: 15px;
       padding: 8px 20px;
       font-size: px(18);
       font-weight: 500;

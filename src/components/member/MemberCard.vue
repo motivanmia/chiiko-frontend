@@ -4,7 +4,6 @@
 
   //宣告props
   const props = defineProps({
-    
     imgSrc: {
       //圖片
       type: String,
@@ -50,7 +49,7 @@
         <Icon
           :icon-name="props.iconName"
           :class="[
-            'member-card__icon', 
+            'member-card__icon',
             props.iconName === 'mark' ? 'mark-icon' : 'heart-icon', // 動態 class
           ]"
         />
@@ -63,6 +62,7 @@
 <style lang="scss" scoped>
   .member-card {
     background-color: white;
+    box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
     border-radius: 20px;
     padding: 10px;
     display: flex;
@@ -109,12 +109,12 @@
         padding-left: 5px;
       }
       .heart-icon {
-        color: color(heart,bright); // 直接在這裡設定 heart-icon 的顏色
+        color: color(heart, bright); // 直接在這裡設定 heart-icon 的顏色
         font-size: 20px;
         cursor: pointer;
       }
       .mark-icon {
-        color: color(text,dark); // 直接在這裡設定 mark-icon 的顏色
+        color: color(text, dark); // 直接在這裡設定 mark-icon 的顏色
         font-size: 20px;
         cursor: pointer;
       }

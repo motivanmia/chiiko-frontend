@@ -212,8 +212,8 @@
 <style lang="scss" scoped>
   .member__info {
     width: 100%;
-    margin-top: 10px;
     background: color(backgroundColor, panel);
+    box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
     border-radius: 15px;
     padding: 65px 45px;
     position: relative;
@@ -224,9 +224,11 @@
       $color: color(text, dark),
       $ls: 1.8px
     );
+    @include rwdmax(1200) {
+      @include font-size(20);
+    }
     @include rwdmax(768) {
       padding: 30px 25px;
-      @include font-size(20);
     }
     form {
       display: flex;
@@ -253,6 +255,7 @@
       @include rwdmax(1200) {
         justify-content: space-between;
         gap: 50px;
+        --btn-padding: 12px 90px;
       }
       @include rwdmax(768) {
         flex-direction: column;
@@ -290,7 +293,7 @@
         $color: color(text, dark),
         $ls: 1.8px
       );
-      @include rwdmax(768) {
+      @include rwdmax(1200) {
         @include font-size(20);
       }
       &:focus {
