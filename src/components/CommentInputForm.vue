@@ -151,11 +151,13 @@
   $avatar-size: 76px;
   $input-height: 120px;
   $input-reply-height: 100px;
+  $rwd-gap: 12px; // RWD 用的間距
 
   // Font
   $base-font-size: 16px;
-  $button-font-size: 24px;
-  $input-font-size: 24px; // 給輸入框一個獨立的字體大小變數
+  $button-font-size-desktop: 24px; // 桌機版按鈕字體
+  $button-font-size-mobile: 16px; // 手機版按鈕字體
+  $input-font-size: 24px;
 
   // Border
   $border-radius-input: 12px;
@@ -165,7 +167,7 @@
   %btn-base {
     padding: 8px 24px;
     border-radius: $border-radius-button;
-    font-size: $button-font-size;
+    font-size: $button-font-size-desktop; // 預設使用桌機版字體
     cursor: pointer;
     border: none;
     transition:
@@ -210,16 +212,16 @@
     }
   }
 
-  /* ✨ 新增：圖片預覽樣式 */
+  /* 圖片預覽樣式 */
   .image-preview-wrapper {
     position: relative;
     margin-top: $base-padding;
-    max-width: 150px; // 限制預覽圖最大寬度
+    max-width: 150px;
 
     .preview-image {
       width: 100%;
       height: auto;
-      border-radius: 8px;
+      border-radius: 20px;
       display: block;
       border: 1px solid $border-color-light;
     }
@@ -248,11 +250,11 @@
     }
   }
 
-  /* 按鈕容器佈局 */
+  /* 按鈕容器佈局 (桌機版) */
   .comment-actions-wrapper {
     display: flex;
     margin-top: $base-padding;
-    align-items: center; // 讓按鈕垂直對齊
+    align-items: center;
   }
 
   .reply-actions-right {
@@ -260,7 +262,7 @@
     gap: $base-padding;
   }
 
-  /* 按鈕樣式 */
+  /* 按鈕樣式 (桌機版) */
   .comment-submit {
     @extend %btn-base;
     background-color: $primary-color;
@@ -277,7 +279,7 @@
     background-color: $secondary-bg-color;
     color: $text-color;
     border: 1px solid $border-color-medium;
-    margin-right: auto; // ✨ 關鍵：將此按鈕推向最左邊
+    margin-right: auto; // 將上傳按鈕推到最左邊
 
     &:hover {
       background-color: $secondary-hover-border-color;
@@ -294,6 +296,39 @@
     &:hover {
       background-color: $secondary-hover-border-color;
       border-color: $secondary-hover-border-color;
+    }
+  }
+
+  /* ====================================================== */
+  /*          ✨✨✨ RWD 響應式修正 (最終版) ✨✨✨         */
+  /*  當螢幕寬度 <= 768px 時，套用以下統一排版            */
+  /* ====================================================== */
+  @media (max-width: 768px) {
+    // 1. 統一所有按鈕的字體大小
+    .comment-submit,
+    .comment-upload-btn,
+    .comment-cancel-btn {
+      font-size: $button-font-size-mobile;
+    }
+
+    // 2. 讓最外層容器垂直堆疊
+    .comment-actions-wrapper {
+      flex-direction: column;
+      align-items: stretch;
+      gap: $rwd-gap;
+    }
+
+    // 3. 重設「上傳圖片」按鈕的邊距，讓它能正常填滿寬度
+    .comment-upload-btn {
+      margin-right: 0;
+    }
+
+    // 4. ✨ 關鍵修正：確保包裹「取消」和「回覆」的容器也垂直堆疊
+    .reply-actions-right {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: $rwd-gap;
     }
   }
 </style>

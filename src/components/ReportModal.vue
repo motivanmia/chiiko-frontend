@@ -181,6 +181,14 @@
     position: relative;
   }
 
+  .modal-content {
+    width: 100%;
+    height: auto;
+    padding: 40px 25px;
+    max-height: 100%;
+    overflow-y: auto;
+  }
+
   /* =================================================================== */
   /*                             燈箱內部元素                             */
   /* =================================================================== */
@@ -229,10 +237,10 @@
     top: 0;
     right: 0;
 
-    /* 
-    再用 transform 將按鈕向右平移自身寬度的 50%，向上平移自身高度的 50%。
-    這會讓按鈕的「中心點」剛好在容器的右上角，完美地浮在角落。
-  */
+    /*
+     再用 transform 將按鈕向右平移自身寬度的 50%，向上平移自身高度的 50%。
+     這會讓按鈕的「中心點」剛好在容器的右上角，完美地浮在角落。
+   */
     transform: translate(40%, -35%);
     z-index: 10;
     /* 尺寸與外觀 */
@@ -333,7 +341,7 @@
   }
 
   /* ✅ 關鍵：移除原本用來畫「點」的 ::after 偽元素，
-   改為直接控制裡面的 SVG 圖示顏色 */
+    改為直接控制裡面的 SVG 圖示顏色 */
   .option-label .check {
     font-size: 20px; /* 控制打勾圖示的大小 */
     color: white; /* 圖示顏色為白色 */
@@ -405,7 +413,7 @@
     /* 內距：文字與邊框之間的距離，上下 12px，左右 20px */
     padding: 12px 20px;
 
-    border-radius: 24px;
+    border-radius: 20px;
     border: none;
     font-size: 18px;
     font-weight: 600;
@@ -436,16 +444,13 @@
   }
 
   @media (max-width: 768px) {
-    /* 1. 讓燈箱內容區塊變成全螢幕 */
     .modal-content {
-      width: 100vw; /* 寬度佔滿整個視窗寬 */
-      height: 100vh; /* 高度佔滿整個視窗高 */
-      border-radius: 0; /* 移除圓角，使其看起來像一個完整的頁面 */
-      padding: 60px 24px 24px 24px; /* 調整內距：頂部多留空間給關閉按鈕，左右和底部縮小 */
-
-      /* 關鍵：讓內容可以滾動 */
-      overflow-y: auto; /* 當內容超過螢幕高度時，顯示垂直滾動條 */
-      -webkit-overflow-scrolling: touch; /* 在 iOS 上提供更流暢的滾動體驗 */
+      width: 90vw;
+      height: 90vh;
+      border-radius: 20px;
+      padding: 24px 24px 24px 24px;
+      margin: 40px auto auto 20px;
+      overflow-y: auto;
     }
 
     /* 2. 重新定位右上角的「X」關閉按鈕 */
@@ -456,11 +461,9 @@
     }
 
     .close-btn {
-      /* 因為背景變成了全螢幕，我們不再需要用 transform 去「推出」角落 */
-      /* 讓它直接定位在右上角，並保留一些邊距 */
       top: 16px;
       right: 16px;
-      transform: none; /* 移除 transform，讓定位更直接 */
+      transform: none;
 
       /* 可以稍微縮小按鈕尺寸以適應手機介面 */
       width: 40px;

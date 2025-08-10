@@ -109,6 +109,7 @@
   $text-color-options: #888;
   $text-color-body: #000;
   $hover-color-text: white;
+  $mobile-breakpoint: 768px; // ✨ 新增：定義一個 RWD 斷點變數
 
   /* --- Component Styles --- */
   .comment-item {
@@ -158,6 +159,13 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: $gap-size;
+
+    // ✨ RWD 樣式 ✨
+    // 當螢幕寬度小於等於 768px 時，套用以下樣式
+    @media (max-width: $mobile-breakpoint) {
+      // 1. 將排列方向改為垂直堆疊
+      flex-direction: column;
+    }
   }
 
   .comment-text {
@@ -173,6 +181,15 @@
     object-fit: cover;
     flex-shrink: 0;
     margin-right: 30px;
+
+    // ✨ RWD 樣式 ✨
+    @media (max-width: $mobile-breakpoint) {
+      // 2. 移除右邊距
+      margin-right: 0;
+      // 3. (可選) 讓圖片寬度更大，視覺效果更好
+      max-width: 400px;
+      width: 100%; // 可以設定一個適合手機的寬度
+    }
   }
 
   .comment-divider {
@@ -183,7 +200,7 @@
     right: 0;
   }
 
-  /* 選項容器與泡泡 */
+  /* 選項容器與泡泡 (維持不變) */
   .comment-options-container {
     position: relative;
   }
@@ -195,7 +212,6 @@
     padding: 4px;
 
     .icon-option {
-      // 假設您的 Icon 元件會產生這樣的 class
       font-size: 20px;
       color: $text-color-options;
     }
@@ -246,10 +262,9 @@
     }
   }
 
-  // 回覆區塊的樣式
+  // 回覆區塊的樣式 (維持不變)
   .comment-reply-section {
-    // 樣式可以讓它稍微縮排，對齊留言內容
-    padding-left: $avatar-size + $gap-size;
+    // padding-left: $avatar-size + $gap-size;
     margin-top: $gap-size;
   }
 </style>
