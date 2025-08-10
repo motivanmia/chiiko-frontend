@@ -1,5 +1,8 @@
 <script setup>
-  import Icon from '@/components/common/Icon.vue';
+  // import Icon from '@/components/common/Icon.vue';
+  import Banner from '@/components/recipe/Banner.vue';
+  import SearchBar from '@/components/common/SearchBar.vue';
+
   const props = defineProps({
     title: {
       type: String,
@@ -11,10 +14,14 @@
 </script>
 
 <template>
-  <icon
+  <Banner
+    title="好物精選"
+    img="/src/assets/image/Product/banner.png"
+  />
+  <!-- <icon
     icon-name="product"
     class="search-icon"
-  />
+  /> -->
 
   <div class="card">
     <div class="card__title">
@@ -37,16 +44,7 @@
       <div class="card__title-txt">廚房小物</div>
     </div>
   </div>
-
-  <div class="search-bar">
-    <input
-      v-model="searchQuery"
-      type="text"
-      placeholder="搜尋好物 例：抹布"
-      @keyup.enter="handleSearch"
-    />
-    <button @click="handleSearch"><img src="/src/assets/image/Product/magnifier.png" /></button>
-  </div>
+  <div class="SearchBar"><SearchBar></SearchBar></div>
 
   <div class="section-title">
     <samp>/高回購率百元好物\</samp>
@@ -181,53 +179,17 @@
 </template>
 
 <style lang="scss" scoped>
-  .search-bar {
-    display: flex;
-    align-items: center;
-    width: 40%;
-    height: 40px;
-    padding: 0 12px;
-    border-radius: 18px;
-    border: 1px solid #e5e5e5;
-    box-shadow:
-      inset 0 2px 4px rgba(0, 0, 0, 0.08),
-      inset 0 -1px 2px rgba(0, 0, 0, 0.05);
-    margin: 0 auto;
+  .product-item img {
+    transition: transform 0.3s ease;
   }
 
-  .search-bar input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 14px;
-    color: #333;
-    background: transparent;
+  .product-item img:hover {
+    transform: translateY(-10px);
   }
-
-  .search-bar input::placeholder {
-    color: #999;
-    font-size: 14px;
+  .SearchBar {
+    margin-top: 80px;
+    margin-bottom: 80px;
   }
-
-  .search-bar button {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-  }
-
-  .search-bar button img {
-    width: 200%;
-    height: auto;
-    position: relative;
-    top: -40%;
-    left: -30%;
-    opacity: 0.6;
-  }
-
   .card {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -236,6 +198,7 @@
   }
 
   .card__title {
+    top: 30px;
     position: relative;
     width: 100%;
     border-radius: 15px;
@@ -277,13 +240,14 @@
     color: color(text, dark);
     letter-spacing: 0.3em;
     text-shadow: 0 4px 5px rgba(59, 55, 57, 0.4);
+    margin-bottom: 80px;
   }
 
   .product-list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
-    padding: 20px 15%;
+    padding: 20px 20%;
     justify-content: center;
   }
 
@@ -291,6 +255,7 @@
     text-align: left;
     font-family: Arial, sans-serif;
     text-decoration: none;
+    color: inherit;
   }
 
   .product-item img {
@@ -300,20 +265,25 @@
   }
 
   .product-name {
-    margin-top: 10px;
-    font-size: 16px;
+    margin-top: 28px;
+    font-size: 20px;
     color: color(text, dark);
     font-weight: bold;
+    letter-spacing: 0.2em;
   }
 
   .product-desc {
     font-size: 14px;
     color: color(text, base);
     margin-top: 4px;
+    letter-spacing: 0.2em;
+    margin-top: 10px;
   }
 
   .product-price {
-    font-size: 16px;
+    letter-spacing: 0.2em;
+    margin-top: 10px;
+    font-size: 20px;
     font-weight: bold;
     color: color(text, dark);
     margin-top: 8px;
@@ -339,34 +309,6 @@
 
     .card__title img {
       border-radius: 12px;
-    }
-
-    /* 搜尋欄 */
-    .search-bar {
-      width: 90%;
-      margin: 16px auto;
-      height: 36px;
-      padding: 0 10px;
-    }
-
-    .search-bar input {
-      font-size: 13px;
-    }
-
-    .search-bar input::placeholder {
-      font-size: 13px;
-    }
-
-    .search-bar button img {
-      width: 180%;
-      top: -35%;
-      left: -40%;
-    }
-
-    .section-title {
-      font-size: 20px;
-      letter-spacing: 0.2em;
-      margin: 12px 0;
     }
 
     .product-list {

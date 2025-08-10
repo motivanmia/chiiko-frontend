@@ -351,6 +351,8 @@
   }
 
   .card {
+    position: fixed;
+    margin-left: 47%;
     background: #ead7c4;
     border-radius: 12px;
     padding: 20px;
@@ -358,6 +360,7 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     font-family: 'Noto Sans TC', sans-serif;
     min-width: 280px;
+    z-index: 999;
   }
 
   .title {
@@ -467,9 +470,9 @@
   }
 
   .related-title {
-    font-size: 18px;
+    font-size: 32px;
     font-weight: bold;
-    margin-bottom: 16px;
+    margin-bottom: 58px;
     color: #222;
   }
 
@@ -487,15 +490,19 @@
     text-decoration: none;
   }
 
-  .related-card:hover {
-    transform: translateY(-2px);
+  .related-card img {
+    transition: transform 0.3s ease;
   }
 
+  .related-card img:hover {
+    transform: translateY(-10px);
+  }
   .related-img {
     width: 100%;
-    aspect-ratio: 1 / 1; /* ✅ 正方形圖片 */
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     display: block;
+    border-radius: 12px;
   }
 
   .related-text {
@@ -508,21 +515,27 @@
 
   .related-name {
     font-weight: 600;
-    font-size: 15px;
+    font-size: 24px;
     margin-bottom: 4px;
     color: #222;
+    letter-spacing: 0.2em;
+    margin-top: 10px;
   }
 
   .related-sub {
-    font-size: 12px;
+    font-size: 20px;
     color: #888;
     margin-bottom: 6px;
+    letter-spacing: 0.2em;
+    margin-top: 10px;
   }
 
   .related-price {
-    font-size: 16px;
+    font-size: 24px;
     font-weight: bold;
     color: #333;
+    letter-spacing: 0.2em;
+    margin-top: 10px;
   }
 
   :deep(.related-swiper .swiper-button-prev),
@@ -548,6 +561,60 @@
     .product-container {
       grid-template-columns: 1fr;
       gap: 12px;
+    }
+
+    .back-col {
+      position: static;
+    }
+  }
+
+  @media (max-width: 880px) {
+    .back-col {
+      grid-area: back;
+    }
+    .product-gallery {
+      grid-area: gallery;
+    }
+    .card {
+      grid-area: card;
+    }
+
+    .product-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        'back'
+        'gallery'
+        'card'
+        'responsive-img';
+      gap: 12px;
+    }
+
+    .thumbs-swiper .responsive-img {
+      display: none;
+    }
+
+    .product-container::after {
+      content: url('/src/assets/image/Product/Product-buy/product-image.png');
+      grid-area: responsive-img;
+      display: block;
+      max-width: 100%;
+      height: auto;
+      justify-self: stretch;
+    }
+
+    .card {
+      position: static;
+      left: auto;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      z-index: 0;
+    }
+    .main-swiper,
+    .thumbs-swiper {
+      position: relative;
+      z-index: 0;
     }
 
     .back-col {
