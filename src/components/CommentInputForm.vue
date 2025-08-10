@@ -14,12 +14,38 @@
         :placeholder="placeholder"
         class="comment-input"
       ></textarea>
+
+      <!-- ✨ 新增：圖片預覽區塊 -->
       <div
-        class="comment-actions-wrapper"
-        :class="{ 'space-between': !isReply }"
+        v-if="imagePreviewUrl"
+        class="image-preview-wrapper"
       >
+        <img
+          :src="imagePreviewUrl"
+          alt="圖片預覽"
+          class="preview-image"
+        />
         <button
-          @click="$emit('uploadImage')"
+          @click="removeImage"
+          class="remove-image-btn"
+        >
+          &times;
+        </button>
+      </div>
+
+      <!-- 隱藏的檔案選擇輸入框 -->
+      <input
+        type="file"
+        ref="fileInput"
+        @change="handleFileSelect"
+        accept="image/*"
+        style="display: none"
+      />
+
+      <div class="comment-actions-wrapper">
+        <!-- 「上傳圖片」按鈕現在觸發檔案選擇 -->
+        <button
+          @click="triggerFileUpload"
           class="comment-upload-btn"
         >
           上傳圖片
@@ -43,6 +69,7 @@
     </div>
   </div>
 </template>
+
 <script setup>
   import { ref } from 'vue';
 
@@ -53,16 +80,59 @@
     isReply: { type: Boolean, default: false },
   });
 
-  const emit = defineEmits(['submit', 'cancel', 'uploadImage']);
-  const content = ref('');
+  const emit = defineEmits(['submit', 'cancel']);
 
+  const content = ref('');
+  const imageFile = ref(null); // ✨ 追蹤實際的圖片檔案
+  const imagePreviewUrl = ref(null); // ✨ 追蹤預覽用的 URL
+  const fileInput = ref(null); // ✨ 追蹤 input 元素
+
+  // ✨ 觸發隱藏的 input 點擊事件
+  function triggerFileUpload() {
+    fileInput.value.click();
+  }
+
+  // ✨ 當使用者選擇檔案後觸發
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      imageFile.value = file; // 儲存檔案物件
+
+      // 使用 FileReader 產生預覽
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        imagePreviewUrl.value = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      // 如果選擇的不是圖片，或取消選擇，就清空
+      imageFile.value = null;
+      imagePreviewUrl.value = null;
+    }
+  }
+
+  // ✨ 移除已選擇的圖片
+  function removeImage() {
+    imageFile.value = null;
+    imagePreviewUrl.value = null;
+    fileInput.value.value = ''; // 重設 input 的值，才能再次選擇同一個檔案
+  }
+
+  // ✨ 修改後的提交函式
   function submit() {
-    if (content.value.trim()) {
-      emit('submit', content.value);
-      content.value = ''; // 提交後清空
+    // 必須要有文字或圖片才能提交
+    if (content.value.trim() || imageFile.value) {
+      emit('submit', {
+        text: content.value.trim(),
+        image: imageFile.value, // 將檔案物件本身發送出去
+      });
+      // 提交後清空所有內容
+      content.value = '';
+      removeImage();
     }
   }
 </script>
+
 <style lang="scss" scoped>
   /* --- Variables --- */
   // Colors
@@ -73,6 +143,7 @@
   $text-color: #333333;
   $border-color-light: #e0e0e0;
   $border-color-medium: #cccccc;
+  $secondary-hover-border-color: #e7e7e7;
 
   // Sizing & Spacing
   $base-gap: 16px;
@@ -84,45 +155,43 @@
   // Font
   $base-font-size: 16px;
   $button-font-size: 24px;
+  $input-font-size: 24px; // 給輸入框一個獨立的字體大小變數
 
   // Border
   $border-radius-input: 12px;
   $border-radius-button: 20px;
 
   /* --- Base Styles & Placeholders --- */
-  // 使用 Placeholder Selector 建立一個可供繼承的按鈕基礎樣式
   %btn-base {
     padding: 8px 24px;
     border-radius: $border-radius-button;
     font-size: $button-font-size;
     cursor: pointer;
     border: none;
-    transition: background-color 0.2s;
+    transition:
+      background-color 0.2s,
+      border-color 0.2s;
   }
 
   /* --- Component Styles --- */
-  /* (共用) 新留言/回覆的整體容器 */
   .comment-input-group {
     display: flex;
     gap: $base-gap;
     padding-top: $base-gap;
     align-items: flex-start;
 
-    .comment-avatar,
-    .comment-user-avatar-large {
+    .comment-avatar {
       width: $avatar-size;
       height: $avatar-size;
       border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .comment-avatar {
-      /* 回覆框用的小頭像 */
       object-fit: cover;
+      flex-shrink: 0;
     }
 
     .comment-input-right {
       width: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     .comment-input {
@@ -133,28 +202,57 @@
       border-radius: $border-radius-input;
       resize: vertical;
       box-sizing: border-box;
-      font-size: $base-font-size;
-      font-size: 24px;
+      font-size: $input-font-size;
     }
 
-    /* 修飾符：當為回覆狀態時 */
-    &.is-reply {
-      .comment-input {
-        height: $input-reply-height;
+    &.is-reply .comment-input {
+      height: $input-reply-height;
+    }
+  }
+
+  /* ✨ 新增：圖片預覽樣式 */
+  .image-preview-wrapper {
+    position: relative;
+    margin-top: $base-padding;
+    max-width: 150px; // 限制預覽圖最大寬度
+
+    .preview-image {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      display: block;
+      border: 1px solid $border-color-light;
+    }
+
+    .remove-image-btn {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 24px;
+      height: 24px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      border: 2px solid white;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      line-height: 1;
+      padding: 0;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.8);
       }
     }
   }
 
-  /* 按鈕與按鈕容器的佈局 */
+  /* 按鈕容器佈局 */
   .comment-actions-wrapper {
     display: flex;
     margin-top: $base-padding;
-    justify-content: space-between;
-
-    /* 當只有右側按鈕時，讓它靠右 */
-    &:not(.space-between) {
-      justify-content: flex-end;
-    }
+    align-items: center; // 讓按鈕垂直對齊
   }
 
   .reply-actions-right {
@@ -174,19 +272,28 @@
     }
   }
 
-  .comment-upload-btn,
+  .comment-upload-btn {
+    @extend %btn-base;
+    background-color: $secondary-bg-color;
+    color: $text-color;
+    border: 1px solid $border-color-medium;
+    margin-right: auto; // ✨ 關鍵：將此按鈕推向最左邊
+
+    &:hover {
+      background-color: $secondary-hover-border-color;
+      border-color: $secondary-hover-border-color;
+    }
+  }
+
   .comment-cancel-btn {
     @extend %btn-base;
     background-color: $secondary-bg-color;
     color: $text-color;
     border: 1px solid $border-color-medium;
-    margin-right: auto;
-  }
 
-  .comment-upload-btn:hover,
-  .comment-cancel-btn:hover {
-    background-color: #e7e7e7;
-    border: 1px solid #e7e7e7;
-    transition: 0.2s ease;
+    &:hover {
+      background-color: $secondary-hover-border-color;
+      border-color: $secondary-hover-border-color;
+    }
   }
 </style>

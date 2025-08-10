@@ -1,3 +1,4 @@
+<!-- CommentItem.vue -->
 <template>
   <div class="comment-item">
     <div class="comment-main">
@@ -53,14 +54,13 @@
       v-if="comment.showReplyBox"
       class="comment-reply-section"
     >
-      <!-- 引入我們之前做好的輸入框元件 -->
+      <!-- ✨ 主要修改：更新事件處理以適應新的 payload 格式 -->
       <CommentInputForm
         :userAvatar="currentUserAvatar"
         submitText="回覆"
         :isReply="true"
-        @submit="(content) => $emit('sendReply', { targetId: comment.id, content: content })"
+        @submit="handleReplySubmit"
         @cancel="$emit('toggleReplyBox', comment.id)"
-        @uploadImage="$emit('uploadImage')"
       />
     </div>
 
@@ -73,69 +73,100 @@
   import CommentInputForm from './CommentInputForm.vue';
 
   // 接收來自父元件的資料
-  defineProps({
+  const props = defineProps({
     comment: {
       type: Object,
       required: true,
     },
     currentUserAvatar: {
-      // 聲明會接收這個 Prop
       type: String,
       required: true,
     },
   });
 
-  // 定義這個元件會觸發哪些事件
-  defineEmits(['toggleOptions', 'toggleReplyBox', 'reportComment']);
+  // ✨ 主要修改：更新 emits 定義，並建立一個 emitter
+  const emit = defineEmits(['toggleOptions', 'toggleReplyBox', 'reportComment', 'sendReply']);
+
+  // ✨ 主要修改：新增一個方法來處理來自輸入框的 submit 事件
+  function handleReplySubmit(payload) {
+    // payload 的格式是 { text: '...', image: File }
+    // 將 targetId 和收到的 payload 一起向上傳遞
+    emit('sendReply', {
+      targetId: props.comment.id,
+      content: payload, // 將完整的 { text, image } 物件傳上去
+    });
+  }
 </script>
 
-<style scoped>
-  /* 將您原本 CSS 中所有與 .comment-item 相關的樣式複製到這裡 */
-  /* 例如 .comment-item, .comment-main, .comment-avatar, .comment-header 等等... */
-  /* 分隔線 .comment-divider 的樣式也放在這裡 */
+<style lang="scss" scoped>
+  /* --- Variables --- */
+  $avatar-size: 76px;
+  $gap-size: 16px;
+  $primary-color: #db7c36;
+  $dropdown-bg: #fefaf2;
+  $divider-color: #cccccc;
+  $text-color-author: #333;
+  $text-color-options: #888;
+  $text-color-body: #000;
+  $hover-color-text: white;
 
+  /* --- Component Styles --- */
   .comment-item {
     position: relative;
     padding: 24px 0;
+
+    &:last-of-type .comment-divider {
+      display: none;
+    }
   }
+
   .comment-main {
     display: flex;
-    gap: 16px;
+    gap: $gap-size;
   }
+
   .comment-avatar {
-    width: 76px;
-    height: 76px;
+    width: $avatar-size;
+    height: $avatar-size;
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0;
   }
+
   .comment-content-wrapper {
     width: 100%;
     position: relative;
   }
+
   .comment-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
-    position: relative;
+    position: relative; // 確保選項按鈕在內容之上
     z-index: 10;
   }
+
   .comment-author {
     font-size: 20px;
     font-weight: 600;
+    color: $text-color-author;
   }
+
   .comment-body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 16px;
+    gap: $gap-size;
   }
+
   .comment-text {
     font-size: 24px;
     line-height: 1.6;
+    color: $text-color-body;
     flex-grow: 1;
   }
+
   .comment-image {
     max-width: 230px;
     border-radius: 20px;
@@ -143,38 +174,40 @@
     flex-shrink: 0;
     margin-right: 30px;
   }
+
   .comment-divider {
-    border-bottom: 1px dotted #cccccc;
+    border-bottom: 1px dotted $divider-color;
     position: absolute;
     bottom: 0;
-    left: 64px; /* 48px頭像 + 16px間距 */
+    left: $avatar-size + $gap-size;
     right: 0;
-  }
-  .comment-item:last-of-type .comment-divider {
-    display: none;
   }
 
   /* 選項容器與泡泡 */
   .comment-options-container {
     position: relative;
   }
+
   .comment-options-btn {
     background: transparent;
     border: none;
     cursor: pointer;
     padding: 4px;
+
+    .icon-option {
+      // 假設您的 Icon 元件會產生這樣的 class
+      font-size: 20px;
+      color: $text-color-options;
+    }
   }
-  .comment-options-icon {
-    font-size: 20px;
-    color: #888;
-  }
+
   .comment-dropdown-bubble {
     position: absolute;
     top: 100%;
     right: 0;
     margin-top: 8px;
-    background-color: #fefaf2;
-    border: 1px solid #db7c36;
+    background-color: $dropdown-bg;
+    border: 1px solid $primary-color;
     border-radius: 16px;
     padding: 6px;
     width: 140px;
@@ -182,6 +215,7 @@
     text-align: center;
     z-index: 20;
   }
+
   .comment-dropdown-arrow {
     position: absolute;
     top: -10px;
@@ -190,8 +224,9 @@
     height: 0;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
-    border-bottom: 10px solid #db7c36;
+    border-bottom: 10px solid $primary-color;
   }
+
   .comment-reply-btn,
   .comment-report-btn {
     background: transparent;
@@ -201,10 +236,20 @@
     font-size: 15px;
     cursor: pointer;
     border-radius: 12px;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+
+    &:hover {
+      background-color: $primary-color;
+      color: $hover-color-text;
+    }
   }
-  .comment-reply-btn:hover,
-  .comment-report-btn:hover {
-    background-color: #db7c36;
-    color: white;
+
+  // 回覆區塊的樣式
+  .comment-reply-section {
+    // 樣式可以讓它稍微縮排，對齊留言內容
+    padding-left: $avatar-size + $gap-size;
+    margin-top: $gap-size;
   }
 </style>
