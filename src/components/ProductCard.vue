@@ -117,9 +117,9 @@
   @media (max-width: 768px) {
     /* 容器：移除所有左右邊距/內距，讓它完全貼合父層 */
     .related-products-wrapper {
-      max-width: none;
+      max-width: 500px;
       width: 100%;
-      margin: 30px 0;
+
       padding: 24px 0; /* ✨ 只保留上下內距 */
       border-radius: 16px;
       border-left: none;

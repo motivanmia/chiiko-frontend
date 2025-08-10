@@ -349,7 +349,6 @@
 
     // ✨ RWD: 將響應式樣式直接寫在元件內部
     @media (max-width: 1024px) {
-      padding: 0 10px;
       margin-top: 80px;
     }
   }
@@ -370,12 +369,10 @@
   .step-ingredient-wrapper {
     display: flex;
     justify-content: center;
-    gap: 10px;
 
     @media (max-width: 1024px) {
       flex-direction: column;
       align-items: center;
-      gap: 16px;
     }
   }
 
@@ -384,7 +381,6 @@
   }
 
   .step-ingredient-wrapper {
-    margin-top: 10px;
     align-items: flex-start;
   }
 
@@ -528,7 +524,6 @@
     color: $color-white;
 
     &:hover {
-      // 使用 SASS 內建函式將顏色變暗，比寫死顏色更有彈性
       background-color: color(orangeColor, base);
       transition: 0.2s ease;
     }
@@ -554,10 +549,13 @@
     width: $content-width-small;
     background-color: $color-white;
     border: 1px solid $color-border-box;
+    position: sticky;
+    top: 110px;
 
     @media (max-width: 1024px) {
       width: 100%; // 注意：原 CSS 寫 0%，應為 100%
       box-sizing: border-box;
+      position: static;
     }
   }
 
@@ -612,7 +610,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
 
     @media (max-width: 1024px) {
       width: 100%;
