@@ -1,7 +1,7 @@
 <script setup>
   import { ref } from 'vue';
   import { Swiper, SwiperSlide } from 'swiper/vue';
-  import { Navigation, Thumbs, Pagination, Virtual } from 'swiper/modules';
+  import { Navigation, Thumbs } from 'swiper/modules';
 
   import 'swiper/css';
   import 'swiper/css/navigation';
@@ -351,8 +351,6 @@
   }
 
   .card {
-    position: fixed;
-    margin-left: 47%;
     background: #ead7c4;
     border-radius: 12px;
     padding: 20px;
@@ -360,7 +358,11 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     font-family: 'Noto Sans TC', sans-serif;
     min-width: 280px;
-    z-index: 999;
+    position: sticky;
+    top: 24px;
+    align-self: start;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
   }
 
   .title {
@@ -470,9 +472,9 @@
   }
 
   .related-title {
-    font-size: 32px;
+    font-size: 18px;
     font-weight: bold;
-    margin-bottom: 58px;
+    margin-bottom: 16px;
     color: #222;
   }
 
@@ -490,19 +492,15 @@
     text-decoration: none;
   }
 
-  .related-card img {
-    transition: transform 0.3s ease;
+  .related-card:hover {
+    transform: translateY(-2px);
   }
 
-  .related-card img:hover {
-    transform: translateY(-10px);
-  }
   .related-img {
     width: 100%;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1 / 1; /* ✅ 正方形圖片 */
     object-fit: cover;
     display: block;
-    border-radius: 12px;
   }
 
   .related-text {
@@ -515,27 +513,21 @@
 
   .related-name {
     font-weight: 600;
-    font-size: 24px;
+    font-size: 15px;
     margin-bottom: 4px;
     color: #222;
-    letter-spacing: 0.2em;
-    margin-top: 10px;
   }
 
   .related-sub {
-    font-size: 20px;
+    font-size: 12px;
     color: #888;
     margin-bottom: 6px;
-    letter-spacing: 0.2em;
-    margin-top: 10px;
   }
 
   .related-price {
-    font-size: 24px;
+    font-size: 16px;
     font-weight: bold;
     color: #333;
-    letter-spacing: 0.2em;
-    margin-top: 10px;
   }
 
   :deep(.related-swiper .swiper-button-prev),
@@ -567,7 +559,6 @@
       position: static;
     }
   }
-
   @media (max-width: 880px) {
     .back-col {
       grid-area: back;
