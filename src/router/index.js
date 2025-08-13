@@ -58,7 +58,11 @@ const router = createRouter({
           path: 'orders',
           name: 'orders',
           component: () => import('@/components/member/MemberOrder.vue'),
-          // 待更換新頁面
+        },
+        {
+          path: 'order-detail',
+          name: 'order-detail',
+          component: () => import('@/components/member/MemberOrderDetail.vue'),
         },
       ],
     },
