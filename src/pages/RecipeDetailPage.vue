@@ -1,3 +1,4 @@
+<!-- 食譜內頁板 -->
 <template>
   <div class="wrappertatle">
     <div class="outer-wrapper">
@@ -276,29 +277,110 @@
   }
 </script>
 <!-- ──────────────────────────────────────────────────────────────────────── -->
-<style scoped>
+<style lang="scss" scoped>
+  /* =================================================================== */
+  /*                                變數設定                             */
+  /* =================================================================== */
+
+  // --- Colors ---
+  $color-primary: #d97c48;
+  $color-primary-darker: #c86a3a; // 用於 hover
+  $color-card-bg: #ead7c4;
+  $color-divider: #d4c0ab;
+  $color-text-dark: #333;
+  $color-text-light: #888;
+  $color-white: #fff;
+  $color-border: #ddd;
+  $color-border-hover: #e7e7e7;
+  $color-border-box: #e5e7eb;
+
+  // --- Sizing & Spacing ---
+  $border-radius-main: 20px;
+  $border-radius-pill: 999px;
+  $content-width-large: 800px;
+  $content-width-small: 393px;
+
+  // --- Typography ---
+  $font-size-base: 16px;
+  $font-size-lg: 24px;
+  $font-size-xl: 28px;
+  $font-size-xxl: 32px;
+  $letter-spacing-base: 1.2px;
+  $letter-spacing-title: 2px;
+
+  // --- Transitions ---
+  $transition-base: all 0.2s;
+  $transition-ease: 0.2s ease;
+
+  /* =================================================================== */
+  /*                         可繼承的 Placeholder                         */
+  /* =================================================================== */
+
+  // 內容區塊的通用樣式
+  %content-box {
+    padding: 32px;
+    border-radius: $border-radius-main;
+  }
+
+  // 按鈕的通用樣式
+  %btn-base {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex-grow: 1;
+    gap: 8px;
+    padding: 12px 0;
+    border-radius: $border-radius-pill;
+    font-size: 18px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: $transition-base;
+  }
+
   /* =================================================================== */
   /*                       主要容器與通用樣式 (預設)                       */
   /* =================================================================== */
 
   .wrappertatle {
-    margin-top: 130px; /* 在手機上可以減少一點上方留白 */
+    margin-top: 130px;
     margin-bottom: 100px;
+    letter-spacing: $letter-spacing-base;
+
+    // ✨ RWD: 將響應式樣式直接寫在元件內部
+    @media (max-width: 1024px) {
+      margin-top: 80px;
+    }
   }
+
   .recipe-image {
-    width: 800px;
+    width: $content-width-large;
     height: 640px;
     object-fit: cover;
-    border-radius: 20px;
+    border-radius: $border-radius-main;
+
+    @media (max-width: 1024px) {
+      width: 100%;
+      height: auto;
+    }
   }
+
   .recipe-wrapper,
   .step-ingredient-wrapper {
     display: flex;
     justify-content: center;
-    gap: 20px; /* 增加一點預設間距 */
+
+    @media (max-width: 1024px) {
+      flex-direction: column;
+      align-items: center;
+    }
   }
+
+  .recipe-wrapper {
+    align-items: flex-start;
+  }
+
   .step-ingredient-wrapper {
-    margin-top: 20px;
     align-items: flex-start;
   }
 
@@ -307,86 +389,100 @@
   /* =================================================================== */
 
   .recipe-card {
-    width: 393px;
-    background-color: #ead7c4;
+    width: $content-width-small;
+    background-color: $color-card-bg;
     padding: 24px;
-    border-radius: 20px;
+    border-radius: $border-radius-main;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
+
+    h1 {
+      font-size: $font-size-xxl;
+      font-weight: 600;
+      letter-spacing: $letter-spacing-title;
+    }
+
+    h2 {
+      text-align: right;
+      color: $color-text-light;
+      font-size: $font-size-base;
+      font-weight: normal;
+      margin-top: 5px;
+      margin-bottom: 30px;
+    }
+
+    @media (max-width: 1024px) {
+      width: 100%; // 注意：原 CSS 寫 0%，應為 100%
+      box-sizing: border-box;
+    }
   }
-  .recipe-card h1 {
-    font-size: 32px;
-    font-weight: 600;
-    letter-spacing: 2px;
-  }
-  .recipe-card h2 {
-    text-align: right;
-    color: #888;
-    font-size: 16px;
-    font-weight: normal;
-    margin-top: 5px;
-    margin-bottom: 30px;
-  }
+
   .description {
-    font-size: 20px;
+    font-size: $font-size-lg;
     line-height: 1.5;
-    color: #333;
+    color: $color-text-dark;
     margin-bottom: 20px;
+
+    @media (max-width: 1024px) {
+      font-size: $font-size-base;
+    }
   }
+
   .tags {
-    color: #888;
-    font-size: 16px;
+    color: $color-text-light;
+    font-size: $font-size-base;
     margin-bottom: 24px;
   }
+
   .meta {
     display: flex;
     align-items: center;
     gap: 20px;
-    font-size: 16px;
-    color: #555;
+    font-size: $font-size-base;
     margin-bottom: 24px;
+
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
   }
-  .meta > div {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+
   .comment {
     transform: scaleX(-1);
   }
+
   .time-serving {
     display: flex;
     align-items: center;
     justify-content: space-around;
     padding: 16px 0;
-    border-top: 1px solid #d4c0ab;
-    border-bottom: 1px solid #d4c0ab;
     margin-bottom: 24px;
   }
+
   .info-block {
     text-align: center;
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .label {
+      font-size: $font-size-lg;
+    }
+    .value {
+      font-size: 20px;
+      margin-top: 20px;
+    }
   }
-  .top {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-  .label {
-    font-size: 18px;
-    color: #555;
-  }
-  .value {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0;
-  }
+
   .divider {
     width: 1px;
     height: 48px;
-    background-color: #d4c0ab;
+    background-color: $color-divider;
   }
 
   /* =================================================================== */
@@ -398,91 +494,113 @@
     justify-content: center;
     gap: 16px;
   }
+
   .btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    flex-grow: 1;
-    gap: 8px;
-    padding: 12px 0;
-    border-radius: 999px;
-    font-size: 18px;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: all 0.2s;
+    // 繼承基礎按鈕樣式
+    @extend %btn-base;
   }
+
   .btn-collect {
-    background-color: white;
-    color: #333;
-    border: 2px solid #ddd;
+    background-color: $color-white;
+    color: $color-text-dark;
+    border: 2px solid $color-border;
+
+    &:hover {
+      background-color: #e7e7e7;
+      border: 1px solid #e7e7e7;
+      transition: 0.2s ease;
+    }
+
+    // 收藏後的狀態
+    &.is-collected {
+      background-color: $color-primary;
+      color: $color-white;
+      border-color: $color-primary;
+    }
   }
-  .btn-collect:hover {
-    background-color: #f0f0f0;
-  }
-  .btn-collect.is-collected {
-    background-color: #d97c48;
-    color: #fff;
-    border-color: #d97c48;
-  }
+
   .btn-share {
-    background-color: #d97c48;
-    color: white;
-  }
-  .btn-share:hover {
-    background-color: #c86b37;
+    background-color: $color-primary;
+    color: $color-white;
+
+    &:hover {
+      background-color: color(orangeColor, base);
+      transition: 0.2s ease;
+    }
   }
 
   /* =================================================================== */
   /*                        食材與步驟區塊樣式 (預設)                      */
   /* =================================================================== */
 
-  .step-box,
-  .ingredient-box {
-    padding: 32px;
-    border-radius: 20px;
-  }
   .step-box {
-    width: 800px;
-    background-color: #ead7c4;
+    @extend %content-box;
+    width: $content-width-large;
+    background-color: $color-card-bg;
+
+    @media (max-width: 1024px) {
+      width: 100%; // 注意：原 CSS 寫 0%，應為 100%
+      box-sizing: border-box;
+    }
   }
+
   .ingredient-box {
-    width: 393px;
-    background-color: #fff;
-    border: 1px solid #e5e7eb;
+    @extend %content-box;
+    width: $content-width-small;
+    background-color: $color-white;
+    border: 1px solid $color-border-box;
+    position: sticky;
+    top: 110px;
+
+    @media (max-width: 1024px) {
+      width: 100%; // 注意：原 CSS 寫 0%，應為 100%
+      box-sizing: border-box;
+      position: static;
+    }
   }
+
   .section-ingredient-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
   }
+
   .section-ingredient-title {
-    font-size: 28px;
+    font-size: $font-size-xxl;
     margin: 0;
   }
+
   .copy-icon {
-    font-size: 24px;
+    font-size: $font-size-lg;
     cursor: pointer;
-    color: #888;
+    color: $color-text-light;
   }
+
+  .section-ingredient-list {
+    margin-top: 40px;
+  }
+
   .section-ingredient-item {
-    margin-bottom: 16px;
-    font-size: 18px;
+    margin-bottom: 25px;
+    font-size: $font-size-lg;
   }
+
+  .step-label,
   .step-title {
-    font-size: 28px;
-    margin: 0 0 24px 0;
+    font-size: $font-size-xl;
   }
-  .step-label {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
+
   .step-text {
-    font-size: 18px;
-    margin-bottom: 32px;
-    line-height: 1.6;
+    font-size: $font-size-lg;
+    margin-bottom: 70px;
+    margin-left: 100px;
+    margin-top: 15px;
+
+    @media (max-width: 1024px) {
+      font-size: $font-size-base;
+      margin-left: 0;
+    }
   }
 
   /* =================================================================== */
@@ -492,60 +610,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-    margin-top: 20px;
-  }
 
-  /* =================================================================== */
-  /*                      ✨ RWD 響應式設計 ✨                        */
-  /*     當螢幕寬度小於等於 1024px 時，以下樣式將會生效              */
-  /* =================================================================== */
-  @media (max-width: 1024px) {
-    /* 調整整體佈局和間距 */
-    .wrappertatle {
-      padding: 0 10px; /* ✨ 所有東西左右間距都是 10px */
-      margin-top: 80px;
-    }
-    .recipe-wrapper,
-    .step-ingredient-wrapper {
-      flex-direction: column; /* ✨ 改為垂直堆疊 */
-      align-items: center; /* 讓內容水平置中 */
-      gap: 16px; /* 調整垂直間距 */
-    }
-
-    /* 圖片：讓寬度 100% 填滿，高度自動調整 */
-    .recipe-image {
-      width: 100%;
-      height: auto;
-    }
-
-    /*
-    主要卡片、食材盒、步驟盒：
-    移除固定寬度，讓它們能 100% 填滿父容器
-  */
-    .recipe-card,
-    .ingredient-box,
-    .step-box {
-      width: 100%;
-      box-sizing: border-box; /* 確保 padding 不會撐爆寬度 */
-    }
-
-    /* 介紹文字和步驟文字：在手機上可以縮小一點 */
-    .description,
-    .step-text {
-      font-size: 16px;
-    }
-
-    /* 移除步驟文字的左側縮排 */
-    .step-text {
-      margin-left: 0;
-    }
-
-    /* 
-    ✨ 讓 CommentSection 和 ProductCard 也符合 10px 的左右間距
-    我們需要一個新的容器來包裹它們
-  */
-    .comment-section-container {
+    @media (max-width: 1024px) {
       width: 100%;
     }
   }

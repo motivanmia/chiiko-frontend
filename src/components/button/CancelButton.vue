@@ -38,6 +38,9 @@
       $color: color(text, dark),
       $ls: 1.8px
     );
+    @include rwdmax(1200) {
+      @include font-size(20);
+    }
   }
   .cancel__btn:hover {
     background-color: #e7e7e7;

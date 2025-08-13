@@ -11,9 +11,15 @@
   const setThumbsSwiper = (swiper) => (thumbsSwiper.value = swiper);
 
   const images = [
-    '/src/assets/image/Product/Product-buy/product-knife1.png',
-    '/src/assets/image/Product/Product-buy/product-knife2.png',
-    '/src/assets/image/Product/Product-buy/product-knife3.png',
+    {
+      image: new URL('@/assets/image/Product/Product-buy/product-knife1.png', import.meta.url).href,
+    },
+    {
+      image: new URL('@/assets/image/Product/Product-buy/product-knife2.png', import.meta.url).href,
+    },
+    {
+      image: new URL('@/assets/image/Product/Product-buy/product-knife3.png', import.meta.url).href,
+    },
   ];
 
   const qty = ref(1);
@@ -53,7 +59,7 @@
           :key="i"
         >
           <img
-            :src="img"
+            :src="img.image"
             class="main-image"
             :alt="`商品主圖 ${i + 1}`"
           />
@@ -74,15 +80,25 @@
           :key="i"
         >
           <img
-            :src="img"
+            :src="img.image"
             class="thumb-image"
             :alt="`縮圖 ${i + 1}`"
           />
         </SwiperSlide>
+        <div>
+          <img
+            class="responsive-img"
+            src="/src/assets/image/Product/Product-buy/product-image.png"
+          />
+        </div>
 
-        <!-- 箭頭 -->
-        <div class="thumbs-button-prev"></div>
-        <div class="thumbs-button-next"></div>
+        <!-- 自訂箭頭：自己放內容 -->
+        <div class="thumbs-button-prev">
+          <span class="thumbs-arrow">&lt;</span>
+        </div>
+        <div class="thumbs-button-next">
+          <span class="thumbs-arrow">&gt;</span>
+        </div>
       </Swiper>
     </div>
 
@@ -136,9 +152,65 @@
     </aside>
   </div>
 
-  <div class="product-image">
-    <img src="/src/assets/image/Product/Product-buy/product-image.png" />
-  </div>
+  <section class="related-section">
+    <h3 class="related-title">搭配好物</h3>
+    <Swiper
+      class="related-swiper"
+      :modules="[Navigation]"
+      :slides-per-view="3"
+      :space-between="20"
+      navigation
+    >
+      <SwiperSlide>
+        <RouterLink
+          to="/product-detail"
+          class="related-card"
+        >
+          <img
+            src="/src/assets/image/Product/product-pot.png"
+            class="related-img"
+          />
+          <div class="related-text">
+            <p class="related-name">韓式雪平鍋 18cm</p>
+            <p class="related-sub">可用於煮湯、熱牛奶、煮醬汁、煮粥</p>
+            <p class="related-price">$329</p>
+          </div>
+        </RouterLink>
+      </SwiperSlide>
+      <SwiperSlide>
+        <RouterLink
+          to="/product-detail"
+          class="related-card"
+        >
+          <img
+            src="/src/assets/image/Product/product-fish.png"
+            class="related-img"
+          />
+          <div class="related-text">
+            <p class="related-name">魚鱗刨刀</p>
+            <p class="related-sub">用於括魚鱗</p>
+            <p class="related-price">$29</p>
+          </div>
+        </RouterLink>
+      </SwiperSlide>
+      <SwiperSlide>
+        <RouterLink
+          to="/product-detail"
+          class="related-card"
+        >
+          <img
+            src="/src/assets/image/Product/product-chopsticks.png"
+            class="related-img"
+          />
+          <div class="related-text">
+            <p class="related-name">日式和風筷架</p>
+            <p class="related-sub">好筷架 不用嗎</p>
+            <p class="related-price">$29</p>
+          </div>
+        </RouterLink>
+      </SwiperSlide>
+    </Swiper>
+  </section>
 </template>
 
 <style scoped>
@@ -279,6 +351,8 @@
   }
 
   .card {
+    position: fixed;
+    margin-left: 47%;
     background: #ead7c4;
     border-radius: 12px;
     padding: 20px;
@@ -286,6 +360,7 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     font-family: 'Noto Sans TC', sans-serif;
     min-width: 280px;
+    z-index: 999;
   }
 
   .title {
@@ -380,23 +455,166 @@
     margin-right: 8px;
   }
 
-  .product-image {
-    display: flex;
-    max-width: 1024px;
-    margin: 0 auto;
-    padding: 0 16px 24px;
+  .thumbs-arrow {
+    font-size: 20px;
+    font-weight: bold;
+    user-select: none;
   }
 
-  .product-image img {
+  .related-section {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    max-width: 70%;
+    margin-inline: auto;
+    padding: 0 16px;
+  }
+
+  .related-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 58px;
+    color: #222;
+  }
+
+  .related-swiper {
+    position: relative;
+  }
+
+  .related-card {
     width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease;
+    text-decoration: none;
+  }
+
+  .related-card img {
+    transition: transform 0.3s ease;
+  }
+
+  .related-card img:hover {
+    transform: translateY(-10px);
+  }
+  .related-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
     display: block;
     border-radius: 12px;
+  }
+
+  .related-text {
+    padding: 12px 10px 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #444;
+    text-align: left;
+  }
+
+  .related-name {
+    font-weight: 600;
+    font-size: 24px;
+    margin-bottom: 4px;
+    color: #222;
+    letter-spacing: 0.2em;
+    margin-top: 10px;
+  }
+
+  .related-sub {
+    font-size: 20px;
+    color: #888;
+    margin-bottom: 6px;
+    letter-spacing: 0.2em;
+    margin-top: 10px;
+  }
+
+  .related-price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    letter-spacing: 0.2em;
+    margin-top: 10px;
+  }
+
+  :deep(.related-swiper .swiper-button-prev),
+  :deep(.related-swiper .swiper-button-next) {
+    color: #b06c2c;
+    top: 40%;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .responsive-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-width: 100%;
   }
 
   @media (max-width: 880px) {
     .product-container {
       grid-template-columns: 1fr;
       gap: 12px;
+    }
+
+    .back-col {
+      position: static;
+    }
+  }
+
+  @media (max-width: 880px) {
+    .back-col {
+      grid-area: back;
+    }
+    .product-gallery {
+      grid-area: gallery;
+    }
+    .card {
+      grid-area: card;
+    }
+
+    .product-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        'back'
+        'gallery'
+        'card'
+        'responsive-img';
+      gap: 12px;
+    }
+
+    .thumbs-swiper .responsive-img {
+      display: none;
+    }
+
+    .product-container::after {
+      content: url('/src/assets/image/Product/Product-buy/product-image.png');
+      grid-area: responsive-img;
+      display: block;
+      max-width: 100%;
+      height: auto;
+      justify-self: stretch;
+    }
+
+    .card {
+      position: static;
+      left: auto;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      z-index: 0;
+    }
+    .main-swiper,
+    .thumbs-swiper {
+      position: relative;
+      z-index: 0;
     }
 
     .back-col {

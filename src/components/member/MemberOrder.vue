@@ -201,6 +201,7 @@
     min-height: 600px;
     background: color(backgroundColor, panel);
     border-radius: 15px;
+    box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
     padding: 30px 25px;
     position: relative;
     @include fontSet(

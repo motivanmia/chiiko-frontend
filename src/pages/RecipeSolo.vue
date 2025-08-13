@@ -16,23 +16,23 @@
   const route = useRoute();
   const router = useRouter();
 
-// 根據查詢參數動態獲取分類標題
-const categoryTitle = computed(() => route.query.category || '一人料理');
+  // 根據查詢參數動態獲取分類標題
+  const categoryTitle = computed(() => route.query.category || '一人料理');
 
-// 搜尋邏輯的狀態管理
-const currentSearchQuery = ref(route.query.q || '');
-
+  // 搜尋邏輯的狀態管理
+  const currentSearchQuery = ref(route.query.q || '');
 
   //搜尋功能
-const handleSearch = (query) => {
-  const newQuery = query.trim();
-  if (newQuery) { // 如果有搜尋關鍵字，就導航到搜尋頁面
-    router.push({
-      name: 'search', // 指定導航到名為 'search' 的路由
-      query: { q: newQuery }
-    });
-  }
-};
+  const handleSearch = (query) => {
+    const newQuery = query.trim();
+    if (newQuery) {
+      // 如果有搜尋關鍵字，就導航到搜尋頁面
+      router.push({
+        name: 'search', // 指定導航到名為 'search' 的路由
+        query: { q: newQuery },
+      });
+    }
+  };
 
   const { searchTerm } = useSearch(currentSearchQuery.value);
 
@@ -100,7 +100,6 @@ const handleSearch = (query) => {
   <div class="content-wrapper">
     <BreadCrumb class="bread-crumb" />
     <RecipeCardSolo
-
       :recipes="filteredRecipes"
       class="solo"
     />
@@ -115,7 +114,10 @@ const handleSearch = (query) => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 100px;
+    margin-top: 80px;
+    @include rwdmax(768) {
+      margin-top: 30px;
+    }
   }
 
   .search-container > * {
@@ -125,7 +127,10 @@ const handleSearch = (query) => {
   }
 
   .section {
-    margin: px(200) auto px(100);
+    margin: px(150) auto px(100);
+    @include rwdmax(768) {
+      margin: px(80) auto px(50);
+    }
   }
 
   .content-wrapper {

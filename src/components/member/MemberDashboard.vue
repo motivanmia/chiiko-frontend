@@ -63,6 +63,7 @@
     gap: 65px;
     margin: auto 150px;
     @include rwdmax(1200) {
+      gap: 60px;
       margin: auto 70px;
     }
     @include rwdmax(768) {

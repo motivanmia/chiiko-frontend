@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
           },
         },
       }),
-      vueDevTools(),
+      // vueDevTools(),
     ],
     base: env.VITE_BASE || '/',
     build: {

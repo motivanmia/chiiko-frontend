@@ -164,7 +164,8 @@
     }
   }
   .hot-search-wrapper {
-    --hot-search-text-shadow: 0 4px 4px rgba(0, 0, 0, 0.59);
+    --hot-search-text-shadow:
+      0px 0px 5px rgba(0, 0, 0, 0.6), 0px 0px 6px rgba(0, 0, 0, 0.6), 0px 0px 8px rgba(0, 0, 0, 0.5);
     --hot-search-color: #fff;
   }
   #ShareRecipeButton {

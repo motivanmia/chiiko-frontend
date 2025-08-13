@@ -12,7 +12,10 @@
 
 <template>
   <MainHeader />
-  <main :class="mainStyle">
+  <main
+    :class="mainStyle"
+    class="mainBottom"
+  >
     <RouterView />
   </main>
   <MainFooter />
@@ -26,6 +29,15 @@
     }
     @include rwdmax(1200) {
       margin-top: px(120);
+    }
+  }
+  .mainBottom {
+    margin-bottom: px(200);
+    @include rwdmax(1440) {
+      margin-bottom: px(150);
+    }
+    @include rwdmax(1200) {
+      margin-bottom: px(120);
     }
   }
 </style>

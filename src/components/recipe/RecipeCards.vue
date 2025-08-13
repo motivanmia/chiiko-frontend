@@ -80,7 +80,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin: 30px auto;
+    margin: 0 auto;
     gap: 40px;
     max-width: 1200px;
     width: 100%;
@@ -96,6 +96,7 @@
       }
 
       @media (max-width: 640px) {
+        padding-inline: 10px;
         flex: 0 1 100%; // 手機：單欄
       }
     }
