@@ -1,93 +1,14 @@
-export const popularRecipe = [
-  {
-    id: 1,
-    title: '味增馬鈴薯煎餅',
-    image: new URL('@/assets/image/Recipes/popular-season/miso-potato.jpg', import.meta.url).href,
-    comments: 120,
-    bookmarks: 90,
-    time: 20,
-    tag: ['#和風', '#馬鈴薯'],
-  },
-  {
-    id: 2,
-    title: '爆漿起司漢堡排',
-    image: new URL('@/assets/image/Recipes/popular-season/cheese-hamburger-steak.jpg', import.meta.url).href,
-    comments: 90,
-    bookmarks: 45,
-    time: 15,
-    tag: ['#和風', '#起司', '#牛肉'],
-  },
-  {
-    id: 3,
-    title: '日式照燒茄子丼',
-    image: new URL('@/assets/image/Recipes/popular-season/scrambled-egg -rice.jpg', import.meta.url).href,
-    comments: 120,
-    bookmarks: 60,
-    time: 20,
-    tag: ['#和風', '#飯', '#茄子'],
-  },
-  {
-    id: 4,
-    title: '奶油雞肉義大利麵',
-    image: new URL('@/assets/image/Recipes/popular-season/creamy-chicken -pasta.jpg', import.meta.url).href,
-    comments: 105,
-    bookmarks: 50,
-    time: 20,
-    tag: ['#雞肉', '#麵'],
-  },
-  {
-    id: 5,
-    title: '覆盆莓開心果慕斯蛋糕',
-    image: new URL('@/assets/image/Recipes/popular-season/raspberry-mousse-cake.jpg', import.meta.url).href,
-    comments: 90,
-    bookmarks: 45,
-    time: 15,
-    tag: ['#覆盆莓'],
-  },
-  {
-    id: 6,
-    title: '日式滑蛋丼',
-    image: new URL('@/assets/image/Recipes/popular-season/eggplant-rice.jpg', import.meta.url).href,
-    comments: 120,
-    bookmarks: 60,
-    time: 20,
-    tag: ['#蛋', '#飯'],
-  },
-  {
-    id: 7,
-    title: '玫瑰鹽奶油蜂蜜布丁',
-    image: new URL('@/assets/image/Recipes/popular-season/honey-pudding.jpg', import.meta.url).href,
-    comments: 90,
-    bookmarks: 45,
-    time: 15,
-    tag: ['#蜂蜜', '#布丁'],
-  },
-  {
-    id: 8,
-    title: '番茄薑香牛奶燉雞',
-    image: new URL('@/assets/image/Recipes/popular-season/chicken-milk.jpg', import.meta.url).href,
-    comments: 90,
-    bookmarks: 45,
-    time: 15,
-    tag: ['#番茄', '#雞肉'],
-  },
-  {
-    id: 9,
-    title: '和風高麗菜炒豆皮絲',
-    image: new URL('@/assets/image/Recipes/popular-season/stir-fried-shredded-cabbage.jpg', import.meta.url).href,
-    comments: 120,
-    bookmarks: 60,
-    time: 20,
-    tag: ['#和風', '#高麗菜'],
-  },
-];
+// src/constants/recipes.js
 
-//一人料理
+// 一人料理
 export const soloMeal = [
   {
     id: 1,
     title: '剝皮辣椒雞湯',
-    image: new URL('@/assets/image/Recipes/solo-meal/peeled-chili- pepper-chicken -soup.jpg', import.meta.url).href,
+    image: new URL(
+      '@/assets/image/Recipes/solo-meal/peeled-chili- pepper-chicken -soup.jpg',
+      import.meta.url,
+    ).href,
     comments: 105,
     bookmarks: 90,
     time: 20,
@@ -123,7 +44,8 @@ export const soloMeal = [
   {
     id: 5,
     title: '經典雙層牛肉起司堡',
-    image: new URL('@/assets/image/Recipes/solo-meal/double-cheeseburger.jpg', import.meta.url).href,
+    image: new URL('@/assets/image/Recipes/solo-meal/double-cheeseburger.jpg', import.meta.url)
+      .href,
     comments: 90,
     bookmarks: 45,
     time: 15,
@@ -204,7 +126,8 @@ export const soloMeal = [
   {
     id: 14,
     title: '爐烤羊排與季節時蔬',
-    image: new URL('@/assets/image/Recipes/solo-meal/oven-baked-pork-chops.jpg', import.meta.url).href,
+    image: new URL('@/assets/image/Recipes/solo-meal/oven-baked-pork-chops.jpg', import.meta.url)
+      .href,
     comments: 80,
     bookmarks: 20,
     time: 20,
@@ -247,3 +170,112 @@ export const soloMeal = [
     tag: ['#豬肉'],
   },
 ];
+
+// 熱門食譜
+export const popularRecipe = [
+  {
+    id: 1,
+    title: '味增馬鈴薯煎餅',
+    image: new URL('@/assets/image/Recipes/popular-season/miso-potato.jpg', import.meta.url).href,
+    comments: 120,
+    bookmarks: 90,
+    time: 20,
+    tag: ['#和風', '#馬鈴薯'],
+  },
+  {
+    id: 2,
+    title: '爆漿起司漢堡排',
+    image: new URL(
+      '@/assets/image/Recipes/popular-season/cheese-hamburger-steak.jpg',
+      import.meta.url,
+    ).href,
+    comments: 90,
+    bookmarks: 45,
+    time: 15,
+    tag: ['#和風', '#起司', '#牛肉'],
+  },
+  {
+    id: 3,
+    title: '日式照燒茄子丼',
+    image: new URL('@/assets/image/Recipes/popular-season/scrambled-egg -rice.jpg', import.meta.url)
+      .href,
+    comments: 120,
+    bookmarks: 60,
+    time: 20,
+    tag: ['#和風', '#飯', '#茄子'],
+  },
+  {
+    id: 4,
+    title: '奶油雞肉義大利麵',
+    image: new URL(
+      '@/assets/image/Recipes/popular-season/creamy-chicken -pasta.jpg',
+      import.meta.url,
+    ).href,
+    comments: 105,
+    bookmarks: 50,
+    time: 20,
+    tag: ['#雞肉', '#麵'],
+  },
+  {
+    id: 5,
+    title: '覆盆莓開心果慕斯蛋糕',
+    image: new URL(
+      '@/assets/image/Recipes/popular-season/raspberry-mousse-cake.jpg',
+      import.meta.url,
+    ).href,
+    comments: 90,
+    bookmarks: 45,
+    time: 15,
+    tag: ['#覆盆莓'],
+  },
+  {
+    id: 6,
+    title: '日式滑蛋丼',
+    image: new URL('@/assets/image/Recipes/popular-season/eggplant-rice.jpg', import.meta.url).href,
+    comments: 120,
+    bookmarks: 60,
+    time: 20,
+    tag: ['#蛋', '#飯'],
+  },
+  {
+    id: 7,
+    title: '玫瑰鹽奶油蜂蜜布丁',
+    image: new URL('@/assets/image/Recipes/popular-season/honey-pudding.jpg', import.meta.url).href,
+    comments: 90,
+    bookmarks: 45,
+    time: 15,
+    tag: ['#蜂蜜', '#布丁'],
+  },
+  {
+    id: 8,
+    title: '番茄薑香牛奶燉雞',
+    image: new URL('@/assets/image/Recipes/popular-season/chicken-milk.jpg', import.meta.url).href,
+    comments: 90,
+    bookmarks: 45,
+    time: 15,
+    tag: ['#番茄', '#雞肉'],
+  },
+  {
+    id: 9,
+    title: '和風高麗菜炒豆皮絲',
+    image: new URL(
+      '@/assets/image/Recipes/popular-season/stir-fried-shredded-cabbage.jpg',
+      import.meta.url,
+    ).href,
+    comments: 120,
+    bookmarks: 60,
+    time: 20,
+    tag: ['#和風', '#高麗菜'],
+  },
+];
+
+export const allRecipeCategories = {
+  'solo-meal': {
+    title: '一人料理',
+    recipes: soloMeal,
+  },
+  'popular-recipe': {
+    title: '熱門食譜',
+    recipes: popularRecipe,
+  },
+};

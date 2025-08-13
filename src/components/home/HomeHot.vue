@@ -45,7 +45,7 @@
     </div>
     <SeeMoreButton
       id="SeeMoreButton"
-      path="/recipe"
+      path="/recipe-overview"
     />
   </div>
 </template>

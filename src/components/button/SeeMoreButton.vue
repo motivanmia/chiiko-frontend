@@ -12,11 +12,11 @@
     },
   });
 
-  // const emit = defineEmits(['seeMoreButtonclick']);
+  const emit = defineEmits(['seeMoreButtonclick']);
 
-  // function handleClick() {
-  //   emit('seeMoreButtonclick');
-  // }
+  function handleClick() {
+    emit('seeMoreButtonclick');
+  }
 </script>
 
 <template>

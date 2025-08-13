@@ -62,7 +62,6 @@ const router = createRouter({
         },
       ],
     },
-    ,
     {
       path: '/school',
       name: 'school',
@@ -79,8 +78,8 @@ const router = createRouter({
       component: () => import('@/pages/RecipeEditPage.vue'),
     },
     {
-      path: '/recipe',
-      name: 'recipe',
+      path: '/recipe-overview',
+      name: 'recipe-overview',
       component: () => import('@/pages/RecipeOverview.vue'),
     },
     {
@@ -103,12 +102,17 @@ const router = createRouter({
       name: 'order-success',
       component: () => import('@/pages/OrderSuccessPage.vue'),
     },
+    // {
+    //   path: '/solo',
+    //   name: 'solo',
+    //   component: () => import('@/pages/RecipeSolo.vue'),
+    // },
     {
-      path: '/solo',
-      name: 'solo',
-      component: () => import('@/pages/RecipeSolo.vue'),
+      path: '/recipes/:category',
+      name: 'recipes',
+      component: () => import('@/pages/RecipeCategoryPage.vue'),
     },
-    {
+    { 
       path: '/search',
       name: 'search',
       component: () => import('@/pages/RecipeSearch.vue'),

@@ -9,7 +9,10 @@
       v-for="buttons in categoryName"
       :key="buttons.id"
       :to="{
-        name: 'solo', // 導向'solo'
+        name: 'recipes', 
+        params: { category: buttons.key }
+        // 使用動態參數，其中 :category 會被替換成每個按鈕的 key
+        //params為傳遞的載體
       }"
       class="category-box"
     >

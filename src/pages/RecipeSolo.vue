@@ -78,14 +78,6 @@ const handleSearch = (query) => {
 
 
 
-// =======================================================
-
-  const goToPage = () => {
-
-  router.push('/recipe-detail');
-};
-// =======================================================
-
 </script>
 
 <template>
@@ -101,14 +93,13 @@ const handleSearch = (query) => {
   </div>
 
   <SectionTitle
-    title="/一人料理\"
+    :title="/route.params.category\"
     class="section"
   ></SectionTitle>
 
   <div class="content-wrapper">
     <BreadCrumb class="bread-crumb" />
     <RecipeCardSolo
-      @click="goToPage" 
 
       :recipes="filteredRecipes"
       class="solo"

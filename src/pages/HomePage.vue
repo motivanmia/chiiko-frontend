@@ -76,7 +76,7 @@
       @click="ingredient.updateActive(null)"
     ></div>
     <!-- </Transition> -->
-    <Pagination />
+    <!-- <Pagination /> -->
 
     <HomeProduct />
 

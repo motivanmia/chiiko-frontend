@@ -12,7 +12,7 @@
       <div class="main-footer__wrapper">
         <div class="main-footer__recipe">
           <RouterLink
-            to="/recipe"
+            to="/recipe-overview"
             class="main-footer__recipe-title"
           >
             靈感×食譜
@@ -20,7 +20,7 @@
           <ul class="main-footer__recipe-list">
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="/solo"
+                to="#"
                 class="main-footer__recipe-link"
               >
                 一人料理
@@ -28,7 +28,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="/solo"
+                to="#"
                 class="main-footer__recipe-link"
               >
                 家庭聚餐
@@ -36,7 +36,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="/solo"
+                to="#"
                 class="main-footer__recipe-link"
               >
                 浪漫晚餐
@@ -44,7 +44,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="/solo"
+                to="#"
                 class="main-footer__recipe-link"
               >
                 戶外料理
@@ -52,7 +52,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="/solo"
+                to="#"
                 class="main-footer__recipe-link"
               >
                 健身/減糖餐
@@ -60,7 +60,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="/solo"
+                to="#"
                 class="main-footer__recipe-link"
               >
                 懶人快煮
@@ -68,7 +68,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="/solo"
+                to="#"
                 class="main-footer__recipe-link"
               >
                 慶生/節慶料理
@@ -76,7 +76,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="/solo"
+                to="#"
                 class="main-footer__recipe-link"
               >
                 低預算料理

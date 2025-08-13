@@ -1,11 +1,11 @@
 <script setup>
-  import { categoryName } from '@/constants/recipeCategory';
-  // tile是我們設的key 冒號後""內為key的值
+import { categoryName } from '@/constants/recipeCategory';
+import SectionTitle from '../SectionTitle.vue';
+import { RouterLink } from 'vue-router'; // <-- 新增這行
 
-  import SectionTitle from '../SectionTitle.vue';
-
-  const card = categoryName;
+const card = categoryName;
 </script>
+
 
 <template>
   <div class="recipe-all">
@@ -19,7 +19,8 @@
           v-for="cards in card"
           :key="cards.id"
           :to="{
-            name: 'solo', // 導向'solo' 
+            name: 'recipes',
+    params: { category: cards.key }
           }"
           class="recipe-category__card"
         >

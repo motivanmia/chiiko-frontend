@@ -7,20 +7,20 @@
 
   // nav選單項目
   const navLinks = ref([
-    { key: 'recipes', title: '靈感×食譜', path: '/recipe', isOpen: true },
+    { key: 'recipes', title: '靈感×食譜', path: '/recipe-overview', isOpen: true },
     { key: 'school', title: '食材學堂', path: '/school', isOpen: true },
     { key: 'prodouts', title: '好物精選', isOpen: false, path: '/product' },
   ]);
 
   const navItemRecipes = [
-    { title: '一人料理', path: '/solo' },
-    { title: '家庭聚餐', path: '/solo' },
-    { title: '浪漫晚餐', path: '/solo' },
-    { title: '戶外料理', path: '/solo' },
-    { title: '懶人快煮', path: '/solo' },
-    { title: '健身/減糖餐', path: '/solo' },
-    { title: '低預算料理', path: '/solo' },
-    { title: '慶生/節慶料理', path: '/solo' },
+    { title: '一人料理', path: '#' },
+    { title: '家庭聚餐', path: '#' },
+    { title: '浪漫晚餐', path: '#' },
+    { title: '戶外料理', path: '#' },
+    { title: '懶人快煮', path: '#' },
+    { title: '健身/減糖餐', path: '#' },
+    { title: '低預算料理', path: '#' },
+    { title: '慶生/節慶料理', path: '#' },
   ];
 
   const navItemSchool = [
@@ -214,7 +214,7 @@
               :class="{ 'is-active': activeSubMenu === 'recipes' }"
             >
               <div class="submenu__title">
-                <RouterLink to="/recipe">靈感×食譜</RouterLink>
+                <RouterLink to="/recipe-overview">靈感×食譜</RouterLink>
               </div>
               <div class="submenu__content recipes__grid">
                 <RouterLink
