@@ -1,6 +1,12 @@
 <script setup>
+  import { onMounted } from 'vue';
   import { useIngredientStore } from '@/stores/ingredient';
   const ingredient = useIngredientStore();
+  onMounted(async () => {
+    await ingredient.loadIngredients();
+    console.log('pretty:', JSON.stringify(ingredient.list, null, 2));
+  });
+
   import { ref, watch, computed } from 'vue';
   import { useRoute } from 'vue-router';
 
@@ -37,7 +43,7 @@
     >
       <div class="Ingredients__card-imgbox">
         <img
-          :src="item.img[0]"
+          :src="item.image[0]"
           alt=""
         />
       </div>
