@@ -2,6 +2,7 @@
   import { ref } from 'vue';
   import { Swiper, SwiperSlide } from 'swiper/vue';
   import { Navigation, Thumbs } from 'swiper/modules';
+  import Icon from '@/components/common/Icon.vue';
 
   import 'swiper/css';
   import 'swiper/css/navigation';
@@ -85,11 +86,57 @@
             :alt="`縮圖 ${i + 1}`"
           />
         </SwiperSlide>
-        <div>
+        <div class="product-detail">
           <img
             class="responsive-img"
             src="/src/assets/image/Product/Product-buy/product-image.png"
           />
+          <div class="notice-wrap">
+            <!-- 商品使用須知 -->
+            <section class="product-notice">
+              <h3>商品使用須知</h3>
+              <p class="lead">為確保使用安全及延長產品壽命，請詳閱以下說明：</p>
+
+              <h4>使用方式</h4>
+              <ul>
+                <li>-本產品適用於塗抹奶油、果醬、起司等軟性食品。</li>
+                <li>-請勿用於切割堅硬食材或作為其他工具使用， 以免損壞產品或造成危險。</li>
+              </ul>
+
+              <h4>清潔與保養</h4>
+              <ul>
+                <li>-初次使用前，請以中性清潔劑清洗乾淨後擦乾。</li>
+                <li>-使用後請立即清洗並徹底擦乾，避免水漬殘留導致鏽蝕。</li>
+                <li>-建議以手洗為主，避免長期使用洗碗機清洗，以延長產品壽命。</li>
+              </ul>
+
+              <h4>注意事項</h4>
+              <ul>
+                <li>-請勿長時間浸泡於水中，亦避免放置於高溫或潮濕環境。</li>
+                <li>-請妥善存放，避免兒童誤用。</li>
+                <li>-若發現產品變形、破損或鏽蝕，請停止使用。</li>
+              </ul>
+
+              <h4>材質說明</h4>
+              <ul>
+                <li>-材質：304食品級不鏽鋼</li>
+                <li>-表面處理：鏡面拋光或霧面處理（依實際商品為準）</li>
+              </ul>
+            </section>
+
+            <!-- 購買前請詳閱 -->
+            <section class="purchase-info">
+              <h3>購買前請詳閱</h3>
+              <p>為保障您的權益，請在下單前詳細閱讀以下資訊：</p>
+              <ul>
+                <li>-商品規格、尺寸、顏色請務必確認無誤。</li>
+                <li>-本商品經拆封使用後恕不接受退換，請確認需求後購買。</li>
+                <li>-若對商品有任何疑問，歡迎下單前聯繫客服詢問。</li>
+                <li>-下單即表示您已詳閱並同意本店之購買條款與規定。</li>
+              </ul>
+              <p>感謝您的理解與支持，祝您購物愉快。</p>
+            </section>
+          </div>
         </div>
 
         <!-- 自訂箭頭：自己放內容 -->
@@ -125,9 +172,9 @@
         class="btn primary"
         @click="addToCart"
       >
-        <img
+        <Icon
+          icon-name="order"
           class="icon-cart"
-          src="/src/assets/image/Product/Product-buy/car.png"
         />
         加入購物車
       </button>
@@ -140,12 +187,19 @@
         class="btn ghost"
         @click="toggleWishlist"
       >
-        <template v-if="inWishlist">♥ 已加入願望清單</template>
-        <template v-else>
-          <img
+        <template v-if="inWishlist">
+          <Icon
+            icon-name="heart"
             class="icon-heart"
-            src="/src/assets/image/Product/Product-buy/heart.png"
           />
+          已加入願望清單
+        </template>
+        <template v-else>
+          <Icon
+            icon-name="heartL"
+            class="icon-heart"
+          />
+
           加入願望清單
         </template>
       </button>
@@ -214,8 +268,81 @@
 </template>
 
 <style scoped>
+  .notice-wrap {
+    max-width: 820px;
+    margin: 24px auto;
+    padding: 0 20px;
+    font-family: 'Noto Sans TC', sans-serif;
+    line-height: 1.75;
+    color: #333;
+  }
+
+  .product-notice {
+    position: relative;
+    background: #f3f3f3;
+    border-radius: 12px;
+    padding: 18px 20px;
+    border: 1px solid #e3e6f3;
+    outline-offset: -6px;
+    box-shadow: 0 2px 10px rgba(18, 24, 40, 0.06);
+    margin-bottom: 18px;
+  }
+
+  .product-notice::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 0;
+    width: 100%;
+  }
+
+  .product-notice h3,
+  .purchase-info h3 {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 10px;
+  }
+
+  .product-notice h4 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 18px 0 6px;
+  }
+
+  .product-notice ul,
+  .purchase-info ul {
+    margin: 6px 0 0 1.25em;
+    padding: 0;
+  }
+
+  .product-notice li,
+  .purchase-info li {
+    margin: 6px 0;
+  }
+
+  .purchase-info {
+    background: #f3f3f3;
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+
+  .purchase-info p {
+    margin: 6px 0 8px;
+    color: #6b7280;
+  }
+
+  @media (max-width: 480px) {
+    .product-notice h3,
+    .purchase-info h3 {
+      font-size: 18px;
+    }
+    .product-notice h4 {
+      font-size: 15px;
+    }
+  }
+
   .product-container {
-    max-width: 1024px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 8px 16px 24px;
     display: grid;
@@ -226,7 +353,7 @@
 
   .back-col {
     position: sticky;
-    top: 24px;
+    top: 170px;
     align-self: start;
     z-index: 5;
   }
@@ -324,8 +451,8 @@
   }
 
   /* :deep(.swiper-slide-thumb-active) .thumb-image {
-    border-color: #d6b59c;
-  } */
+      border-color: #d6b59c;
+    } */
 
   :deep(.thumbs-button-prev),
   :deep(.thumbs-button-next) {
@@ -359,22 +486,23 @@
     font-family: 'Noto Sans TC', sans-serif;
     min-width: 280px;
     position: sticky;
-    top: 24px;
+    top: 170px;
     align-self: start;
     max-height: calc(100vh - 48px);
     overflow-y: auto;
   }
 
   .title {
-    font-size: 20px;
+    font-size: 36px;
     font-weight: 700;
     margin-bottom: 8px;
+    letter-spacing: 0.1em;
   }
 
   .features {
     padding-left: 0;
     list-style: none;
-    font-size: 14px;
+    font-size: 20px;
     margin-bottom: 10px;
     line-height: 1.8;
     color: #5b4b40;
@@ -382,7 +510,7 @@
   }
 
   .price {
-    font-size: 22px;
+    font-size: 36px;
     font-weight: 700;
     margin: 15px 0 14px;
   }
@@ -392,6 +520,7 @@
     justify-content: space-between;
     align-items: center;
     margin: 10px 0 16px;
+    font-size: 24px;
   }
 
   .stepper {
@@ -425,10 +554,10 @@
 
   .btn {
     width: 100%;
-    height: 44px;
+    height: 60px;
     border: none;
     border-radius: 10px;
-    font-size: 15px;
+    font-size: 32px;
     margin-top: 8px;
     cursor: pointer;
   }
@@ -444,17 +573,19 @@
   }
 
   .note {
-    font-size: 12px;
+    font-size: 16px;
     color: #6a5a51;
     margin: 10% 0 5%;
+    line-height: 1.5;
   }
 
   .icon-cart,
   .icon-heart {
-    width: 16px;
-    height: 16px;
+    width: 45px;
+    height: 45px;
     object-fit: contain;
     margin-right: 8px;
+    vertical-align: middle;
   }
 
   .thumbs-arrow {
@@ -472,14 +603,25 @@
   }
 
   .related-title {
-    font-size: 18px;
+    font-size: 32px;
     font-weight: bold;
-    margin-bottom: 16px;
+    margin-bottom: 58px;
     color: #222;
   }
 
   .related-swiper {
     position: relative;
+  }
+
+  .related-card img {
+    transition: transform 0.3s ease;
+  }
+
+  .related-card img:hover {
+    transform: translateY(-10px);
+  }
+  .btn primary {
+    background-color: #d6b59c;
   }
 
   .related-card {
@@ -492,15 +634,12 @@
     text-decoration: none;
   }
 
-  .related-card:hover {
-    transform: translateY(-2px);
-  }
-
   .related-img {
     width: 100%;
-    aspect-ratio: 1 / 1; /* ✅ 正方形圖片 */
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     display: block;
+    border-radius: 12px;
   }
 
   .related-text {
@@ -513,19 +652,19 @@
 
   .related-name {
     font-weight: 600;
-    font-size: 15px;
+    font-size: 30px;
     margin-bottom: 4px;
     color: #222;
   }
 
   .related-sub {
-    font-size: 12px;
+    font-size: 16px;
     color: #888;
     margin-bottom: 6px;
   }
 
   .related-price {
-    font-size: 16px;
+    font-size: 30px;
     font-weight: bold;
     color: #333;
   }
@@ -549,27 +688,20 @@
     max-width: 100%;
   }
 
-  @media (max-width: 880px) {
-    .product-container {
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-
-    .back-col {
-      position: static;
-    }
+  .btn.primary {
+    background: #d97c48;
+    color: #fef9ec;
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease;
   }
-  @media (max-width: 880px) {
-    .back-col {
-      grid-area: back;
-    }
-    .product-gallery {
-      grid-area: gallery;
-    }
-    .card {
-      grid-area: card;
-    }
 
+  .btn.primary:hover {
+    background-color: #fef9ec;
+    color: #d97c48;
+  }
+
+  @media (max-width: 880px) {
     .product-container {
       display: grid;
       grid-template-columns: 1fr;
@@ -577,39 +709,40 @@
         'back'
         'gallery'
         'card'
-        'responsive-img';
+        'responsive-img'
+        'notice-wrap';
       gap: 12px;
+      width: 80%;
+      margin: 0 auto;
+    }
+    .back-col {
+      grid-area: back;
+      position: static;
     }
 
-    .thumbs-swiper .responsive-img {
-      display: none;
-    }
-
-    .product-container::after {
-      content: url('/src/assets/image/Product/Product-buy/product-image.png');
-      grid-area: responsive-img;
-      display: block;
-      max-width: 100%;
-      height: auto;
-      justify-self: stretch;
+    .product-gallery {
+      grid-area: gallery;
     }
 
     .card {
+      grid-area: card;
       position: static;
-      left: auto;
       width: 100%;
       max-width: 420px;
       margin: 0 auto;
-      z-index: 0;
-    }
-    .main-swiper,
-    .thumbs-swiper {
-      position: relative;
-      z-index: 0;
     }
 
-    .back-col {
-      position: static;
+    .responsive-img {
+      grid-area: responsive-img;
+      width: 100%;
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .notice-wrap {
+      grid-area: notice-wrap;
+      display: block;
     }
   }
 </style>

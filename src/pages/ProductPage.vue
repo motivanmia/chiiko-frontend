@@ -24,27 +24,57 @@
   /> -->
 
   <div class="card">
-    <div class="card__title">
-      <img src="/src/assets/image/Product/pot.png" />
-      <div class="card__title-txt">鍋具/鍋鏟</div>
-    </div>
+    <div class="card">
+      <div class="card__title">
+        <img
+          class="normal"
+          src="/src/assets/image/Product/pot.png"
+        />
+        <img
+          class="hover"
+          src="/src/assets/image/Product/pot1.png"
+        />
+        <div class="card__title-txt">鍋具/鍋鏟</div>
+      </div>
 
-    <div class="card__title">
-      <img src="/src/assets/image/Product/oven.png" />
-      <div class="card__title-txt">烤箱/氣炸鍋</div>
-    </div>
+      <div class="card__title">
+        <img
+          class="normal"
+          src="/src/assets/image/Product/oven.png"
+        />
+        <img
+          class="hover"
+          src="/src/assets/image/Product/oven1.png"
+        />
+        <div class="card__title-txt">烤箱/氣炸鍋</div>
+      </div>
 
-    <div class="card__title">
-      <img src="/src/assets/image/Product/knife.png" />
-      <div class="card__title-txt">刀具/砧板</div>
-    </div>
+      <div class="card__title">
+        <img
+          class="normal"
+          src="/src/assets/image/Product/knife.png"
+        />
+        <img
+          class="hover"
+          src="/src/assets/image/Product/knife1.png"
+        />
+        <div class="card__title-txt">刀具/砧板</div>
+      </div>
 
-    <div class="card__title">
-      <img src="/src/assets/image/Product/life.png" />
-      <div class="card__title-txt">廚房小物</div>
+      <div class="card__title">
+        <img
+          class="normal"
+          src="/src/assets/image/Product/life.png"
+        />
+        <img
+          class="hover"
+          src="/src/assets/image/Product/life1.png"
+        />
+        <div class="card__title-txt">廚房小物</div>
+      </div>
     </div>
   </div>
-  <div class="SearchBar"><SearchBar></SearchBar></div>
+  <div class="SearchBar"><SearchBar placeholder="搜尋好物 例：抹布"></SearchBar></div>
 
   <div class="section-title">
     <samp>/高回購率百元好物\</samp>
@@ -182,7 +212,6 @@
   .product-item img {
     transition: transform 0.3s ease;
   }
-
   .product-item img:hover {
     transform: translateY(-10px);
   }
@@ -191,12 +220,20 @@
     margin-bottom: 80px;
   }
   .card {
+    width: 1200px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
-    padding: 0 20%;
+    margin: 0 auto;
+    cursor: pointer;
   }
-
+  .card__title .hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease; // 加上過渡
+  }
   .card__title {
     top: 30px;
     position: relative;
@@ -205,7 +242,47 @@
     overflow: hidden;
     text-align: center;
     letter-spacing: 0.2em;
-    // transition: background-color 0.3s ease;
+  }
+
+  .card__title {
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    text-align: center;
+
+    img {
+      width: 100%;
+      display: block;
+      transition: opacity 1s ease;
+    }
+
+    .hover {
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+    }
+
+    &:hover .hover {
+      opacity: 1;
+    }
+
+    &:hover .normal {
+      opacity: 0;
+    }
+
+    .card__title-txt {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-weight: bold;
+      font-size: 24px;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+      z-index: 1;
+      pointer-events: none;
+    }
   }
 
   .card__title-txt {
@@ -216,15 +293,11 @@
     transform: translate(-50%, -50%);
     color: white;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 24px;
     text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
     z-index: 1;
     cursor: pointer;
   }
-
-  // .card__title:hover {
-    
-  // }
 
   .card__title img {
     position: relative;
@@ -233,6 +306,7 @@
     object-fit: cover;
     border-radius: 10px;
     z-index: 0;
+    transition: opacity 0.4s ease;
   }
 
   .section-title {
@@ -252,8 +326,9 @@
   .product-list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    padding: 20px 20%;
+    gap: 70px 24px;
+    width: 1200px;
+    margin: 80px auto 80px;
     justify-content: center;
   }
 
@@ -272,14 +347,14 @@
 
   .product-name {
     margin-top: 28px;
-    font-size: 20px;
+    font-size: 30px;
     color: color(text, dark);
     font-weight: bold;
     letter-spacing: 0.2em;
   }
 
   .product-desc {
-    font-size: 14px;
+    font-size: 16px;
     color: color(text, base);
     margin-top: 4px;
     letter-spacing: 0.2em;
@@ -289,13 +364,26 @@
   .product-price {
     letter-spacing: 0.2em;
     margin-top: 10px;
-    font-size: 20px;
+    font-size: 30px;
     font-weight: bold;
     color: color(text, dark);
     margin-top: 8px;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 880px) {
+    .section-title {
+      font-size: 24px;
+    }
+    .product-name {
+      font-size: 18px;
+    }
+    .product-desc {
+      font-size: 14px;
+    }
+    .product-price {
+      font-size: 18px;
+    }
+
     .card {
       grid-template-columns: repeat(2, 1fr);
       padding: 0 8px;
