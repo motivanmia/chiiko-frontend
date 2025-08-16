@@ -1,6 +1,8 @@
 import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
-
+// const {VITE_API_BASE} = import.meta.env
+const apiBase = import.meta.env.VITE_API_BASE;
+`${apiBase}/school/getIngredients.php`;
 // import { Ingredients } from '@/constants/schoolIngredients';
 
 export const useIngredientStore = defineStore('ingredient', () => {
