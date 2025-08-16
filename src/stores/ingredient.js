@@ -1,10 +1,29 @@
 import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-import { Ingredients } from '@/constants/schoolIngredients';
+// import { Ingredients } from '@/constants/schoolIngredients';
 
 export const useIngredientStore = defineStore('ingredient', () => {
-  const list = ref(Ingredients);
+  const list = ref([]);
+  const loading = ref(false);
+  const error = ref(null);
+
+  async function loadIngredients() {
+    loading.value = true;
+    error.value = null;
+    try {
+      const res = await fetch('http://localhost:8888/getIngredients.php');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      list.value = Array.isArray(data) ? data : [];
+    } catch (e) {
+      error.value = e.message || '讀取失敗';
+    } finally {
+      loading.value = false;
+    }
+  }
+
   const active = ref(null);
 
   const updateActive = (target) => {
@@ -23,5 +42,5 @@ export const useIngredientStore = defineStore('ingredient', () => {
     }
   });
 
-  return { list, active, updateActive };
+  return { list, loading, error, active, loadIngredients, updateActive };
 });
