@@ -4,7 +4,7 @@
   const ingredient = useIngredientStore();
   onMounted(async () => {
     await ingredient.loadIngredients();
-    console.log('pretty:', JSON.stringify(ingredient.list, null, 2));
+    // console.log('pretty:', JSON.stringify(ingredient.list, null, 2));
   });
 
   import { ref, watch, computed } from 'vue';

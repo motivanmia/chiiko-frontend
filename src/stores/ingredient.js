@@ -12,11 +12,17 @@ export const useIngredientStore = defineStore('ingredient', () => {
     loading.value = true;
     error.value = null;
     try {
-      const res = await fetch('http://localhost:8888/getIngredients.php');
+      const res = await fetch('http://localhost:8888/front/school/getIngredients.php');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
+      const result = await res.json();
 
-      list.value = Array.isArray(data) ? data : [];
+      list.value = Array.isArray(result.data)
+        ? result.data.map((item) => ({
+            ...item,
+            image: JSON.parse(item.image),
+            content: JSON.parse(item.content),
+          }))
+        : [];
     } catch (e) {
       error.value = e.message || '讀取失敗';
     } finally {
@@ -28,7 +34,7 @@ export const useIngredientStore = defineStore('ingredient', () => {
 
   const updateActive = (target) => {
     active.value = target;
-    // console.log(target);
+    console.log('prett y:', JSON.stringify(active.value, null, 2));
   };
 
   watch(active, (val) => {
