@@ -18,7 +18,7 @@ export const useIngredientStore = defineStore('ingredient', () => {
       list.value = Array.isArray(result.data)
         ? result.data.map((item) => ({
             ...item,
-            image: JSON.parse(item.image),
+            // image: JSON.parse(item.image),
             content: JSON.parse(item.content),
           }))
         : [];
