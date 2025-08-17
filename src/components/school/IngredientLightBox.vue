@@ -28,14 +28,14 @@
             class="lightbox__img"
             slot="first"
             data-before
-            :src="ingredient.active.img[0]"
+            :src="ingredient.active.image[0]"
             alt=""
           />
           <img
             class="lightbox__img"
             slot="second"
             data-after
-            :src="ingredient.active.img[1]"
+            :src="ingredient.active.image[1]"
             alt=""
           />
         </img-comparison-slider>
@@ -45,7 +45,7 @@
       <div class="lightbox__text">
         <div
           class="lightbox__text--box"
-          v-for="(item, index) in ingredient.active.lightbox"
+          v-for="(item, index) in ingredient.active.content"
           :key="'good-' + index"
         >
           <Icon
@@ -63,7 +63,7 @@
       <div class="lightbox__text">
         <div
           class="lightbox__text--box"
-          v-for="(item, index) in ingredient.active.lightbox"
+          v-for="(item, index) in ingredient.active.content"
           :key="'bad-' + index"
         >
           <Icon
@@ -79,7 +79,7 @@
     </div>
     <pre class="lightbox__foot">
         <h2>保存方法</h2>
-        <p>{{ ingredient.active.preservation }}</p>
+        <p>{{ ingredient.active.storage_method }}</p>
       </pre>
     <div
       class="lightbox__close"

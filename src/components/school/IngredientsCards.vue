@@ -4,7 +4,7 @@
   const ingredient = useIngredientStore();
   onMounted(async () => {
     await ingredient.loadIngredients();
-    console.log('pretty:', JSON.stringify(ingredient.list, null, 2));
+    // console.log('pretty:', JSON.stringify(ingredient.list, null, 2));
   });
 
   import { ref, watch, computed } from 'vue';
@@ -20,11 +20,15 @@
   );
 
   const displayCount = ref(50);
+  // console.log(ingredient.list);
 
   const vegetableList = computed(() =>
-    ingredient.list.filter((item) => item.category === 'vegetables'),
+    ingredient.list.filter((item) => item.ingredients_categary_id === '1'),
   );
-  const meatList = computed(() => ingredient.list.filter((item) => item.category === 'meat'));
+
+  const meatList = computed(() =>
+    ingredient.list.filter((item) => item.ingredients_categary_id === '2'),
+  );
 
   const filteredList = computed(() => {
     if (category.value === 'vegetable') return vegetableList.value;
