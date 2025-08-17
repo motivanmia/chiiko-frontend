@@ -346,7 +346,6 @@
     margin-top: 130px;
     margin-bottom: 100px;
     letter-spacing: $letter-spacing-base;
-
     // ✨ RWD: 將響應式樣式直接寫在元件內部
     @media (max-width: 1024px) {
       margin-top: 80px;
@@ -369,6 +368,8 @@
   .step-ingredient-wrapper {
     display: flex;
     justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
 
     @media (max-width: 1024px) {
       flex-direction: column;

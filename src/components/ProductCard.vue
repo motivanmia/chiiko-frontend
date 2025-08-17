@@ -76,6 +76,7 @@
     background-color: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 20px;
+    margin-top: 10px;
   }
   .section-title {
     text-align: center;
