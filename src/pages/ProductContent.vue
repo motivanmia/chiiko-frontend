@@ -37,6 +37,7 @@
 
 <template>
   <div class="product-container">
+    <!-- 返回按鈕 -->
     <div class="back-col">
       <button
         class="back-button"
@@ -47,8 +48,8 @@
       </button>
     </div>
 
+    <!-- 商品圖片區（主圖 + 縮圖 Swiper） -->
     <div class="product-gallery">
-      <!-- 主圖 Swiper -->
       <Swiper
         class="main-swiper"
         :modules="[Navigation, Thumbs]"
@@ -67,7 +68,6 @@
         </SwiperSlide>
       </Swiper>
 
-      <!-- 縮圖箭頭 -->
       <Swiper
         class="thumbs-swiper"
         :modules="[Navigation, Thumbs]"
@@ -86,60 +86,8 @@
             :alt="`縮圖 ${i + 1}`"
           />
         </SwiperSlide>
-        <div class="product-detail">
-          <img
-            class="responsive-img"
-            src="/src/assets/image/Product/Product-buy/product-image.png"
-          />
-          <div class="notice-wrap">
-            <!-- 商品使用須知 -->
-            <section class="product-notice">
-              <h3>商品使用須知</h3>
-              <p class="lead">為確保使用安全及延長產品壽命，請詳閱以下說明：</p>
 
-              <h4>使用方式</h4>
-              <ul>
-                <li>-本產品適用於塗抹奶油、果醬、起司等軟性食品。</li>
-                <li>-請勿用於切割堅硬食材或作為其他工具使用， 以免損壞產品或造成危險。</li>
-              </ul>
-
-              <h4>清潔與保養</h4>
-              <ul>
-                <li>-初次使用前，請以中性清潔劑清洗乾淨後擦乾。</li>
-                <li>-使用後請立即清洗並徹底擦乾，避免水漬殘留導致鏽蝕。</li>
-                <li>-建議以手洗為主，避免長期使用洗碗機清洗，以延長產品壽命。</li>
-              </ul>
-
-              <h4>注意事項</h4>
-              <ul>
-                <li>-請勿長時間浸泡於水中，亦避免放置於高溫或潮濕環境。</li>
-                <li>-請妥善存放，避免兒童誤用。</li>
-                <li>-若發現產品變形、破損或鏽蝕，請停止使用。</li>
-              </ul>
-
-              <h4>材質說明</h4>
-              <ul>
-                <li>-材質：304食品級不鏽鋼</li>
-                <li>-表面處理：鏡面拋光或霧面處理（依實際商品為準）</li>
-              </ul>
-            </section>
-
-            <!-- 購買前請詳閱 -->
-            <section class="purchase-info">
-              <h3>購買前請詳閱</h3>
-              <p>為保障您的權益，請在下單前詳細閱讀以下資訊：</p>
-              <ul>
-                <li>-商品規格、尺寸、顏色請務必確認無誤。</li>
-                <li>-本商品經拆封使用後恕不接受退換，請確認需求後購買。</li>
-                <li>-若對商品有任何疑問，歡迎下單前聯繫客服詢問。</li>
-                <li>-下單即表示您已詳閱並同意本店之購買條款與規定。</li>
-              </ul>
-              <p>感謝您的理解與支持，祝您購物愉快。</p>
-            </section>
-          </div>
-        </div>
-
-        <!-- 自訂箭頭：自己放內容 -->
+        <!-- 縮圖箭頭 -->
         <div class="thumbs-button-prev">
           <span class="thumbs-arrow">&lt;</span>
         </div>
@@ -149,6 +97,7 @@
       </Swiper>
     </div>
 
+    <!-- 商品資訊卡 -->
     <aside class="card">
       <h2 class="title">不鏽鋼奶油刀</h2>
       <ul class="features">
@@ -199,13 +148,66 @@
             icon-name="heartL"
             class="icon-heart"
           />
-
           加入願望清單
         </template>
       </button>
     </aside>
+
+    <!-- 額外圖片（單張展示圖） -->
+    <img
+      class="responsive-img"
+      src="/src/assets/image/Product/Product-buy/product-image.png"
+      alt="商品展示圖"
+    />
+
+    <!-- 商品須知區塊 -->
+    <div class="notice-wrap">
+      <section class="product-notice">
+        <h3>商品使用須知</h3>
+        <p class="lead">為確保使用安全及延長產品壽命，請詳閱以下說明：</p>
+
+        <h4>使用方式</h4>
+        <ul>
+          <li>-本產品適用於塗抹奶油、果醬、起司等軟性食品。</li>
+          <li>-請勿用於切割堅硬食材或作為其他工具使用， 以免損壞產品或造成危險。</li>
+        </ul>
+
+        <h4>清潔與保養</h4>
+        <ul>
+          <li>-初次使用前，請以中性清潔劑清洗乾淨後擦乾。</li>
+          <li>-使用後請立即清洗並徹底擦乾，避免水漬殘留導致鏽蝕。</li>
+          <li>-建議以手洗為主，避免長期使用洗碗機清洗，以延長產品壽命。</li>
+        </ul>
+
+        <h4>注意事項</h4>
+        <ul>
+          <li>-請勿長時間浸泡於水中，亦避免放置於高溫或潮濕環境。</li>
+          <li>-請妥善存放，避免兒童誤用。</li>
+          <li>-若發現產品變形、破損或鏽蝕，請停止使用。</li>
+        </ul>
+
+        <h4>材質說明</h4>
+        <ul>
+          <li>-材質：304食品級不鏽鋼</li>
+          <li>-表面處理：鏡面拋光或霧面處理（依實際商品為準）</li>
+        </ul>
+      </section>
+
+      <section class="purchase-info">
+        <h3>購買前請詳閱</h3>
+        <p>為保障您的權益，請在下單前詳細閱讀以下資訊：</p>
+        <ul>
+          <li>-商品規格、尺寸、顏色請務必確認無誤。</li>
+          <li>-本商品經拆封使用後恕不接受退換，請確認需求後購買。</li>
+          <li>-若對商品有任何疑問，歡迎下單前聯繫客服詢問。</li>
+          <li>-下單即表示您已詳閱並同意本店之購買條款與規定。</li>
+        </ul>
+        <p>感謝您的理解與支持，祝您購物愉快。</p>
+      </section>
+    </div>
   </div>
 
+  <!-- 搭配好物 swiper -->
   <section class="related-section">
     <h3 class="related-title">搭配好物</h3>
     <Swiper
@@ -700,7 +702,15 @@
     background-color: #fef9ec;
     color: #d97c48;
   }
+  @media (min-width: 881px) {
+    .responsive-img {
+      grid-column: 2 / 3;
+    }
 
+    .notice-wrap {
+      grid-column: 2 / 3;
+    }
+  }
   @media (max-width: 880px) {
     .product-container {
       display: grid;
@@ -712,9 +722,10 @@
         'responsive-img'
         'notice-wrap';
       gap: 12px;
-      width: 80%;
+      width: 90%;
       margin: 0 auto;
     }
+
     .back-col {
       grid-area: back;
       position: static;
@@ -730,6 +741,7 @@
       width: 100%;
       max-width: 420px;
       margin: 0 auto;
+      max-height: 100%;
     }
 
     .responsive-img {
