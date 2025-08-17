@@ -1,9 +1,6 @@
 import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
-// const {VITE_API_BASE} = import.meta.env
-const apiBase = import.meta.env.VITE_API_BASE;
-`${apiBase}/school/getIngredients.php`;
-// import { Ingredients } from '@/constants/schoolIngredients';
+const apiBase = import.meta.env.VITE_API_URL;
 
 export const useIngredientStore = defineStore('ingredient', () => {
   const list = ref([]);
@@ -14,7 +11,7 @@ export const useIngredientStore = defineStore('ingredient', () => {
     loading.value = true;
     error.value = null;
     try {
-      const res = await fetch('http://localhost:8888/front/school/getIngredients.php');
+      const res = await fetch(`${apiBase}/school/get_ingredients.php`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const result = await res.json();
 
@@ -36,7 +33,7 @@ export const useIngredientStore = defineStore('ingredient', () => {
 
   const updateActive = (target) => {
     active.value = target;
-    console.log('prett y:', JSON.stringify(active.value, null, 2));
+    // console.log('prett y:', JSON.stringify(active.value, null, 2));
   };
 
   watch(active, (val) => {
