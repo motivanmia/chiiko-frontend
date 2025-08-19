@@ -1,95 +1,73 @@
-<!-- 食譜內頁板 -->
 <template>
-  <div class="wrappertatle">
+  <!-- 步驟 5: 加入 v-if，只有在 recipeData 有值的時候才顯示內容 -->
+  <div
+    v-if="recipeData"
+    class="wrappertatle"
+  >
+    <!-- ... (上半部分 template 維持不變) ... -->
     <div class="outer-wrapper">
       <div class="recipe-wrapper">
-        <!-- 食物圖片 -->
         <img
-          src="@/assets/image/NewRecipes/Group_537.png"
-          alt="香煎豆腐卷"
+          :src="recipeData.image"
+          :alt="recipeData.name"
           class="recipe-image"
         />
-
-        <!-- 標題 + 發布者 -->
         <div class="recipe-card">
-          <!-- 標題 + 發布者 -->
           <div class="header">
-            <h1>香煎豆腐卷</h1>
-            <h2>由管理員 發佈</h2>
+            <h1>{{ recipeData.name }}</h1>
+            <h2>由 {{ recipeData.author_name }} 發佈</h2>
           </div>
-
-          <!-- 介紹文字 -->
           <p class="description">
-            酥酥脆脆的肉片外皮，
-            <br />
-            軟嫩的豆腐，
-            <br />
-            很適合當下酒菜的料理。
+            {{ recipeData.content }}
           </p>
-
-          <!-- TAG 區塊 -->
           <div class="tags">
-            <span># 快速</span>
-            <span># 三明治</span>
-            <span># 微波爐</span>
+            <span
+              v-for="tag in formattedTags"
+              :key="tag"
+            >
+              {{ tag }}
+            </span>
           </div>
-
-          <!-- 收藏與回覆 -->
           <div class="meta">
             <div>
-              <span>
-                <Icon
-                  icon-name="markL"
-                  class="markL"
-                />
-              </span>
-              105收藏
+              <Icon
+                icon-name="markL"
+                class="markL"
+              />
+              {{ recipeData.favorites_count || 0 }} 收藏
             </div>
             <div>
-              <span>
-                <Icon
-                  icon-name="comment"
-                  class="comment"
-                />
-              </span>
-              50回覆
+              <Icon
+                icon-name="comment"
+                class="comment"
+              />
+              {{ recipeData.comments.length || 0 }} 回覆
             </div>
           </div>
-
-          <!-- 時間與份數 -->
           <div class="time-serving">
             <div class="info-block">
               <div class="top">
-                <span>
-                  <Icon
-                    icon-name="time"
-                    class="cookingtime"
-                  />
-                </span>
+                <Icon
+                  icon-name="time"
+                  class="cookingtime"
+                />
                 <p class="label">烹煮時間</p>
               </div>
-              <p class="value">10分鐘</p>
+              <p class="value">{{ recipeData.cooked_time }} 分鐘</p>
             </div>
-
             <div class="divider"></div>
-
             <div class="info-block">
               <div class="top">
-                <span>
-                  <Icon
-                    icon-name="portion"
-                    class="portion"
-                  />
-                </span>
+                <Icon
+                  icon-name="portion"
+                  class="portion"
+                />
                 <p class="label">料理份數</p>
               </div>
-              <p class="value">1-2人份</p>
+              <p class="value">{{ recipeData.serving }} 人份</p>
             </div>
           </div>
-          <!-- 按鈕區 -->
           <div class="button-group">
-            <!-- 收藏按鈕 -->
-
             <button
               class="btn btn-collect"
               :class="{ 'is-collected': isCollected }"
@@ -99,10 +77,8 @@
                 :icon-name="isCollected ? 'markF' : 'markL'"
                 class="icon"
               />
-
               {{ isCollected ? '已收藏' : '收藏' }}
             </button>
-
             <button
               class="btn btn-share"
               @click="shareRecipe"
@@ -121,19 +97,25 @@
     <!-- 步驟區塊 -->
     <div class="step-ingredient-wrapper">
       <!-- 左邊：料理步驟 -->
-      <div class="step-box">
-        <h3 class="step-title"></h3>
+      <div
+        v-if="recipeData.steps && recipeData.steps.length > 0"
+        class="step-box"
+      >
         <div
-          v-for="(step, index) in steps"
-          :key="index"
+          v-for="step in recipeData.steps"
+          :key="step.step_id"
+          class="step-item"
         >
-          <p class="step-label">步驟{{ numberToChinese(index + 1) }}</p>
-          <p class="step-text">{{ step }}</p>
+          <p class="step-label">步驟{{ numberToChinese(parseInt(step.order)) }}</p>
+          <p class="step-text">{{ step.content }}</p>
         </div>
       </div>
 
       <!-- 右邊：所需食材 -->
-      <div class="ingredient-box">
+      <div
+        v-if="recipeData.ingredients && recipeData.ingredients.length > 0"
+        class="ingredient-box"
+      >
         <div class="section-ingredient-header">
           <h3 class="section-ingredient-title">所需食材</h3>
           <Icon
@@ -145,142 +127,173 @@
         <ul class="section-ingredient-list">
           <li
             class="section-ingredient-item"
-            v-for="(item, index) in ingredients"
-            :key="index"
+            v-for="ingredient in recipeData.ingredients"
+            :key="ingredient.ingredient_item_id"
           >
-            {{ item }}
+            <span>{{ ingredient.name }}</span>
+            <span>{{ ingredient.amount }}</span>
           </li>
         </ul>
       </div>
     </div>
+
     <!-- 留言區 -->
     <div>
       <div class="comment-section-container">
+        <!-- ⭐️ 核心修正 2: 將資料來源從扁平的陣列改為巢狀的陣列 ⭐️ -->
         <CommentSection
-          :initial-comments="recipeComments"
+          :initial-comments="threadedComments"
           :current-user-avatar="currentUserAvatar"
         />
-        <!-- 好物推薦 -->
         <ProductCard />
       </div>
     </div>
   </div>
+
+  <!-- 載入中提示 -->
+  <div
+    v-else
+    class="loading-state"
+  >
+    <p>正在為您準備美味的食譜...</p>
+  </div>
 </template>
 
 <script setup>
-  import { ref } from 'vue';
+  import { ref, onMounted, computed } from 'vue';
+  import { useRoute } from 'vue-router';
+
   import Icon from '@/components/common/Icon.vue';
   import CommentSection from '@/components/CommentSection.vue';
   import ProductCard from '@/components/ProductCard.vue';
   import avatarImage from '@/assets/image/NewRecipes/Mask_group.png';
-  import postImage from '@/assets/image/NewRecipes/Rectangle_5.png';
 
-  const steps = [
-    '將板豆腐切成小塊（大小剛好能卷進肉片即可）',
-    '將切好的板豆腐包進薄肉片裡',
-    '將包好的肉片豆腐裹上一層起司酥炸粉，放在盤子上靜置五分鐘',
-    '靜置好的肉片豆腐再裹上一層麵包粉',
-    '平底鍋熱油，放進裹好粉的肉片豆腐，煎至金黃酥脆即可。',
-  ];
+  const recipeData = ref(null);
+  const route = useRoute();
 
-  const ingredients = [
-    '板豆腐／一盒',
-    '起司酥炸粉／適量',
-    '椒鹽粉／適量',
-    '薄片的豬肉片／一盒',
-    '麵包粉／適量',
-  ];
+  onMounted(async () => {
+    const recipeId = route.params.id;
+    if (!recipeId) return;
+
+    try {
+      const apiUrl = `http://localhost:8888/front/recipe/get_recipe.php?recipe_id=${recipeId}`;
+      const response = await fetch(apiUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      if (result.status === 'success') {
+        recipeData.value = result.data;
+        console.log('食譜資料已成功載入 (包含所有關聯資料):', recipeData.value);
+      } else {
+        console.error('後端回傳錯誤:', result.message);
+      }
+    } catch (error) {
+      console.error('獲取食譜資料失敗:', error);
+    }
+  });
+
+  const formattedTags = computed(() => {
+    if (!recipeData.value || !recipeData.value.tag) return [];
+    return recipeData.value.tag
+      .split('#')
+      .filter(Boolean)
+      .map((tag) => `#${tag}`);
+  });
+
+  // ⭐️ 核心修正 1: 在父層加入這個計算屬性來重組留言 ⭐️
+  const threadedComments = computed(() => {
+    if (!recipeData.value || !recipeData.value.comments) {
+      return [];
+    }
+
+    const allComments = recipeData.value.comments;
+    const commentMap = {};
+
+    // 為了避免修改原始資料，我們先做一次淺拷貝，並預先建立 replies 陣列
+    allComments.forEach((comment) => {
+      commentMap[comment.comment_id] = { ...comment, replies: [] };
+    });
+
+    const nestedComments = [];
+    Object.values(commentMap).forEach((comment) => {
+      if (comment.parent_id && commentMap[comment.parent_id]) {
+        // 如果這是一則回覆，找到它的父留言，並把自己塞進去
+        commentMap[comment.parent_id].replies.push(comment);
+      } else {
+        // 如果這是一則主留言，直接放進最外層
+        nestedComments.push(comment);
+      }
+    });
+
+    return nestedComments;
+  });
 
   const isCollected = ref(false);
 
   function toggleCollect() {
     isCollected.value = !isCollected.value;
-    if (isCollected.value) {
-      alert('【測試功能】已將食譜加入收藏！ (實際功能會將此狀態存入後端資料庫)');
-    } else {
-      alert('【測試功能】已將食譜移出收藏。');
-    }
   }
 
   function shareRecipe() {
-    const recipeUrl = 'https://www.your-website.com/recipes/yummy-tofu-roll';
-
-    navigator.clipboard
-      .writeText(recipeUrl)
-      .then(() => {
-        alert(`【測試功能】分享連結已複製！\n\n您可以到別處貼上看看：\n${recipeUrl}`);
-      })
-      .catch((err) => {
-        console.error('複製失敗:', err);
-        alert('【測試功能】複製失敗，請手動複製連結。');
-      });
+    const recipeUrl = window.location.href;
+    navigator.clipboard.writeText(recipeUrl);
   }
 
   function numberToChinese(num) {
-    if (typeof num !== 'number' || num < 1) {
-      return '';
-    }
-
+    const parsedNum = typeof num === 'string' ? parseInt(num, 10) : num;
+    if (isNaN(parsedNum) || parsedNum < 1) return '';
     const chineseNums = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
-
-    if (num <= 10) {
-      return chineseNums[num];
+    if (parsedNum <= 10) return chineseNums[parsedNum];
+    if (parsedNum > 10 && parsedNum < 20) return '十' + chineseNums[parsedNum % 10];
+    if (parsedNum >= 20 && parsedNum < 100) {
+      const tens = Math.floor(parsedNum / 10);
+      const ones = parsedNum % 10;
+      if (ones === 0) return chineseNums[tens] + '十';
+      return chineseNums[tens] + '十' + chineseNums[ones];
     }
-
-    if (num > 10 && num < 20) {
-      return '十' + chineseNums[num % 10];
-    }
-
-    if (num >= 20 && num < 100) {
-      const tens = Math.floor(num / 10);
-      const ones = num % 10;
-
-      if (ones === 0) {
-        return chineseNums[tens] + '十';
-      } else {
-        return chineseNums[tens] + '十' + chineseNums[ones];
-      }
-    }
-
-    return num.toString();
+    return parsedNum.toString();
   }
-
-  const recipeComments = ref([
-    {
-      id: 1,
-      name: '小胖子',
-      message: '太好吃了！我還加了辣椒！',
-      avatar: avatarImage,
-      showOptions: false,
-      showReplyBox: false,
-      reply: '',
-      image: postImage,
-    },
-    {
-      id: 2,
-      name: '大胖子',
-      message: '板豆腐硬一點比較好？',
-      avatar: avatarImage,
-      showOptions: false,
-      showReplyBox: false,
-      reply: '',
-    },
-  ]);
-
-  const currentUserAvatar = ref(avatarImage);
 
   function copyIngredients() {
-    const text = ingredients.join('\n');
-    navigator.clipboard.writeText(text).then(() => {
-      alert('食材清單已複製！');
-    });
+    if (
+      recipeData.value &&
+      recipeData.value.ingredients &&
+      recipeData.value.ingredients.length > 0
+    ) {
+      const text = recipeData.value.ingredients
+        .map((item) => `${item.name} / ${item.amount}`)
+        .join('\n');
+      navigator.clipboard.writeText(text).then(() => {
+        alert('食材清單已複製！');
+      });
+    } else {
+      alert('目前沒有可複製的食材清單。');
+    }
   }
+
+  const currentUserAvatar = ref(avatarImage);
 </script>
+
 <!-- ──────────────────────────────────────────────────────────────────────── -->
 <style lang="scss" scoped>
   /* =================================================================== */
   /*                                變數設定                             */
   /* =================================================================== */
+
+  .loading-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    font-size: 1.5rem;
+    color: #888;
+  }
+
+  /* 讓 API 回傳的 description 換行生效 */
+  .description {
+    white-space: pre-wrap;
+  }
 
   // --- Colors ---
   $color-primary: #d97c48;
@@ -590,6 +603,9 @@
   .step-label,
   .step-title {
     font-size: $font-size-xl;
+  }
+
+  title {
   }
 
   .step-text {

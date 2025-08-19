@@ -72,7 +72,7 @@ const router = createRouter({
       component: () => import('@/pages/SchoolPage.vue'),
     },
     {
-      path: '/recipe-detail',
+      path: '/recipe-detail/:id',
       name: 'recipe-detail',
       component: () => import('@/pages/RecipeDetailPage.vue'),
     },
@@ -116,7 +116,7 @@ const router = createRouter({
       name: 'recipes',
       component: () => import('@/pages/RecipeCategoryPage.vue'),
     },
-    { 
+    {
       path: '/search',
       name: 'search',
       component: () => import('@/pages/RecipeSearch.vue'),
