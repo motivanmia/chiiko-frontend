@@ -5,7 +5,7 @@
   import tomato from '@/assets/image/signin/cut-tomato.png';
   import axios from 'axios';
 
-  const emit = defineEmits(['close']);
+  const emit = defineEmits(['close', 'signin-success']);
   const name = ref('');
   const account = ref(''); // 這是 email，作為登入帳號
   const password = ref('');
@@ -92,8 +92,10 @@
 
       // 處理成功的回應
       if (response.status === 201) {
-        alert(response.data.message);
+        // alert(response.data.message);
         // 註冊成功後，可以執行導向或其他操作
+        emit('signin-success');
+        emit('close');
         // emit('switch-to-login');
         // location.reload();
       }

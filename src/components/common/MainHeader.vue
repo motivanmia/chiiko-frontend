@@ -151,10 +151,19 @@
     showToast.value = true;
     setTimeout(() => {
       showToast.value = false;
-    }, 3000);
+    }, 2000);
   };
 
   const showToast = ref(false); // 顯示登入成功提示
+  const showSignin = ref(false); // 顯示註冊成功前往登入提示
+
+  const signinSuccess = () => {
+    showSignin.value = true;
+    setTimeout(() => {
+      showSignin.value = false;
+      openModal('login');
+    }, 2000);
+  };
 </script>
 
 <template>
@@ -491,6 +500,7 @@
         :is="currentModalComponent"
         @close="closeModal"
         @login-success="loginSuccess"
+        @signin-success="signinSuccess"
         @switch-to-signin="openModal('signin')"
         @switch-to-login="openModal('login')"
         @switch-to-forgetpsw="openModal('forgetpsw')"
@@ -503,6 +513,15 @@
       class="toast"
     >
       登入成功！
+    </div>
+  </transition>
+
+  <transition name="fade">
+    <div
+      v-if="showSignin"
+      id="showSignin_message"
+    >
+      <div class="toast">註冊成功！ 即將前往登入頁面</div>
     </div>
   </transition>
 </template>
@@ -1169,6 +1188,13 @@
     font-size: 20px;
     pointer-events: none;
     z-index: 20;
+  }
+  #showSignin_message {
+    position: fixed;
+    z-index: 20;
+    background-color: rgb(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100vh;
   }
   .fade-enter-active,
   .fade-leave-active {
