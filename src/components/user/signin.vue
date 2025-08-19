@@ -3,6 +3,7 @@
   import Icon from '@/components/common/Icon.vue';
   import { ref } from 'vue';
   import tomato from '@/assets/image/signin/cut-tomato.png';
+  import axios from 'axios';
 
   const emit = defineEmits(['close']);
   const name = ref('');
@@ -66,7 +67,7 @@
     },
   ];
 
-  function handleSubmit() {
+  async function handleSubmit() {
     for (const rule of validations) {
       if (!rule.valid()) {
         formError.value = rule.message;
@@ -74,10 +75,41 @@
         return;
       }
     }
-
+    // 前端驗證通過，發送註冊請求到後端
     formError.value = '';
 
-    alert('✅ 註冊成功！');
+    const userData = {
+      name: name.value,
+      account: account.value, // 使用 account 作為 email
+      password: password.value,
+      phone: phone.value,
+    };
+
+    const API_URL = 'http://localhost:8888/front/users/signup.php'; // 替換為你的後端 API URL
+
+    try {
+      const response = await axios.post(API_URL, userData);
+
+      // 處理成功的回應
+      if (response.status === 201) {
+        alert(response.data.message);
+        // 註冊成功後，可以執行導向或其他操作
+        // emit('switch-to-login');
+        // location.reload();
+      }
+    } catch (error) {
+      // 處理錯誤的回應
+      if (error.response && error.response.data && error.response.data.message) {
+        // 顯示後端回傳的錯誤訊息
+        formError.value = error.response.data.message;
+        errorKey.value++;
+      } else {
+        // 處理其他未知的錯誤
+        formError.value = '註冊失敗，請稍後再試。';
+        errorKey.value++;
+      }
+    }
+    // alert('✅ 註冊成功！');
   }
 </script>
 
