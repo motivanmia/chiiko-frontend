@@ -1,4 +1,5 @@
 <script setup>
+  import { onMounted } from 'vue';
   import { useCartStore } from '@/stores/useCartStore';
   import CartStep from '@/components/cart/CartStep.vue';
   import OrderList from '@/components/cart/OrderList.vue';
@@ -7,7 +8,9 @@
   const cart = useCartStore();
   const { setCurrentStep } = cart;
 
-  setCurrentStep(3);
+  onMounted(() => {
+    setCurrentStep(3);
+  });
 </script>
 
 <template>

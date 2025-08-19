@@ -23,9 +23,13 @@
       type: String,
       default: null,
     },
+    error: {
+      type: String,
+      default: '',
+    },
   });
 
-  const emit = defineEmits(['update:modelValue', 'change']);
+  const emit = defineEmits(['update:modelValue', 'change', 'blur']);
 
   // 生成唯一 ID
   const selectId = `select-${Math.random().toString(36).substr(2, 9)}`;
@@ -72,59 +76,13 @@
     highlightedIndex.value = -1;
   };
 
-  const handleBlur = (event) => {
-    // 延遲關閉，讓點擊選項有時間執行
+  // 處理 focusout 事件，當焦點移出組件外才關閉
+  const handleFocusOut = (event) => {
     const currentTarget = event.currentTarget;
     const relatedTarget = event.relatedTarget;
-
-    setTimeout(() => {
-      if (!currentTarget || !relatedTarget || !currentTarget.contains(relatedTarget)) {
-        isOpen.value = false;
-        highlightedIndex.value = -1;
-      }
-    }, 150);
-  };
-
-  const handleKeydown = (event) => {
-    if (props.disabled) return;
-
-    switch (event.key) {
-      case 'Enter':
-      case ' ':
-        event.preventDefault();
-        if (isOpen.value && highlightedIndex.value >= 0) {
-          selectOption(props.options[highlightedIndex.value]);
-        } else {
-          toggleDropdown();
-        }
-        break;
-
-      case 'Escape':
-        event.preventDefault();
-        isOpen.value = false;
-        highlightedIndex.value = -1;
-        break;
-
-      case 'ArrowDown':
-        event.preventDefault();
-        if (!isOpen.value) {
-          isOpen.value = true;
-          highlightedIndex.value = selectedOptionIndex.value >= 0 ? selectedOptionIndex.value : 0;
-        } else {
-          highlightedIndex.value = Math.min(highlightedIndex.value + 1, props.options.length - 1);
-        }
-        break;
-
-      case 'ArrowUp':
-        event.preventDefault();
-        if (!isOpen.value) {
-          isOpen.value = true;
-          highlightedIndex.value =
-            selectedOptionIndex.value >= 0 ? selectedOptionIndex.value : props.options.length - 1;
-        } else {
-          highlightedIndex.value = Math.max(highlightedIndex.value - 1, 0);
-        }
-        break;
+    if (!currentTarget.contains(relatedTarget)) {
+      isOpen.value = false;
+      highlightedIndex.value = -1;
     }
   };
 
@@ -159,17 +117,26 @@
 
 <template>
   <div
-    class="base-select"
-    :class="{
-      'base-select--open': isOpen,
-      'base-select--disabled': disabled,
-    }"
+    :class="[
+      'base-select',
+      {
+        'base-select--open': isOpen,
+        'base-select--disabled': disabled,
+      },
+    ]"
     :data-select-id="selectId"
     @click="toggleDropdown"
-    @blur="handleBlur"
+    @focusout="handleFocusOut"
     tabindex="0"
     @keydown="handleKeydown"
+    @blur="$emit('blur')"
   >
+    <p
+      v-if="error"
+      class="base-select__error"
+    >
+      {{ error }}
+    </p>
     <!-- 選中顯示區域 -->
     <div class="base-select__display">
       <span class="base-select__text">
@@ -177,7 +144,7 @@
       </span>
       <div class="base-select__arrow">
         <Icon
-          icon-name="upA"
+          icon-name="downA"
           class="base-select__icon"
         />
       </div>
@@ -194,11 +161,13 @@
           <div
             v-for="(option, index) in options"
             :key="option.value"
-            class="base-select__option"
-            :class="{
-              'base-select__option--selected': option.value === modelValue,
-              'base-select__option--highlighted': index === highlightedIndex,
-            }"
+            :class="[
+              'base-select__option',
+              {
+                'base-select__option--selected': option.value === modelValue,
+                'base-select__option--highlighted': index === highlightedIndex,
+              },
+            ]"
             @click="selectOption(option)"
             @mouseenter="highlightedIndex = index"
             @mouseleave="highlightedIndex = -1"
@@ -229,6 +198,13 @@
       .base-select__display {
         background-color: #f5f5f5;
       }
+    }
+
+    &__error {
+      position: absolute;
+      transform: translateY(-100%);
+      color: color(text, error);
+      padding-bottom: px(5);
     }
 
     &__display {
@@ -307,23 +283,6 @@
         }
       }
     }
-  }
-
-  // 下拉動畫
-  .dropdown-enter-active,
-  .dropdown-leave-active {
-    transition: all 0.2s ease;
-    transform-origin: top;
-  }
-
-  .dropdown-enter-from {
-    opacity: 0;
-    transform: scaleY(0.8) translateY(-8px);
-  }
-
-  .dropdown-leave-to {
-    opacity: 0;
-    transform: scaleY(0.8) translateY(-8px);
   }
 
   // 滾動條樣式

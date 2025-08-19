@@ -14,22 +14,19 @@
     });
   };
 
-  const toggleSame = () => {
-    toggleSameAsRecipient(!sameAsRecipient.value);
+  const toggleSame = (val) => {
+    toggleSameAsRecipient(val);
   };
 </script>
 
 <template>
   <div>
-    <BuyerInfo
-      :form="recipientForm"
-      @update:form="updateForm"
-    />
+    <BuyerInfo :form="recipientForm" />
     <RecipientInfo
       :form="recipientForm"
       :same-as-recipient="sameAsRecipient"
       @update:form="updateForm"
-      @toggle-same-as="toggleSame"
+      @update:same-as-recipient="toggleSame"
     />
   </div>
 </template>

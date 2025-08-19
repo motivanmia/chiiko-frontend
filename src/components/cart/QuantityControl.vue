@@ -78,6 +78,7 @@
 
     &__input {
       width: px(20);
+      padding: 0;
       border: unset;
       text-align: center;
       @include fontSet($size: px(20));

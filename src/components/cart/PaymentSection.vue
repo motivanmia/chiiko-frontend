@@ -35,7 +35,7 @@
         name="paymentMethod"
         :options="paymentOptions"
       />
-      <CreditCardForm v-if="paymentForm.paymentMethod === 'card'" />
+      <CreditCardForm v-show="paymentForm.paymentMethod === 'card'" />
     </div>
   </section>
 </template>

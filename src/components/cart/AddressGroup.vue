@@ -1,5 +1,5 @@
 <script setup>
-  import { computed, watch } from 'vue';
+  import { ref, computed, watch, onMounted } from 'vue';
   import BaseSelect from './BaseSelect.vue';
   import BaseInput from './BaseInput.vue';
 
@@ -28,9 +28,34 @@
       type: Boolean,
       default: false,
     },
+    errorCity: {
+      type: String,
+      default: '',
+    },
+    errorDistrict: {
+      type: String,
+      default: '',
+    },
+    errorPostal: {
+      type: String,
+      default: '',
+    },
+    errorAddress: {
+      type: String,
+      default: '',
+    },
   });
 
-  const emit = defineEmits(['update:city', 'update:district', 'update:postal', 'update:address']);
+  const emit = defineEmits([
+    'update:city',
+    'update:district',
+    'update:postal',
+    'update:address',
+    'blur-city',
+    'blur-district',
+    'blur-postal',
+    'blur-address',
+  ]);
 
   const cityLocal = computed({
     get: () => props.city,
@@ -49,74 +74,56 @@
     set: (val) => emit('update:address', val),
   });
 
-  // options (示意，可以抽出去共用)
-  const cityOptions = [
-    { value: '桃園市', label: '桃園市' },
-    { value: '台北市', label: '台北市' },
-    { value: '新北市', label: '新北市' },
-  ];
+  const cityOptions = ref([]);
+  const districtMapping = ref({});
+  const postalMapping = ref({});
 
-  const districtMapping = {
-    桃園市: [
-      { value: '中壢區', label: '中壢區' },
-      { value: '桃園區', label: '桃園區' },
-    ],
-    台北市: [
-      { value: '中正區', label: '中正區' },
-      { value: '大安區', label: '大安區' },
-    ],
+  const loadTaiwanDistricts = async () => {
+    try {
+      const { VITE_TAIWAN_DISTRICTS } = import.meta.env;
+      const res = await fetch(VITE_TAIWAN_DISTRICTS);
+      const data = await res.json();
+
+      console.log('data', data);
+      // 初始化縣市、區域、郵遞區號
+      data.forEach((city) => {
+        cityOptions.value.push({ value: city.name, label: city.name });
+        districtMapping.value[city.name] = city.districts.map((d) => ({
+          value: d.name,
+          label: d.name,
+          zip: d.zip,
+        }));
+        city.districts.forEach((d) => {
+          postalMapping.value[d.name] = d.zip;
+        });
+      });
+    } catch (error) {
+      console.log('載入台灣縣市資料失敗', error);
+    }
   };
 
-  const postalMapping = {
-    中壢區: [{ value: '320', label: '320' }],
-    桃園區: [{ value: '330', label: '330' }],
-    中正區: [{ value: '100', label: '100' }],
-    大安區: [{ value: '106', label: '106' }],
-  };
+  const districtOptions = computed(() => districtMapping.value[cityLocal.value] || []);
+  const postalOptions = computed(() => {
+    const zip = postalMapping.value[districtLocal.value];
+    return zip ? [{ value: zip, label: zip }] : [];
+  });
 
-  const districtOptions = computed(() => districtMapping[cityLocal.value] || []);
-  const postalOptions = computed(() => postalMapping[districtLocal.value] || []);
+  watch(cityLocal, (newCity, oldCity) => {
+    if (newCity !== oldCity) {
+      districtLocal.value = null;
+      postalLocal.value = null;
+    }
+  });
 
-  // 記錄上一個 city 值，避免不必要的重置
-  let previousCity = props.city;
-  let previousDistrict = props.district;
+  watch(districtLocal, (newDistrict, oldDistrict) => {
+    if (newDistrict !== oldDistrict) {
+      postalLocal.value = newDistrict ? postalMapping.value[newDistrict] : null;
+    }
+  });
 
-  watch(
-    () => props.city,
-    (newCity, oldCity) => {
-      // 只有在城市真的改變時才重置
-      if (oldCity && newCity !== oldCity && newCity !== previousCity) {
-        // 檢查新的城市是否有當前的區域選項
-        const hasCurrentDistrict = districtMapping[newCity]?.some(
-          (option) => option.value === props.district,
-        );
-
-        if (!hasCurrentDistrict) {
-          emit('update:district', null);
-          emit('update:postal', null);
-        }
-      }
-      previousCity = newCity;
-    },
-  );
-
-  watch(
-    () => props.district,
-    (newDistrict, oldDistrict) => {
-      // 只有在區域真的改變時才重置郵遞區號
-      if (oldDistrict && newDistrict !== oldDistrict && newDistrict !== previousDistrict) {
-        // 檢查新的區域是否有當前的郵遞區號選項
-        const hasCurrentPostal = postalMapping[newDistrict]?.some(
-          (option) => option.value === props.postal,
-        );
-
-        if (!hasCurrentPostal) {
-          emit('update:postal', null);
-        }
-      }
-      previousDistrict = newDistrict;
-    },
-  );
+  onMounted(() => {
+    loadTaiwanDistricts();
+  });
 </script>
 
 <template>
@@ -128,24 +135,32 @@
         :options="cityOptions"
         placeholder="縣市"
         :disabled="disabled"
+        :error="errorCity"
+        @blur="$emit('blur-city')"
       />
       <BaseSelect
         v-model="districtLocal"
         :options="districtOptions"
         placeholder="鄉鎮市區"
         :disabled="disabled || !cityLocal"
+        :error="errorDistrict"
+        @blur="$emit('blur-district')"
       />
       <BaseSelect
         v-model="postalLocal"
         :options="postalOptions"
         placeholder="郵遞區號"
         :disabled="disabled || !districtLocal"
+        :error="errorPostal"
+        @blur="$emit('blur-postal')"
       />
     </div>
     <BaseInput
       v-model="addressLocal"
-      placeholder="請輸入詳細地址"
+      placeholder="請輸入詳細收件人地址:路/巷/弄/號/樓"
       :readonly="disabled"
+      :error="errorAddress"
+      @blur="$emit('blur-address')"
     />
   </div>
 </template>

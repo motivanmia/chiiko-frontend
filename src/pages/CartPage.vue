@@ -1,4 +1,5 @@
 <script setup>
+  import { onMounted } from 'vue';
   import { useCartStore } from '@/stores/useCartStore';
   import CartStep from '@/components/cart/CartStep.vue';
   import CartList from '@/components/cart/CartList.vue';
@@ -9,8 +10,10 @@
   const cart = useCartStore();
   const { setCurrentStep, resetForms } = cart;
 
-  setCurrentStep(1);
-  resetForms();
+  onMounted(() => {
+    setCurrentStep(1);
+    resetForms();
+  });
 </script>
 
 <template>

@@ -2,10 +2,31 @@
   import { useCartStore } from '@/stores/useCartStore';
   import { storeToRefs } from 'pinia';
   import FormGroup from './FormGroup.vue';
+  import { computed } from 'vue';
 
   const cart = useCartStore();
-  const { paymentForm } = storeToRefs(cart);
-  const { updatePaymentForm } = cart;
+  const { paymentForm, errors } = storeToRefs(cart);
+  const { updatePaymentForm, validateCreditCardField } = cart;
+
+  const cardNumber = computed({
+    get: () => paymentForm.value.cardNumber,
+    set: (val) => updatePaymentForm('cardNumber', val),
+  });
+
+  const expMonth = computed({
+    get: () => paymentForm.value.expMonth,
+    set: (val) => updatePaymentForm('expMonth', val),
+  });
+
+  const cvv = computed({
+    get: () => paymentForm.value.cvv,
+    set: (val) => updatePaymentForm('cvv', val),
+  });
+
+  const cardHolder = computed({
+    get: () => paymentForm.value.cardHolder,
+    set: (val) => updatePaymentForm('cardHolder', val),
+  });
 </script>
 
 <template>
@@ -13,32 +34,36 @@
     <FormGroup
       label="卡號"
       placeholder="＊＊＊＊-＊＊＊＊-＊＊＊＊-＊＊＊＊"
-      :model-value="paymentForm.cardNumber"
-      @update:modelValue="(val) => updatePaymentForm('cardNumber', val)"
+      v-model="cardNumber"
+      :error="errors.payment.cardNumber"
+      @blur="validateCreditCardField('cardNumber')"
     />
 
     <div class="credit-card-form__wrap">
       <FormGroup
         label="卡片有效年月"
         placeholder="MM/YY"
-        :model-value="paymentForm.expMonth"
-        @update:modelValue="(val) => updatePaymentForm('expMonth', val)"
+        v-model="expMonth"
         class="credit-card-form__wrap-item"
+        :error="errors.payment.expMonth"
+        @blur="validateCreditCardField('expMonth')"
       />
       <FormGroup
         label="CVV/CVC"
         placeholder="卡片背面檢查碼"
-        :model-value="paymentForm.cvv"
-        @update:modelValue="(val) => updatePaymentForm('cvv', val)"
+        v-model="cvv"
         class="credit-card-form__wrap-item"
+        :error="errors.payment.cvv"
+        @blur="validateCreditCardField('cvv')"
       />
     </div>
 
     <FormGroup
       label="持卡人姓名"
       placeholder="請輸入卡片上的姓名"
-      :model-value="paymentForm.cardHolder"
-      @update:modelValue="(val) => updatePaymentForm('cardHolder', val)"
+      v-model="cardHolder"
+      :error="errors.payment.cardHolder"
+      @blur="validateCreditCardField('cardHolder')"
     />
   </div>
 </template>
