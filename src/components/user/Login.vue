@@ -18,7 +18,6 @@
   // 控制 toast 顯示
   // const showSuccess = ref(false);
 
-  // 範例 login 函式：驗證是否與假帳密吻合
   const login = async () => {
     formError.value = '';
 
