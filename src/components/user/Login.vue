@@ -4,6 +4,7 @@
   import { ref } from 'vue';
   import axios from 'axios';
 
+  const apiBase = import.meta.env.VITE_API_BASE;
   const emit = defineEmits(['close', 'login-success']);
 
   // 假帳號密碼
@@ -27,7 +28,7 @@
     };
 
     // 你的後端 login API 網址
-    const API_URL = 'http://localhost:8888/front/users/login.php';
+    const API_URL = `${apiBase}/users/login.php`;
 
     try {
       const response = await axios.post(API_URL, userData);

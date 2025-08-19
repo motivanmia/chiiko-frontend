@@ -15,6 +15,8 @@
   const formError = ref('');
   const errorKey = ref(0);
 
+  const apiBase = import.meta.env.VITE_API_BASE;
+  // const response = await axios.get(${apiBase}/member/get_profile.php);
   /////
 
   const validators = {
@@ -85,7 +87,9 @@
       phone: phone.value,
     };
 
-    const API_URL = 'http://localhost:8888/front/users/signup.php'; // 替換為你的後端 API URL
+
+
+    const API_URL = `${apiBase}/users/signup.php`; // 替換為你的後端 API URL
 
     try {
       const response = await axios.post(API_URL, userData);
