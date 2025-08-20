@@ -23,17 +23,21 @@
   // console.log(ingredient.list);
 
   const vegetableList = computed(() =>
-    ingredient.list.filter((item) => item.ingredients_categary_id === '1'),
+    ingredient.list.filter((item) => item.ingredients_category_id === '1'),
   );
 
   const meatList = computed(() =>
-    ingredient.list.filter((item) => item.ingredients_categary_id === '2'),
+    ingredient.list.filter((item) => item.ingredients_category_id === '2'),
   );
-
   const filteredList = computed(() => {
-    if (category.value === 'vegetable') return vegetableList.value;
-    if (category.value === 'meat') return meatList.value;
-    return ingredient.list;
+    let base =
+      category.value === 'vegetable'
+        ? vegetableList.value
+        : category.value === 'meat'
+          ? meatList.value
+          : ingredient.list;
+
+    return base.filter((item) => Number(item.status) === 0);
   });
 </script>
 
