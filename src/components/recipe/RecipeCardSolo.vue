@@ -8,24 +8,22 @@
   const props = defineProps({
     recipes: {
       type: Array,
-      default: () => [],
+          required: true,
+
     },
   });
 </script>
-
 <template>
   <div class="recipe-card">
     <div
-      v-for="card in props.recipes"
-      :key="card.id"
-      class="recipe-card__box"
+      v-for="recipe in props.recipes"
+      :key="recipe.recipe_id" class="recipe-card__box"
     >
       <div class="recipe-card__pic">
         <img
           class="recipe-card__img"
-          :src="card.image"
-          :alt="card.title"
-        />
+          :src="recipe.image"
+          :alt="recipe.name" />
       </div>
 
       <div class="recipe-card__content">
@@ -34,8 +32,7 @@
           src="/src/assets/image/Recipes/graffiti.png"
           alt=""
         />
-        <h2>{{ card.title }}</h2>
-      </div>
+        <h2>{{ recipe.name }}</h2> </div>
 
       <div class="icon-board">
         <div class="icon-board__left">
@@ -44,8 +41,7 @@
               icon-name="time"
               class="time-icon"
             />
-            約{{ card.time }}分鐘
-          </p>
+            約{{ recipe.cooked_time }}分鐘 </p>
         </div>
         <div class="icon-board__right">
           <p>
@@ -53,21 +49,19 @@
               icon-name="comment"
               class="comment-icon"
             />
-            {{ card.comments }}
-          </p>
+            {{ recipe.comments || 0 }} </p>
           <p>
             <Icon
               icon-name="markL"
               class="markL-icon"
             />
-            {{ card.bookmarks }}
-          </p>
+            {{ recipe.likes || 0 }} </p>
         </div>
       </div>
 
       <div class="icon-board__tag">
         <p
-          v-for="tag in card.tag"
+          v-for="tag in recipe.tag"
           :key="tag"
         >
           {{ tag }}

@@ -1,106 +1,96 @@
 <script setup>
-  import { ref, computed, watch, nextTick } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
-  import { useSearch } from '@/constants/search';
-  import { soloMeal, popularRecipe } from '@/constants/recipes';
+import { ref, computed, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios';
 
-  import Banner from '@/components/recipe/Banner.vue';
-  import Category from '@/components/recipe/Category.vue';
-  import SectionTitle from '@/components/SectionTitle.vue';
-  import SearchBar from '@/components/common/SearchBar.vue';
-  import HotSearch from '@/components/common/HotSearch.vue';
-  import BreadCrumb from '@/components/recipe/BreadCrumb.vue';
-  import RecipeCardSolo from '@/components/recipe/RecipeCardSolo.vue';
-  import Pagination from '@/components/Pagination.vue';
+// 引入你需要的元件
+import Banner from '@/components/recipe/Banner.vue';
+import Category from '@/components/recipe/Category.vue';
+import SectionTitle from '@/components/SectionTitle.vue';
+import SearchBar from '@/components/common/SearchBar.vue';
+import HotSearch from '@/components/common/HotSearch.vue';
+import BreadCrumb from '@/components/recipe/BreadCrumb.vue';
+import RecipeCardSolo from '@/components/recipe/RecipeCardSolo.vue';
 
-  const route = useRoute();
-  const router = useRouter();
+const route = useRoute();
+const router = useRouter();
 
-  const currentSearchQuery = ref(route.query.q || '');
+const currentSearchQuery = ref('');
+const searchResults = ref([]); // 儲存後端結果
 
-  const handleSearch = (query) => {
-    const newQuery = query.trim();
-    if (currentSearchQuery.value !== newQuery) {
-      router.push({
-        name: route.name,
-        query: { q: newQuery },
-      });
-    }
-  };
+const apiUrl = 'http://localhost:8888/front/recipe/search_recipe.php';
 
-  const { searchTerm } = useSearch(currentSearchQuery.value);
-
-  // 合併兩個模擬資料
-  const allRecipes = ref([...soloMeal, ...popularRecipe]);
-
-  const filteredRecipes = computed(() => {
-    const query = currentSearchQuery.value;
-
-    if (!query || query.trim() === '') {
-      return allRecipes.value;
-    }
-
-    const queryLower = query.toLowerCase().trim();
-
-    const filtered = allRecipes.value.filter((recipe) => {
-      const titleMatch = recipe.title.toLowerCase().includes(queryLower);
-      const tagMatch = recipe.tag.some((tag) =>
-        tag.toLowerCase().replace('#', '').includes(queryLower),
-      );
-
-      const isMatch = titleMatch || tagMatch;
-
-      if (isMatch) {
-        console.log(`  匹配: ${recipe.title} (${titleMatch ? '標題' : '標籤'})`);
-      }
-
-      return isMatch;
+const performSearch = async (query) => {
+  const trimmedQuery = query.trim();
+  if (!trimmedQuery) {
+    searchResults.value = [];
+    return;
+  }
+  
+  try {
+    const response = await axios.get(apiUrl, {
+      params: { q: trimmedQuery },
     });
+    
+    if (response.data.success) {
+      console.log(response);
+      
+      searchResults.value = response.data.data;
+    } else {
+      searchResults.value = [];
+    }
+  } catch (error) {
+    console.error('搜尋失敗', error);
+    searchResults.value = [];
+  }
+  // console.log("hhbhbi",searchResults.value);
+  
+};
 
-    console.log('   過濾結果數量:', filtered.length);
-    console.log(
-      '   過濾結果:',
-      filtered.map((r) => r.title),
-    );
+// 導航
+const handleSearch = (query) => {
+  if (route.query.q !== query) {
+    router.push({
+      path: route.path,
+      query: { q: query },
+    });
+  }
+};
 
-    return filtered;
-  });
+// 監聽路由,觸發performSearch
+watch(
+  () => route.query.q,
+  (newQuery) => {
+    currentSearchQuery.value = newQuery || '';
+    performSearch(currentSearchQuery.value);
+  },
+  { immediate: true }
+);
 
-  watch(
-    () => route.query.q,
-    (newQuery) => {
-      const query = newQuery || '';
+// 動態標題
+const pageTitle = computed(() => {
+  if (currentSearchQuery.value) {
+    return `/搜尋結果\\`;
+  }
+  return '/所有食譜\\';
+});
 
-      if (currentSearchQuery.value !== query) {
-        currentSearchQuery.value = query;
-        searchTerm.value = query;
-      }
-    },
-    { immediate: true },
-  );
+// ✅ 移除不必要的 computed 屬性
+// const filteredRecipes = computed(() => { ... });
 
-  watch(
-    filteredRecipes,
-    (newRecipes) => {
-      nextTick(() => {});
-    },
-    { deep: true },
-  );
+// ✅ 移除多餘的 watch 區塊
+// watch(() => route.query.q, (newQuery) => { ... });
 
-  const breadcrumbItems = computed(() => {
-    return [
-      { text: '靈感食譜', href: '#' },
-      { text: `搜尋結果: ${currentSearchQuery.value}`, href: '#' },
-    ];
-  });
+// 麵包屑導航項目 (無變動)
+const breadcrumbItems = computed(() => {
+  return [
+    { text: '靈感食譜', to: '/recipes' }, // 假設 '靈感食譜' 頁面的路徑是 /recipes
+    { text: `搜尋結果: ${currentSearchQuery.value}`, to: `/recipes/search?q=${currentSearchQuery.value}` },
+  ];
+});
 
-  // =======================================================
-
-  const goToPage = () => {
-    router.push('/recipe-detail');
-  };
-  // =======================================================
 </script>
+
 
 <template>
   <Banner />
@@ -108,14 +98,14 @@
 
   <div class="search-container">
     <SearchBar
-      v-model="searchTerm"
+      :model-value="currentSearchQuery"
       @search="handleSearch"
     />
     <HotSearch @search="handleSearch" />
   </div>
 
   <SectionTitle
-    :title="`/搜尋結果\\`"
+    :title="pageTitle"
     class="section"
   ></SectionTitle>
 
@@ -127,18 +117,17 @@
 
     <RecipeCardSolo
       class="solo"
-      :recipes="filteredRecipes"
+      :recipes="searchResults"
       :key="currentSearchQuery"
-      @click="goToPage"
     />
-    <!-- goToPage後續要做移除改router -->
+    
     <div
-      v-if="currentSearchQuery && filteredRecipes.length === 0"
+      v-if="currentSearchQuery && searchResults.length === 0"
       class="no-results"
-    ></div>
+    >
+      <p>沒有找到符合「{{ currentSearchQuery }}」的食譜</p>
+    </div>
   </div>
-
-  <!-- <Pagination /> -->
 </template>
 
 <style lang="scss" scoped>

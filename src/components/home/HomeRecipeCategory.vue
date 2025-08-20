@@ -1,9 +1,39 @@
 <script setup>
-import { categoryName } from '@/constants/recipeCategory';
+import {ref,onMounted} from 'vue';
+import axios from 'axios';
+// import { categoryName } from '@/constants/recipeCategory';
 import SectionTitle from '../SectionTitle.vue';
-import { RouterLink } from 'vue-router'; // <-- 新增這行
+import { RouterLink } from 'vue-router'; 
 
-const card = categoryName;
+// const card = categoryName;
+
+
+  //使用axios串接資料
+  const apiUrl = 'http://localhost:8888/front/recipe/get_recipe_category.php';
+
+  const allCategory = ref([]);
+
+  //用axios串接category_get.api
+  const fetchCategory = async () => {
+    try {
+      const response = await axios.get(apiUrl);
+      const apiData = response.data;
+
+      allCategory.value = apiData;
+
+      console.log('成功取得後端分類資料', allCategory.value);
+    } catch (error) {
+      console.error('取得食譜資料失敗', error);
+      if (error.response) {
+        console.error('伺服器回傳錯誤:', error.response.status, error.response.data);
+      }
+    }
+  };
+
+  onMounted(() => {
+    fetchCategory();
+  });
+
 </script>
 
 
@@ -16,19 +46,19 @@ const card = categoryName;
 
       <div class="recipe-category__box">
         <RouterLink 
-          v-for="cards in card"
-          :key="cards.id"
+          v-for="category in allCategory"
+          :key="category.recipe_category_id"
           :to="{
             name: 'recipes',
-    params: { category: cards.key }
+    params: { category: category.name }
           }"
           class="recipe-category__card"
         >
           <img
-            :src="cards.image"
-            :alt="cards.title"
+            :src="category.image"
+            :alt="category.title"
           />
-          <button class="recipe-category__button">{{ cards.title }}</button>
+          <button class="recipe-category__button">{{ category.name }}</button>
         </RouterLink>
       </div>
     </div>

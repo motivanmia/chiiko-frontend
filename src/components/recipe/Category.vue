@@ -1,28 +1,58 @@
 <script setup>
-  import { categoryName } from '@/constants/recipeCategory';
+  import { ref,onMounted, } from 'vue';
+  // import { categoryName } from '@/constants/recipeCategory';
   import { RouterLink } from 'vue-router';
+
+  import axios from 'axios';
+
+
+
+
+  //使用axios串接資料
+  const apiUrl = 'http://localhost:8888/front/recipe/get_recipe_category.php';
+
+  const allCategory = ref([]);
+
+  //用axios串接category_get.api
+  const fetchCategory = async () => {
+    try {
+      const response = await axios.get(apiUrl);
+      const apiData = response.data;
+
+      allCategory.value = apiData;
+
+      console.log('成功取得後端分類資料', allCategory.value);
+    } catch (error) {
+      console.error('取得食譜資料失敗', error);
+      if (error.response) {
+        console.error('伺服器回傳錯誤:', error.response.status, error.response.data);
+      }
+    }
+  };
+
+  onMounted(() => {
+    fetchCategory();
+  });
 </script>
 
 <template>
   <div class="category">
     <RouterLink
-      v-for="buttons in categoryName"
-      :key="buttons.id"
+      v-for="category in allCategory"
+      :key="category.recipe_category_id"
       :to="{
-        name: 'recipes', 
-        params: { category: buttons.key }
-        // 使用動態參數，其中 :category 會被替換成每個按鈕的 key
-        //params為傳遞的載體
+        name: 'recipes',
+        params: { category: category.name }, // 這裡從 `name` 欄位取得參數
       }"
       class="category-box"
     >
       <button class="category-box__button">
         <img
-          :src="buttons.image"
-          :alt="buttons.title"
+          :src="category.image"
+          :alt="category.name"
           class="category-box__image"
         />
-        <span class="category-box__title">{{ buttons.title }}</span>
+        <span class="category-box__title">{{ category.name }}</span>
       </button>
     </RouterLink>
   </div>

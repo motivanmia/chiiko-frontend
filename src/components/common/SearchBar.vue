@@ -37,7 +37,7 @@
   watch(inputValue, (newValue) => {
     emits('update:modelValue', newValue);
   });
-
+  
   // 搜尋按鈕的點擊事件處理函式
   const search = () => {
     // 執行搜尋，發出 'search' 事件，讓父元件處理導航

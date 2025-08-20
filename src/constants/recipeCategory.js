@@ -38,8 +38,8 @@ export const categoryName = [
   {
     id: 6,
     title: '健身/減糖餐',
-    key:'low-carb',
-    image: new URL('@/assets/image/Recipes/low-carb.jpg', import.meta.url).href,
+    key:'low-crab',
+    image: new URL('@/assets/image/Recipes/low-crab.jpg', import.meta.url).href,
     indexImage: new URL('@/assets/image/Home/index-low-carb.jpg', import.meta.url).href,
   },
   {

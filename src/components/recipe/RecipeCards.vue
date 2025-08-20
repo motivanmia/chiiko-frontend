@@ -15,14 +15,14 @@
   <div class="recipe-card">
     <div
       v-for="card in props.recipes"
-      :key="card.id"
+      :key="card.recipe_id"
       class="recipe-card__box"
     >
       <div class="recipe-card__pic">
         <img
           class="recipe-card__img"
           :src="card.image"
-          :alt="card.title"
+          :alt="card.name"
         />
       </div>
 
@@ -32,7 +32,7 @@
           src="/src/assets/image/Recipes/graffiti.png"
           alt=""
         />
-        <h2>{{ card.title }}</h2>
+        <h2>{{ card.name }}</h2>
       </div>
 
       <div class="icon-board">
@@ -42,7 +42,7 @@
               icon-name="time"
               class="time-icon"
             />
-            約{{ card.time }}分鐘
+            約{{ card.cooked_time }}分鐘
           </p>
         </div>
         <div class="icon-board__right">
@@ -51,29 +51,34 @@
               icon-name="comment"
               class="comment-icon"
             />
-            {{ card.comments }}
+            {{ card.comments || '0' }}
           </p>
           <p>
             <Icon
               icon-name="markL"
               class="markL-icon"
             />
-            {{ card.bookmarks }}
+            {{ card.bookmarks || '0' }}
           </p>
         </div>
       </div>
 
       <div class="icon-board__tag">
         <p
-          v-for="tag in card.tag"
+          v-for="tag in (card.tag && typeof card.tag === 'string' ? card.tag.split(',') : [])"
           :key="tag"
         >
-          {{ tag }}
+          #{{ tag }}
         </p>
       </div>
     </div>
   </div>
+  
+  <div v-if="props.recipes.length === 0" class="no-recipes">
+    目前沒有任何食譜可顯示。
+  </div>
 </template>
+
 
 <style lang="scss" scoped>
   .recipe-card {

@@ -1,6 +1,7 @@
 <script setup>
-  import { ref, computed, watch } from 'vue';
+  import { ref, computed, watch, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import axios from 'axios';
 
   import Banner from '@/components/recipe/Banner.vue';
   import Category from '@/components/recipe/Category.vue';
@@ -19,7 +20,41 @@
   const currentSearchQuery = ref(route.query.q || '');
 
   // 合併模擬資料
-  const allRecipes = ref([...soloMeal, ...popularRecipe]);
+  // const allRecipes = ref([...soloMeal, ...popularRecipe]);
+
+  //指定本地端api位置
+  const apiUrl = 'http://localhost:8888/front/recipe/get_recipe.php';
+
+  const allRecipes = ref([]);
+
+  //用axios串接recipe_get.api
+  const fetchRecipe = async () => {
+    try {
+      const response = await axios.get(apiUrl);
+      const apiResponse = response.data; // 現在 apiResponse 是 { success: true, data: { ... } }
+
+      if (apiResponse.success) {
+        // 檢查後端回傳是否成功
+        const apiData = apiResponse.data; // ✅ 正確地獲取 'data' 屬性
+        allRecipes.value = {
+          mostFavorite: apiData.mostBookmarked, // ✅ 現在可以正確讀取資料了
+          hot: apiData.seasonalHot, // ✅
+          newest: apiData.latest, // ✅
+        };
+        console.log('成功取得後端食譜資料', allRecipes.value);
+      } else {
+        console.error('API 錯誤：', apiResponse.error);
+        allRecipes.value = {};
+      }
+    } catch (error) {
+      console.error('取得食譜資料失敗', error);
+      allRecipes.value = {};
+    }
+  };
+
+  onMounted(() => {
+    fetchRecipe();
+  });
 
   // 搜尋功能
   const handleSearch = (query) => {
@@ -43,21 +78,27 @@
   );
 
   // 模擬資料 每個區塊9張
-  const hotRecipes = allRecipes.value.slice(0, 9);
-  const mostBookmarkedRecipes = allRecipes.value.slice(9, 18);
-  const latestRecipes = allRecipes.value.slice(18, 27);
+  const hotRecipes = computed(() => {
+    return allRecipes.value.hot ? allRecipes.value.hot.slice(0, 9) : [];
+  });
+
+  const mostBookmarkedRecipes = computed(() => {
+    return allRecipes.value.mostFavorite ? allRecipes.value.mostFavorite.slice(0, 9) : [];
+  });
+
+  const latestRecipes = computed(() => {
+    return allRecipes.value.newest ? allRecipes.value.newest.slice(0, 9) : [];
+  });
 
   // =======================================================
 
-  const goToPage = () => {
-    router.push('/recipe-detail');
-  };
+  // const goToPage = () => {
+  //   router.push('/recipe-detail');
+  // };
   // =======================================================
 </script>
 
 <template>
-  <MainHeader />
-
   <Banner />
 
   <Category />
@@ -71,28 +112,19 @@
     title="/當季熱門\"
     class="section"
   ></SectionTitle>
-  <RecipeCards
-    :recipes="hotRecipes"
-    @click="goToPage"
-  />
+  <RecipeCards :recipes="hotRecipes" />
 
   <SectionTitle
     title="/最多收藏\"
     class="section"
   ></SectionTitle>
-  <RecipeCards
-    :recipes="mostBookmarkedRecipes"
-    @click="goToPage"
-  />
+  <RecipeCards :recipes="mostBookmarkedRecipes" />
 
   <SectionTitle
     title="/最新投稿\"
     class="section"
   ></SectionTitle>
-  <RecipeCards
-    :recipes="latestRecipes"
-    @click="goToPage"
-  />
+  <RecipeCards :recipes="latestRecipes" />
 
   <!-- goToPage後續要做刪除的動作 -->
 </template>

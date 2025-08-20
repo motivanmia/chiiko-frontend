@@ -112,7 +112,7 @@ const router = createRouter({
     //   component: () => import('@/pages/RecipeSolo.vue'),
     // },
     {
-      path: '/recipes/:category',
+      path: '/recipes/:category?',
       name: 'recipes',
       component: () => import('@/pages/RecipeCategoryPage.vue'),
     },
