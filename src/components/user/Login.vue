@@ -3,7 +3,10 @@
   import Icon from '@/components/common/Icon.vue';
   import { ref } from 'vue';
   import axios from 'axios';
+  import { useAuthStore } from '@/stores/auth';
+  import { useRouter } from 'vue-router';
 
+  const authStore = useAuthStore();
   const apiBase = import.meta.env.VITE_API_BASE;
   const emit = defineEmits(['close', 'login-success']);
 
@@ -14,7 +17,9 @@
 
   const account = ref('');
   const password = ref('');
-  const formError = ref(''); 
+  const formError = ref('');
+
+  const router = useRouter();
 
   // 控制 toast 顯示
   // const showSuccess = ref(false);
@@ -34,10 +39,16 @@
       const response = await axios.post(API_URL, userData);
 
       // 成功回應 (後端狀態碼 200)
-      if (response.status === 200) {
+      if (response.data.user) {
         // alert(response.data.message); // 顯示成功訊息
-        emit('login-success'); // 發出成功登入事件
-        emit('close'); // 關閉登入視窗
+        // emit('login-success');
+        // emit('close'); // 關閉登入視窗
+
+        // 更新 Pinia Store 的登入狀態
+        authStore.loginSuccess(response.data.user);
+      } else {
+        // 登入失敗 (後端回傳失敗訊息)
+        formError.value = response.data.message || '登入失敗，請檢查帳號密碼';
       }
     } catch (error) {
       // 處理錯誤回應
@@ -124,7 +135,7 @@
         v-if="formError"
         class="toast"
       >
-      {{ formError }}
+        {{ formError }}
         <!-- 帳號或密碼錯誤！ -->
       </div>
     </transition>
