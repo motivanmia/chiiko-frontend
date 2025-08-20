@@ -4,6 +4,9 @@
   import LoginModal from '@/components/user/Login.vue';
   import SigninModal from '@/components/user/signin.vue';
   import ForgetPswModal from '@/components/user/ForgetPsw.vue';
+  import axios from 'axios';
+
+  const apiBase = import.meta.env.VITE_API_BASE;
 
   // nav選單項目
   const navLinks = ref([
@@ -35,8 +38,30 @@
 
   // 登出
   const logout = () => {
-    isLogin.value = false;
-    localStorage.removeItem('isLogin');
+    // 向後端發出登出請求
+    axios
+      .post(
+        `${apiBase}/users/logout.php`,
+        {},
+        {
+          withCredentials: true,
+        },
+      )
+      .then((response) => {
+        // 檢查後端的回應狀態
+        if (response.data.status === 'success') {
+          console.log(response.data.message);
+          // 如果後端登出成功 才在前端清除狀態
+          isLogin.value = false;
+          localStorage.removeItem('isLogin');
+        } else {
+          console.error('Server reported a logout error:', response.data.message);
+        }
+      })
+      .catch((error) => {
+        console.error('An error occurred during logout:', error);
+        alert('登出失敗，請稍後再試。');
+      });
   };
 
   // 登入前的會員選單
@@ -123,7 +148,7 @@
   const ModalComponents = {
     login: LoginModal,
     signin: SigninModal,
-    forgetpsw:ForgetPswModal,
+    forgetpsw: ForgetPswModal,
   };
   const currentModalComponent = computed(() => {
     return activeModal.value ? ModalComponents[activeModal.value] : null;
