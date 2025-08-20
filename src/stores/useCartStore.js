@@ -1,10 +1,37 @@
 import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
-import { useRouter } from 'vue-router';
+
+// 表單預設值函式，避免重複
+function getDefaultPaymentForm() {
+  return {
+    delivery: 'home',
+    location: 'mainIsland',
+    paymentMethod: 'card',
+    cardNumber: '',
+    expMonth: '',
+    cvv: '',
+    cardHolder: '',
+  };
+}
+
+function getDefaultRecipientForm() {
+  return {
+    buyerName: '小胖子',
+    buyerPhone: '0912345678',
+    buyerCity: '桃園市',
+    buyerDistrict: '中壢區',
+    buyerPostal: '320',
+    buyerAddress: '復興路46號9樓',
+    recipientName: '',
+    recipientPhone: '',
+    recipientCity: '',
+    recipientDistrict: '',
+    recipientPostal: '',
+    recipientAddress: '',
+  };
+}
 
 export const useCartStore = defineStore('cart', () => {
-  const router = useRouter();
-
   // 購物車商品
   const products = ref([
     {
@@ -31,10 +58,10 @@ export const useCartStore = defineStore('cart', () => {
   ]);
 
   // 付款表單
-  const paymentForm = ref({
-    delivery: 'home',
-    location: 'mainIsland',
-    paymentMethod: 'card',
+  const paymentForm = ref(getDefaultPaymentForm());
+
+  // 付款錯誤提示
+  const creditCartErrors = ref({
     cardNumber: '',
     expMonth: '',
     cvv: '',
@@ -42,13 +69,10 @@ export const useCartStore = defineStore('cart', () => {
   });
 
   // 收貨人表單
-  const recipientForm = ref({
-    buyerName: '小胖子',
-    buyerPhone: '0912345678',
-    buyerCity: '桃園市',
-    buyerDistrict: '中壢區',
-    buyerPostal: '320',
-    buyerAddress: '復興路46號9樓',
+  const recipientForm = ref(getDefaultRecipientForm());
+
+  // 新增收件人錯誤狀態
+  const recipientErrors = ref({
     recipientName: '',
     recipientPhone: '',
     recipientCity: '',
@@ -65,6 +89,24 @@ export const useCartStore = defineStore('cart', () => {
 
   // 步驟
   const currentStep = ref(1);
+
+  // 驗證
+  const errors = ref({
+    payment: {
+      cardNumber: '',
+      expMonth: '',
+      cvv: '',
+      cardHolder: '',
+    },
+    recipient: {
+      name: '',
+      phone: '',
+      city: '',
+      district: '',
+      postal: '',
+      address: '',
+    },
+  });
 
   // 小計
   const subtotal = computed(() => {
@@ -89,6 +131,28 @@ export const useCartStore = defineStore('cart', () => {
     return products.value.reduce((count, product) => count + product.quantity, 0);
   });
 
+  // 計算收件人資料：根據 sameAsRecipient 來決定用哪一組資料
+  const recipientData = computed(() => {
+    if (sameAsRecipient.value) {
+      return {
+        name: recipientForm.value.buyerName,
+        phone: recipientForm.value.buyerPhone,
+        city: recipientForm.value.buyerCity,
+        district: recipientForm.value.buyerDistrict,
+        postal: recipientForm.value.buyerPostal,
+        address: recipientForm.value.buyerAddress,
+      };
+    }
+    return {
+      name: recipientForm.value.recipientName,
+      phone: recipientForm.value.recipientPhone,
+      city: recipientForm.value.recipientCity,
+      district: recipientForm.value.recipientDistrict,
+      postal: recipientForm.value.recipientPostal,
+      address: recipientForm.value.recipientAddress,
+    };
+  });
+
   // 增加商品數量
   const increaseQuantity = (productId) => {
     const product = products.value.find((p) => p.id === productId);
@@ -107,10 +171,9 @@ export const useCartStore = defineStore('cart', () => {
 
   // 移除商品
   const removeProduct = (productId) => {
-    const index = products.value.findIndex((p) => p.id === productId);
-    if (index > -1) {
-      products.value.splice(index, 1);
-    }
+    products.value = products.value.filter((p) => {
+      return p.id !== productId;
+    });
   };
 
   // 新增商品
@@ -130,6 +193,107 @@ export const useCartStore = defineStore('cart', () => {
 
   const updateCardData = (cardData) => {
     Object.assign(paymentForm.value, cardData);
+  };
+
+  const validateCreditCardField = (field) => {
+    if (paymentForm.value.paymentMethod !== 'card') {
+      // 如果不是信用卡付款，直接清空錯誤並返回 true
+      errors.value.payment[field] = '';
+      return true;
+    }
+
+    const val = paymentForm.value[field];
+    switch (field) {
+      case 'cardNumber':
+        if (!/^\d{16}$/.test(val.replace(/\s|-/g, ''))) {
+          errors.value.payment.cardNumber = '請輸入16位數字卡號';
+          return false;
+        }
+        break;
+      case 'expMonth':
+        if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(val)) {
+          errors.value.payment.expMonth = '請輸入有效年月 (MM/YY)';
+          return false;
+        }
+        break;
+      case 'cvv':
+        if (!/^\d{3,4}$/.test(val)) {
+          errors.value.payment.cvv = '請輸入3到4位數字的CVV';
+          return false;
+        }
+        break;
+      case 'cardHolder':
+        if (!val.trim()) {
+          errors.value.payment.cardHolder = '請輸入持卡人姓名';
+          return false;
+        }
+        break;
+    }
+    errors.value.payment[field] = '';
+    return true;
+  };
+
+  // 驗證單一欄位
+  const validateRecipientField = (field) => {
+    const val = recipientData.value[field] || '';
+    switch (field) {
+      case 'name':
+        if (!val.trim()) {
+          errors.value.recipient.name = '請輸入收件人姓名';
+          return false;
+        }
+        break;
+      case 'phone':
+        if (!/^09\d{8}$/.test(val)) {
+          errors.value.recipient.phone = '請輸入有效手機號碼';
+          return false;
+        }
+        break;
+      case 'city':
+        if (!val) {
+          errors.value.recipient.city = '請選擇縣市';
+          return false;
+        }
+        break;
+      case 'district':
+        if (!val) {
+          errors.value.recipient.district = '請選擇鄉鎮市區';
+          return false;
+        }
+        break;
+      case 'postal':
+        if (!val) {
+          errors.value.recipient.postal = '請輸入郵遞區號';
+          return false;
+        }
+        break;
+      case 'address':
+        if (!val.trim()) {
+          errors.value.recipient.address = '請輸入詳細地址';
+          return false;
+        }
+        break;
+    }
+    errors.value.recipient[field] = '';
+    return true;
+  };
+
+  const validateCheckoutForm = () => {
+    let valid = true;
+
+    // 驗證信用卡
+    if (paymentForm.value.paymentMethod === 'card') {
+      for (const field of ['cardNumber', 'expMonth', 'cvv', 'cardHolder']) {
+        if (!validateCreditCardField(field)) valid = false;
+      }
+    }
+
+    // 驗證收件人
+    for (const field of ['name', 'phone', 'city', 'district', 'postal', 'address']) {
+      if (!validateRecipientField(field)) valid = false;
+    }
+
+    return valid;
   };
 
   // 收貨人資料操作
@@ -227,37 +391,15 @@ export const useCartStore = defineStore('cart', () => {
 
   // 訂單提交
   const submitOrder = () => {
-    const orderData = {
+    return {
       products: products.value,
       payment: paymentForm.value,
-      recipient: sameAsRecipient.value
-        ? {
-            name: recipientForm.value.buyerName,
-            phone: recipientForm.value.buyerPhone,
-            city: recipientForm.value.buyerCity,
-            district: recipientForm.value.buyerDistrict,
-            postal: recipientForm.value.buyerPostal,
-            address: recipientForm.value.buyerAddress,
-          }
-        : {
-            name: recipientForm.value.recipientName,
-            phone: recipientForm.value.recipientPhone,
-            city: recipientForm.value.recipientCity,
-            district: recipientForm.value.recipientDistrict,
-            postal: recipientForm.value.recipientPostal,
-            address: recipientForm.value.recipientAddress,
-          },
+      recipient: recipientData.value,
       subtotal: subtotal.value,
       shippingCost: shippingCost.value,
       total: total.value,
       orderTime: new Date().toISOString(),
     };
-
-    router.push({ path: '/order-success' });
-    // console.log('提交訂單:', orderData);
-
-    // 這裡可以調用 API 提交訂單
-    return orderData;
   };
 
   // 清空購物車
@@ -267,31 +409,8 @@ export const useCartStore = defineStore('cart', () => {
 
   // 重置表單
   const resetForms = () => {
-    paymentForm.value = {
-      delivery: 'home',
-      location: 'mainIsland',
-      paymentMethod: 'card',
-      cardNumber: '',
-      expMonth: '',
-      cvv: '',
-      cardHolder: '',
-    };
-
-    recipientForm.value = {
-      buyerName: '小胖子',
-      buyerPhone: '0912345678',
-      buyerCity: '桃園市',
-      buyerDistrict: '中壢區',
-      buyerPostal: '320',
-      buyerAddress: '復興路46號9樓',
-      recipientName: '',
-      recipientPhone: '',
-      recipientCity: '',
-      recipientDistrict: '',
-      recipientPostal: '',
-      recipientAddress: '',
-    };
-
+    paymentForm.value = getDefaultPaymentForm();
+    recipientForm.value = getDefaultRecipientForm();
     sameAsRecipient.value = false;
     currentStep.value = 1;
   };
@@ -303,12 +422,16 @@ export const useCartStore = defineStore('cart', () => {
     recipientForm,
     sameAsRecipient,
     currentStep,
+    creditCartErrors,
+    recipientErrors,
+    errors,
 
     // 計算屬性
     subtotal,
     shippingCost,
     total,
     productCount,
+    recipientData,
 
     // 商品方法
     increaseQuantity,
@@ -319,6 +442,9 @@ export const useCartStore = defineStore('cart', () => {
     // 付款方法
     updatePaymentForm,
     updateCardData,
+    validateCreditCardField,
+    validateRecipientField,
+    validateCheckoutForm,
 
     // 收貨人方法
     updateRecipientForm,

@@ -1,12 +1,17 @@
 <script setup>
   import { useIngredientStore } from '@/stores/ingredient';
-  import { ref, computed } from 'vue';
+  const ingredient = useIngredientStore();
+
+  import { ref, computed, onMounted } from 'vue';
   import SeeMoreButton from '../button/SeeMoreButton.vue';
   import SectionTitle from '../SectionTitle.vue';
   import { useRouter } from 'vue-router';
   const router = useRouter();
-  const ingredient = useIngredientStore();
-  // console.log(ingredient.list[0]);
+
+  onMounted(async () => {
+    await ingredient.loadIngredients();
+    // console.log('pretty:', JSON.stringify(ingredient.list, null, 2));
+  });
   function handleCardClick(item) {
     ingredient.updateActive(item);
     // router.push({ path: '/school' });
@@ -30,15 +35,15 @@
       >
         <div class="school__imgbox">
           <img
-            :src="item.img[0]"
+            :src="item.image[0]"
             alt=""
           />
           <p>{{ item.name }}</p>
         </div>
         <div class="school__text">
-          <h1>{{ item.lightbox[0].goodtitle }}</h1>
+          <h1>{{ item.content[0].goodtitle }}</h1>
           <br />
-          <p>{{ item.lightbox[0].goodcontent }}</p>
+          <p>{{ item.content[0].goodcontent }}</p>
         </div>
       </div>
     </div>

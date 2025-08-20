@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomePage from '@/pages/HomePage.vue';
-import AccountPage from '@/pages/AccountPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,11 +12,11 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomePage,
+      component: () => import('@/pages/HomePage.vue'),
     },
     {
       path: '/account',
-      component: AccountPage,
+      component: () => import('@/pages/AccountPage.vue'),
       children: [
         {
           path: '',
@@ -72,7 +70,7 @@ const router = createRouter({
       component: () => import('@/pages/SchoolPage.vue'),
     },
     {
-      path: '/recipe-detail',
+      path: '/recipe-detail/:id',
       name: 'recipe-detail',
       component: () => import('@/pages/RecipeDetailPage.vue'),
     },
@@ -116,7 +114,7 @@ const router = createRouter({
       name: 'recipes',
       component: () => import('@/pages/RecipeCategoryPage.vue'),
     },
-    { 
+    {
       path: '/search',
       name: 'search',
       component: () => import('@/pages/RecipeSearch.vue'),

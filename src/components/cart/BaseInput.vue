@@ -16,27 +16,49 @@
       type: Boolean,
       default: false,
     },
+    error: {
+      type: String,
+      default: '',
+    },
   });
 
-  const emit = defineEmits(['update:modelValue']);
+  const emit = defineEmits(['update:modelValue', 'blur']);
 
   const handleInput = (event) => {
     emit('update:modelValue', event.target.value);
   };
+
+  const handleBlur = () => {
+    emit('blur');
+  };
 </script>
 
 <template>
-  <input
-    :type="type"
-    class="base-input"
-    :value="modelValue"
-    :placeholder="placeholder"
-    :readonly="readonly"
-    @input="handleInput"
-  />
+  <div class="base-input__container">
+    <input
+      :type="type"
+      class="base-input"
+      :value="modelValue"
+      :placeholder="placeholder"
+      :readonly="readonly"
+      @input="handleInput"
+      @blur="handleBlur"
+    />
+
+    <p
+      v-if="error"
+      class="base-input__error"
+    >
+      {{ error }}
+    </p>
+  </div>
 </template>
 
 <style lang="scss" scoped>
+  .base-input__container {
+    position: relative;
+  }
+
   .base-input {
     width: 100%;
     padding: px(20);
@@ -55,6 +77,14 @@
 
     &::placeholder {
       @include fontSet($size: px(24), $lh: 1.2, $color: color(search, placeholder), $ls: 0.1em);
+    }
+
+    &__error {
+      position: absolute;
+      top: 0;
+      transform: translateY(-100%);
+      padding-bottom: px(5);
+      color: color(text, error);
     }
   }
 </style>

@@ -2,31 +2,52 @@
   import InputField from '@/components/user/InputField.vue';
   import Icon from '@/components/common/Icon.vue';
   import { ref } from 'vue';
+  import axios from 'axios';
 
+  const apiBase = import.meta.env.VITE_API_BASE;
   const emit = defineEmits(['close', 'login-success']);
 
   // 假帳號密碼
-  const FAKE_ACCOUNT = 'test123@1.1';
-  const FAKE_PASSWORD = 'test123';
+  // const FAKE_ACCOUNT = ref('');
+  // const FAKE_PASSWORD = ref('');
+  // const noSuccess = ref(false);
 
   const account = ref('');
   const password = ref('');
+  const formError = ref(''); 
 
   // 控制 toast 顯示
   // const showSuccess = ref(false);
 
-  const noSuccess = ref(false);
+  const login = async () => {
+    formError.value = '';
 
-  // 範例 login 函式：驗證是否與假帳密吻合
-  const login = () => {
-    if (account.value === FAKE_ACCOUNT && password.value === FAKE_PASSWORD) {
-      emit('login-success');
-      emit('close');
-    } else {
-      noSuccess.value = true;
-      setTimeout(() => {
-        noSuccess.value = false;
-      }, 1000);
+    const userData = {
+      account: account.value,
+      password: password.value,
+    };
+
+    // 你的後端 login API 網址
+    const API_URL = `${apiBase}/users/login.php`;
+
+    try {
+      const response = await axios.post(API_URL, userData);
+
+      // 成功回應 (後端狀態碼 200)
+      if (response.status === 200) {
+        // alert(response.data.message); // 顯示成功訊息
+        emit('login-success'); // 發出成功登入事件
+        emit('close'); // 關閉登入視窗
+      }
+    } catch (error) {
+      // 處理錯誤回應
+      if (error.response && error.response.data && error.response.data.message) {
+        // 顯示後端回傳的錯誤訊息
+        formError.value = error.response.data.message;
+      } else {
+        // 顯示通用錯誤訊息
+        formError.value = '登入失敗，請稍後再試。';
+      }
     }
   };
 </script>
@@ -100,10 +121,11 @@
     </div>
     <transition name="fade">
       <div
-        v-if="noSuccess"
+        v-if="formError"
         class="toast"
       >
-        帳號或密碼錯誤！
+      {{ formError }}
+        <!-- 帳號或密碼錯誤！ -->
       </div>
     </transition>
   </div>
@@ -247,7 +269,7 @@
       #signin {
         font-size: px(16);
         text-align: center;
-        
+
         #go_signin {
           color: color(text, dark);
           margin-left: px(20);

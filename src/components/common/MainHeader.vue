@@ -4,6 +4,9 @@
   import LoginModal from '@/components/user/Login.vue';
   import SigninModal from '@/components/user/signin.vue';
   import ForgetPswModal from '@/components/user/ForgetPsw.vue';
+  import axios from 'axios';
+
+  const apiBase = import.meta.env.VITE_API_BASE;
 
   // nav選單項目
   const navLinks = ref([
@@ -35,8 +38,30 @@
 
   // 登出
   const logout = () => {
-    isLogin.value = false;
-    localStorage.removeItem('isLogin');
+    // 向後端發出登出請求
+    axios
+      .post(
+        `${apiBase}/users/logout.php`,
+        {},
+        {
+          withCredentials: true,
+        },
+      )
+      .then((response) => {
+        // 檢查後端的回應狀態
+        if (response.data.status === 'success') {
+          console.log(response.data.message);
+          // 如果後端登出成功 才在前端清除狀態
+          isLogin.value = false;
+          localStorage.removeItem('isLogin');
+        } else {
+          console.error('Server reported a logout error:', response.data.message);
+        }
+      })
+      .catch((error) => {
+        console.error('An error occurred during logout:', error);
+        alert('登出失敗，請稍後再試。');
+      });
   };
 
   // 登入前的會員選單
@@ -123,7 +148,7 @@
   const ModalComponents = {
     login: LoginModal,
     signin: SigninModal,
-    forgetpsw:ForgetPswModal,
+    forgetpsw: ForgetPswModal,
   };
   const currentModalComponent = computed(() => {
     return activeModal.value ? ModalComponents[activeModal.value] : null;
@@ -151,10 +176,19 @@
     showToast.value = true;
     setTimeout(() => {
       showToast.value = false;
-    }, 3000);
+    }, 2000);
   };
 
   const showToast = ref(false); // 顯示登入成功提示
+  const showSignin = ref(false); // 顯示註冊成功前往登入提示
+
+  const signinSuccess = () => {
+    showSignin.value = true;
+    setTimeout(() => {
+      showSignin.value = false;
+      openModal('login');
+    }, 2000);
+  };
 </script>
 
 <template>
@@ -491,6 +525,7 @@
         :is="currentModalComponent"
         @close="closeModal"
         @login-success="loginSuccess"
+        @signin-success="signinSuccess"
         @switch-to-signin="openModal('signin')"
         @switch-to-login="openModal('login')"
         @switch-to-forgetpsw="openModal('forgetpsw')"
@@ -503,6 +538,15 @@
       class="toast"
     >
       登入成功！
+    </div>
+  </transition>
+
+  <transition name="fade">
+    <div
+      v-if="showSignin"
+      id="showSignin_message"
+    >
+      <div class="toast">註冊成功！ 即將前往登入頁面</div>
     </div>
   </transition>
 </template>
@@ -1169,6 +1213,13 @@
     font-size: 20px;
     pointer-events: none;
     z-index: 20;
+  }
+  #showSignin_message {
+    position: fixed;
+    z-index: 20;
+    background-color: rgb(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100vh;
   }
   .fade-enter-active,
   .fade-leave-active {

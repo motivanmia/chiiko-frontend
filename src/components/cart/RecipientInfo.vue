@@ -1,7 +1,10 @@
 <script setup>
+  import { computed } from 'vue';
+  import { storeToRefs } from 'pinia';
+  import { useCartStore } from '@/stores/useCartStore';
   import FormGroup from './FormGroup.vue';
   import AddressGroup from './AddressGroup.vue';
-  import { computed } from 'vue';
+  import Icon from '../common/Icon.vue';
 
   const props = defineProps({
     form: {
@@ -14,62 +17,77 @@
     },
   });
 
-  const emit = defineEmits(['update:form', 'toggle-same-as']);
+  const emit = defineEmits(['update:form', 'update:same-as-recipient']);
+
+  const cart = useCartStore();
+  const { errors } = storeToRefs(cart);
+  const { validateRecipientField } = cart;
 
   const recipientName = computed({
     get: () => props.form.recipientName,
     set: (val) => {
-      props.form.recipientName = val;
-      emit('update:form', props.form);
+      const newForm = { ...props.form, recipientName: val };
+      emit('update:form', newForm);
     },
   });
   const recipientPhone = computed({
     get: () => props.form.recipientPhone,
     set: (val) => {
-      props.form.recipientPhone = val;
-      emit('update:form', props.form);
+      const newForm = { ...props.form, recipientPhone: val };
+      emit('update:form', newForm);
     },
   });
   const recipientCity = computed({
     get: () => props.form.recipientCity,
     set: (val) => {
-      props.form.recipientCity = val;
-      emit('update:form', props.form);
+      const newForm = { ...props.form, recipientCity: val };
+      emit('update:form', newForm);
     },
   });
   const recipientDistrict = computed({
     get: () => props.form.recipientDistrict,
     set: (val) => {
-      props.form.recipientDistrict = val;
-      emit('update:form', props.form);
+      const newForm = { ...props.form, recipientDistrict: val };
+      emit('update:form', newForm);
     },
   });
   const recipientPostal = computed({
     get: () => props.form.recipientPostal,
     set: (val) => {
-      props.form.recipientPostal = val;
-      emit('update:form', props.form);
+      const newForm = { ...props.form, recipientPostal: val };
+      emit('update:form', newForm);
     },
   });
   const recipientAddress = computed({
     get: () => props.form.recipientAddress,
     set: (val) => {
-      props.form.recipientAddress = val;
-      emit('update:form', props.form);
+      const newForm = { ...props.form, recipientAddress: val };
+      emit('update:form', newForm);
     },
   });
+
+  const toggleSameAs = () => {
+    emit('update:same-as-recipient', !props.sameAsRecipient);
+  };
 </script>
 
 <template>
   <section class="recipient-info">
     <header class="recipient-info__header">
       <h2 class="recipient-info__title">收件人資訊</h2>
-      <label>
+      <label class="recipient-info__checkbox-wrap">
         <input
+          class="recipient-info__checkbox"
           type="checkbox"
           :checked="sameAsRecipient"
-          @change="$emit('toggle-same-as')"
+          @change="toggleSameAs"
         />
+        <div class="recipient-info__customize">
+          <Icon
+            class="recipient-info__checkbox-icon"
+            icon-name="check"
+          />
+        </div>
         同購買人資料
       </label>
     </header>
@@ -78,11 +96,15 @@
         label="姓名"
         placeholder="請輸入收件人姓名"
         v-model="recipientName"
+        :error="errors.recipient.name"
+        @blur="validateRecipientField('name')"
       />
       <FormGroup
         label="電話"
         placeholder="請輸入收件人電話"
         v-model="recipientPhone"
+        :error="errors.recipient.phone"
+        @blur="validateRecipientField('phone')"
       />
       <AddressGroup
         label="收件人地址"
@@ -90,6 +112,14 @@
         v-model:district="recipientDistrict"
         v-model:postal="recipientPostal"
         v-model:address="recipientAddress"
+        :error-city="errors.recipient.city"
+        :error-district="errors.recipient.district"
+        :error-postal="errors.recipient.postal"
+        :error-address="errors.recipient.address"
+        @blur-city="validateRecipientField('city')"
+        @blur-district="validateRecipientField('district')"
+        @blur-postal="validateRecipientField('postal')"
+        @blur-address="validateRecipientField('address')"
       />
     </div>
   </section>
@@ -112,6 +142,37 @@
 
     &__list {
       padding: px(30) px(20);
+    }
+
+    &__checkbox-wrap {
+      @include flex();
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    &__customize {
+      position: relative;
+      @include flex();
+      width: px(20);
+      height: px(20);
+      background-color: white;
+      border: px(1) solid color(text, dark);
+      border-radius: 50%;
+    }
+
+    &__checkbox-icon {
+      display: none;
+      @include posCenter;
+      @include font-size(15);
+      color: color(text, dark);
+    }
+
+    &__checkbox {
+      display: none;
+
+      &:checked ~ .recipient-info__customize > .recipient-info__checkbox-icon {
+        display: block;
+      }
     }
   }
 

@@ -1,11 +1,20 @@
 <script setup>
+  import { useRouter } from 'vue-router';
   import { useCartStore } from '@/stores/useCartStore';
   import { storeToRefs } from 'pinia';
   import ConfirmButton from '../button/ConfirmButton.vue';
 
+  const router = useRouter();
   const cart = useCartStore();
   const { subtotal, shippingCost, total } = storeToRefs(cart);
-  const { submitOrder } = cart;
+  const { submitOrder, validateCheckoutForm } = cart;
+
+  const handleSubmitOrder = () => {
+    if (!validateCheckoutForm()) return;
+    const data = submitOrder();
+    router.push({ path: '/order-success' });
+    console.log('submit', data);
+  };
 </script>
 
 <template>
@@ -40,7 +49,7 @@
       </div>
       <ConfirmButton
         class="order-summary__submit"
-        @click="submitOrder"
+        @click.prevent="handleSubmitOrder"
       >
         立即結帳
       </ConfirmButton>

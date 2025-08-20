@@ -13,10 +13,10 @@
     <div class="recipe-editor">
       <div class="form-content-wrapper">
         <h1 class="recipe-editor__title">編輯食譜</h1>
-        <ImageUploader />
 
-        <!-- ⭐️ 關鍵 1: 將 FormField 替換為【InputSingleline】 -->
-        <!-- 這個組件是固定高度、不換行的 -->
+        <!-- ⭐️ 關鍵修改 1: 監聽子層的 @update:file 事件，並將檔案存到 file ref 中 -->
+        <ImageUploader @update:file="file = $event" />
+
         <InputSingleline
           label="輸入食譜名稱"
           v-model="form.title"
@@ -25,8 +25,6 @@
           :placeholder="'例：香煎豆腐卷（最多15字）'"
         />
 
-        <!-- ⭐️ 關鍵 2: 將 FormField 替換為【TextareaAutosize】 -->
-        <!-- 這個組件是可自動增高、會自動折行的，並且不再需要 slot -->
         <TextareaAutosize
           label="簡介"
           v-model="form.description"
@@ -38,6 +36,7 @@
 
         <TagInput v-model="form.tags" />
         <RecipeMeta
+          :categories="categories"
           v-model:category="form.category"
           v-model:time="form.time"
           v-model:servings="form.servings"
@@ -67,8 +66,9 @@
 </template>
 
 <script setup>
-  import { reactive, computed } from 'vue';
+  import { ref, reactive, computed } from 'vue';
   import { useRouter } from 'vue-router';
+  import axios from 'axios';
   import Icon from '@/components/common/Icon.vue';
   import BaseButton from '@/components/common/BaseButton.vue';
   import ImageUploader from '@/components/recipe-editor/ImageUploader.vue';
@@ -76,26 +76,37 @@
   import RecipeMeta from '@/components/recipe-editor/RecipeMeta.vue';
   import IngredientsManager from '@/components/recipe-editor/IngredientsManager.vue';
   import StepsManager from '@/components/recipe-editor/StepsManager.vue';
-
-  // ⭐️ 關鍵 3: 引入兩個全新的、獨立的組件，並移除舊的 FormField
   import InputSingleline from '@/components/recipe-editor/InputSingleline.vue';
   import TextareaAutosize from '@/components/recipe-editor/TextareaAutosize.vue';
 
-  // --- 以下您的 Script 邏輯完全不需要修改 ---
-
   const router = useRouter();
   const goBack = () => router.back();
+
+  // ⭐️ 核心修正 1: 將 categories 陣列的定義「提升」到函式外部
+  // 這樣 <template> 和 publishRecipe 函式就都能訪問到它了
+  const categories = [
+    { value: 'single', label: '一人料理', id: 1 },
+    { value: 'family', label: '家庭聚餐', id: 2 },
+    { value: 'romantic', label: '浪漫晚餐', id: 3 },
+    { value: 'outdoor', label: '戶外料理', id: 4 },
+    { value: 'lazy', label: '懶人快煮', id: 5 },
+    { value: 'fitness', label: '健身/減糖餐', id: 6 },
+    { value: 'budget', label: '低預算料理', id: 7 },
+    { value: 'festival', label: '慶生/節慶料理', id: 8 },
+  ];
 
   const form = reactive({
     title: '',
     description: '',
     tags: [],
     category: 'single',
-    time: 5,
-    servings: 2,
+    time: '5~10',
+    servings: '1~2',
     ingredients: [{ name: '', amount: '' }],
     steps: [''],
   });
+
+  const file = ref(null);
 
   const titleWarning = computed(() => (form.title.length > 15 ? '標題不能超過 15 字喔！' : ''));
 
@@ -105,28 +116,78 @@
 
   const saveDraft = () => alert('草稿已儲存');
 
-  const publishRecipe = () => {
+  const publishRecipe = async () => {
+    // --- 前端基本驗證 ---
     const errors = [];
-    if (!form.title.trim()) {
-      errors.push('請輸入食譜名稱。');
-    }
-    if (!form.description.trim()) {
-      errors.push('請輸入簡介。');
-    }
-    if (form.tags.length === 0) {
-      errors.push('請至少新增一個食譜標籤。');
-    }
-    if (form.ingredients.some((item) => !item.name.trim() || !item.amount.trim())) {
-      errors.push('所有「所需食材」和「份量」的欄位都必須填寫。');
-    }
-    if (form.steps.some((step) => !step.trim())) {
-      errors.push('所有「料理步驟」都必須填寫內容。');
-    }
+    if (!form.title.trim()) errors.push('請輸入食譜名稱。');
+    if (!form.description.trim()) errors.push('請輸入簡介。');
+    if (!file.value) errors.push('請上傳一張食譜圖片。');
+    // ... 其他驗證 ...
+
     if (errors.length > 0) {
       alert('請修正以下問題：\n\n- ' + errors.join('\n- '));
       return;
     }
-    alert('🎉 食譜已成功發布！');
+
+    try {
+      // ⭐️ 核心修正 2: categories 的定義已經移到外面，所以這裡不需要再定義
+
+      // 根據使用者選擇的 form.category，去陣列中找到完整的物件
+      const selectedCategory = categories.find((cat) => cat.value === form.category);
+
+      const apiBase = import.meta.env.VITE_API_BASE;
+      let imagePath = '';
+
+      // --- 階段一：上傳【圖片】---
+      const formData = new FormData();
+      formData.append('image', file.value);
+      const imageResponse = await axios.post(`${apiBase}/recipe/upload_image.php`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      imagePath = imageResponse.data.imagePath;
+      if (!imagePath) throw new Error('後端未成功回傳圖片路徑');
+
+      // --- 階段二：發佈【主食譜】資訊 ---
+      const recipePayload = {
+        user_id: 1,
+        manage_id: null,
+        // 從找到的物件中，安全地取出 id 作為要傳送的值
+        recipe_categary_id: selectedCategory ? selectedCategory.id : null,
+        name: form.title,
+        content: form.description,
+        serving: form.servings,
+        image: imagePath,
+        cooked_time: form.time,
+        status: 0,
+        tag: form.tags.map((tag) => `#${tag}`).join(''),
+      };
+
+      const recipeResponse = await axios.post(`${apiBase}/recipe/post_recipe.php`, recipePayload);
+      const newRecipeId = recipeResponse.data.recipe_id;
+      if (!newRecipeId) throw new Error('後端未回傳 recipe_id');
+
+      // --- 階段三 & 四：發佈【食材】與【步驟】 ---
+      const ingredientsPayload = {
+        recipe_id: newRecipeId,
+        ingredients: form.ingredients.filter((item) => item.name && item.amount),
+      };
+      await axios.post(`${apiBase}/recipe/post_ingredients.php`, ingredientsPayload);
+
+      const stepsPayload = {
+        recipe_id: newRecipeId,
+        steps: form.steps.filter((step) => step),
+      };
+      await axios.post(`${apiBase}/recipe/post_steps.php`, stepsPayload);
+
+      // --- 如果全部成功 ---
+      alert('🎉 您的美味食譜已成功發布！');
+      router.push('/');
+    } catch (error) {
+      // --- 統一的錯誤處理 ---
+      console.error('發布食譜時發生錯誤:', error);
+      const errorMessage = error.response?.data?.error || '發布失敗，請檢查網路連線或稍後再試。';
+      alert(`發布失敗：\n${errorMessage}`);
+    }
   };
 </script>
 
