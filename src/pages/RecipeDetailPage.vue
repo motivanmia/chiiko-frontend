@@ -41,7 +41,7 @@
                 icon-name="comment"
                 class="comment"
               />
-              {{ recipeData.comments.length || 0 }} 回覆
+              {{ (recipeData.comments && recipeData.comments.length) || 0 }} 回覆
             </div>
           </div>
           <div class="time-serving">
