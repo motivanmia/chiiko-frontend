@@ -1,34 +1,69 @@
 <script setup>
   import { useRouter } from 'vue-router';
-
+  import axios from 'axios';
+  import MemberCard from './MemberCard.vue';
+  import { ref, onMounted } from 'vue';
   const router = useRouter();
+  const allRecipes = ref([]);
+  const deleteApiUrl = 'http://localhost:8888/front/member/delete_favorite_recipes.php';
+  //下面是抓取會員收藏的食譜
+  const apiUrl = 'http://localhost:8888/front/member/get_favorite_recipes.php';
 
-  const goToPage = () => {
-    router.push('/recipe-detail');
+  //用axios串接favorite_recipes.php
+  const fetchRecipe = async () => {
+    try {
+      const response = await axios.get(apiUrl);
+      const apiResponse = response.data;
+
+      if (apiResponse.success) {
+        (allRecipes.value = apiResponse.data), console.log('成功取得收藏資料', allRecipes.value);
+      } else {
+        console.error('API錯誤:', apiResponse.error);
+        allRecipes.value = [];
+      }
+    } catch (error) {
+      console.error('取得收藏資料失敗', error);
+      allRecipes.value = [];
+    }
   };
 
-  const imageUrl = new URL('@/assets/image/Member/spring-onion-soba.jpg', import.meta.url).href;
+  const handleDeleteRecipe = async (recipeId) => {
+    try {
+      const response = await axios.delete(deleteApiUrl, {
+        data: { recipe_id: recipeId },
+      });
+      const apiResponse = response.data;
 
-  //上面後續要更改
+      if (apiResponse.success) {
+        console.log('成功刪除收藏', apiResponse.message);
+        allRecipes.value = allRecipes.value.filter((recipe) => recipe.recipe_id !== recipeId);
+      } else {
+        console.error('刪除收藏失敗:', apiResponse.error);
+      }
+    } catch (error) {
+      console.error('刪除收藏失敗', error);
+    }
+  };
 
-  import MemberSidebar from './MemberSidebar.vue';
-  import MemberCard from './MemberCard.vue';
-  import MemberDashboard from './MemberDashboard.vue';
+  onMounted(() => {
+    fetchRecipe();
+  });
 </script>
 
 <template>
   <div class="member-collect">
     <div
-      v-for="cards in 9"
+      v-for="recipe in allRecipes"
+      :key="recipe.recipe_id"
       class="member-card__box"
     >
       <MemberCard
-        @click="goToPage"
-        :img-src="imageUrl"
-        img-alt="蔥花溫蕎麥麵"
-        title-text="蔥花溫蕎麥麵"
+        :img-src="recipe.image"
+        :img-alt="recipe.name"
+        :title-text="recipe.name"
         icon-name="mark"
         icon-description="已收藏"
+        @delete-click="handleDeleteRecipe(recipe.recipe_id)"
       ></MemberCard>
     </div>
   </div>

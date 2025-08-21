@@ -17,12 +17,10 @@ const route = useRoute();
 const router = useRouter();
 const recipes = ref([]);
 const searchTerm = ref(route.query.q || '');
-
-// ✅ 修正 1: 只宣告一次 computed 屬性
 const categoryName = computed(() => route.params.category);
 const pageTitle = computed(() => categoryName.value || '找不到此分類');
 
-// 麵包屑也使用 computed 屬性來動態更新
+// 麵包屑使用computed更新
 const breadcrumbs = computed(() => {
   return [
     { text: '靈感食譜', to: { name: 'recipe-overview' } },
@@ -30,7 +28,7 @@ const breadcrumbs = computed(() => {
   ];
 });
 
-// 獲取食譜資料的函式
+// 獲取食譜資料
 const fetchRecipesByCategory = async (categoryKey) => {
   if (!categoryKey) {
     recipes.value = [];
@@ -52,7 +50,6 @@ const fetchRecipesByCategory = async (categoryKey) => {
   }
 };
 
-// ✅ 修正 2: 使用 watch 並帶上 { immediate: true }，取代 onMounted
 watch(
   () => route.params.category,
   (newCategory) => {
@@ -79,8 +76,6 @@ const filteredRecipes = computed(() => {
   }
   const queryLower = query.toLowerCase().trim();
   return recipes.value.filter((recipe) => {
-     //使用資料庫中有的欄位進行過濾
-    // 假設你的 recipe 表格有 name 和 content
     const nameMatch = recipe.name && recipe.name.toLowerCase().includes(queryLower);
     const contentMatch = recipe.content && recipe.content.toLowerCase().includes(queryLower);
     return nameMatch || contentMatch;
