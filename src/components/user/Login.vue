@@ -7,7 +7,7 @@
   import { login } from '@/api/fetch';
 
   const authStore = useAuthStore();
-  const emit = defineEmits(['close', 'login-success']);
+  const emit = defineEmits(['close', 'login-success', 'switch-to-signin', 'switch-to-forgetpsw']);
 
   // 假帳號密碼
   // const FAKE_ACCOUNT = ref('');

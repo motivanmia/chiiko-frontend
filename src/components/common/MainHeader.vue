@@ -530,9 +530,9 @@
         :is="currentModalComponent"
         @close="closeModal"
         @signin-success="signinSuccess"
-        @switch-to-signin="authStore.activeModalName('signin')"
-        @switch-to-login="authStore.activeModalName('login')"
-        @switch-to-forgetpsw="authStore.activeModalName('forgetpsw')"
+        @switch-to-signin="authStore.openModal('signin')"
+        @switch-to-login="authStore.openModal('login')"
+        @switch-to-forgetpsw="authStore.openModal('forgetpsw')"
       />
     </transition>
   </teleport>
