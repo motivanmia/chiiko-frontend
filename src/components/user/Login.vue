@@ -2,12 +2,11 @@
   import InputField from '@/components/user/InputField.vue';
   import Icon from '@/components/common/Icon.vue';
   import { ref } from 'vue';
-  import axios from 'axios';
   import { useAuthStore } from '@/stores/auth';
   import { useRouter } from 'vue-router';
+  import { login } from '@/api/fetch';
 
   const authStore = useAuthStore();
-  const apiBase = import.meta.env.VITE_API_BASE;
   const emit = defineEmits(['close', 'login-success']);
 
   // 假帳號密碼
@@ -24,7 +23,7 @@
   // 控制 toast 顯示
   // const showSuccess = ref(false);
 
-  const login = async () => {
+  const handleLogin = async () => {
     formError.value = '';
 
     const userData = {
@@ -32,11 +31,8 @@
       password: password.value,
     };
 
-    // 你的後端 login API 網址
-    const API_URL = `${apiBase}/users/login.php`;
-
     try {
-      const response = await axios.post(API_URL, userData);
+      const response = await login(userData);
 
       // 成功回應 (後端狀態碼 200)
       if (response.data.user) {
@@ -76,7 +72,7 @@
         />
       </div>
       <h1>會員登入</h1>
-      <form @submit.prevent="login">
+      <form @submit.prevent="handleLogin">
         <InputField
           v-model="account"
           label="電子信箱"
