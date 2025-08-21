@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
-
-const apiBase = import.meta.env.VITE_API_BASE;
+import { logout } from '@/api/fetch';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -32,7 +31,7 @@ export const useAuthStore = defineStore('auth', {
     async logout() {
       try {
         // 呼叫logout api
-        await axios.post(`${apiBase}/users/logout.php`);
+        await logout();
       } catch (error) {
         console.error('Logout API call failed:', error);
       } finally {
