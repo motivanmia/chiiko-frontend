@@ -18,6 +18,20 @@ export function login(data) {
   });
 }
 
+export function logout() {
+  return request({
+    url: `${url.user}/logout.php`,
+    method: 'post',
+  });
+}
+
+export function getUserProfile(data) {
+  return request({
+    url: `${url.member}/get_profile.php`,
+    method: 'get',
+  });
+}
+
 export function getCarts() {
   return request({
     url: `${url.cart}/get_carts.php`,

@@ -39,9 +39,9 @@
         // alert(response.data.message); // 顯示成功訊息
         // emit('login-success');
         // emit('close'); // 關閉登入視窗
-
         // 更新 Pinia Store 的登入狀態
         authStore.loginSuccess(response.data.user);
+        await authStore.fetchUserInfo();
       } else {
         // 登入失敗 (後端回傳失敗訊息)
         formError.value = response.data.message || '登入失敗，請檢查帳號密碼';
