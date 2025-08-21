@@ -20,7 +20,7 @@
     <div class="cart-list__items">
       <CartItem
         v-for="product in products"
-        :key="product.id"
+        :key="product?.product_id"
         :product="product"
       />
     </div>

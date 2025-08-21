@@ -2,6 +2,7 @@
   import { ref, computed, watch, onMounted } from 'vue';
   import BaseSelect from './BaseSelect.vue';
   import BaseInput from './BaseInput.vue';
+  import Swal from 'sweetalert2';
 
   const props = defineProps({
     label: {
@@ -84,7 +85,6 @@
       const res = await fetch(VITE_TAIWAN_DISTRICTS);
       const data = await res.json();
 
-      console.log('data', data);
       // 初始化縣市、區域、郵遞區號
       data.forEach((city) => {
         cityOptions.value.push({ value: city.name, label: city.name });
@@ -98,7 +98,11 @@
         });
       });
     } catch (error) {
-      console.log('載入台灣縣市資料失敗', error);
+      Swal.fire({
+        icon: 'error',
+        title: '載入台灣縣市資料失敗',
+        text: error.response?.data?.message || error.message || '',
+      });
     }
   };
 
