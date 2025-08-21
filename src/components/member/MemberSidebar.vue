@@ -1,6 +1,6 @@
 <script setup>
   import Icon from '@/components/common/Icon.vue';
-  import { ref, Transition, computed } from 'vue';
+  import { ref, Transition } from 'vue';
   import { useUserStore } from '@/stores/user';
 
   const userStore = useUserStore();
@@ -8,18 +8,6 @@
   // 儲存選中的檔案
   const avatarFile = ref(null);
   const fileInput = ref(null);
-  // 定義預設頭像
-  const defaultAvatar = new URL('@/assets/image/ShareRecipeButton.png', import.meta.url).href;
-
-  // 使用計算屬性來動態決定要顯示的頭像 URL
-  const displayAvatar = computed(() => {
-    // 如果 userStore.info 存在且 info.avatar 有值，就使用它
-    if (userStore.info && userStore.info.avatar) {
-      return userStore.info.avatar;
-    }
-    // 否則，使用預設圖片
-    return defaultAvatar;
-  });
 
   const menuItem = ref([
     {
@@ -133,7 +121,7 @@
     <!-- 會員頭像 -->
     <div class="profile__pic">
       <img
-        :src="displayAvatar"
+        :src="userStore.userAvatarUrl"
         alt="會員頭像"
       />
       <input

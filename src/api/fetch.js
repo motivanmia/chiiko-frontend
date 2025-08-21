@@ -25,10 +25,26 @@ export function logout() {
   });
 }
 
-export function getUserProfile(data) {
+export function getUserProfile() {
   return request({
     url: `${url.member}/get_profile.php`,
     method: 'get',
+  });
+}
+
+export function uploadAvatar(payload) {
+  return request({
+    url: `${url.member}/post_avatar.php`,
+    method: 'post',
+    data: payload,
+  });
+}
+
+export function patchProfile(data) {
+  return request({
+    url: `${url.member}/patch_profile.php`,
+    method: 'patch',
+    data,
   });
 }
 

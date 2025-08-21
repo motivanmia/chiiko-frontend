@@ -6,10 +6,9 @@
   import Swal from 'sweetalert2';
   import twZipcodes from '@/assets/taiwan_districts.json';
   import { useUserStore } from '@/stores/user';
-  import { useRoute } from 'vue-router';
+  import { patchProfile } from '@/api/fetch';
 
   const userStore = useUserStore();
-  const route = useRoute();
   const isLoading = ref(true);
 
   // 是否在編輯模式
@@ -53,83 +52,41 @@
     userInfo.phone = formatValue;
   };
 
+  // 將 Pinia store 的資料同步到本地 reactive 物件
+  const syncDataFromStore = () => {
+    if (userStore.info) {
+      userInfo.name = userStore.info.name || '';
+      userInfo.nickname = userStore.info.nickname || '';
+      userInfo.phone = userStore.info.phone || '';
+      userInfo.account = userStore.info.account || '';
+      userInfo.address = userStore.info.address || '';
+      formatPhone(); // 同步後格式化電話
+    }
+  };
+
   // 儲存編輯前的原始資料
   let originalUserInfo = {};
 
-  // 當store的使用者資料載入或變動時 更新本地的表單資料
-  watch(
-    () => userStore.info,
-    (newInfo) => {
-      // 檢查是否有新的使用者資料
-      if (newInfo) {
-        // 有資料就更新本地表單
-        userInfo.name = newInfo.name || '';
-        userInfo.nickname = newInfo.nickname || '';
-        userInfo.phone = newInfo.phone || '';
-        userInfo.account = newInfo.account || '';
-        userInfo.address = newInfo.address || '';
-        isLoading.value = false;
-        formatPhone();
-      } else {
-        // 如果沒有資料 (例如登出)，清空本地表單並設定為載入中
-        // 這也是為了處理從登入頁面直接跳轉過來，但資料還沒載入完成的情況
-        Object.assign(userInfo, {
-          name: '',
-          nickname: '',
-          phone: '',
-          account: '',
-          address: '',
-        });
-        isLoading.value = true;
-      }
-    },
-    { immediate: true },
-  );
+  // 獲取資料
+  onMounted(async () => {
+    isLoading.value = true;
 
-  // 這段會確保無論從哪個頁面進入這個路由，都會觸發資料獲取
-  watch(
-    () => route.path,
-    (newPath) => {
-      // 檢查當前路由是否是會員資料頁面
-      if (newPath.includes('/account/profile')) {
-        // 在進入會員頁面時，強制重新獲取資料
-        userStore.fetchUserInfo();
-      }
-    },
-    { immediate: true },
-  );
+    // 呼叫 Pinia action 來獲取使用者資料
+    const success = await userStore.fetchUserInfo();
 
-  // const fetchMemberData = async () => {
-  //   isLoading.value = true;
-  //   try {
-  //     const response = await axios.get(`${apiBase}/member/get_profile.php`);
-  //     console.log(response.data);
-  //     // 檢查後端回傳的狀態和資料是否存在
-  //     if (response.data && response.data.status === 'success' && response.data.data) {
-  //       const memberData = response.data.data;
-  //       userInfo.name = memberData.name;
-  //       userInfo.nickname = memberData.nickname;
-  //       userInfo.phone = memberData.phone;
-  //       userInfo.email = memberData.account;
-  //       userInfo.address = memberData.address;
-
-  //       formatPhone();
-  //     }
-  //   } catch (error) {
-  //     console.log('取得會員資料失敗:', error);
-  //     Swal.fire({
-  //       icon: 'error',
-  //       title: '資料載入失敗',
-  //       text: '無法連線至伺服器，請稍後再試。',
-  //     });
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // };
-
-  // onMounted(() => {
-  //   fetchMemberData();
-  // });
+    // 如果獲取成功，則將 store 的資料同步到本地 userInfo
+    if (success) {
+      syncDataFromStore();
+    } else {
+      // 處理獲取失敗的情況
+      Swal.fire({
+        icon: 'error',
+        title: '資料載入失敗',
+        text: '無法取得您的會員資料，請重新登入或稍後再試。',
+      });
+    }
+    isLoading.value = false;
+  });
 
   // 輸入地址帶入郵遞區號
   watch(
@@ -196,14 +153,75 @@
   };
 
   // 儲存變更
-  const saveChange = () => {
-    isEdit.value = false;
-    Swal.fire({
-      icon: 'success',
-      title: '修改成功',
-    });
-    // 清空備份資料
-    originalUserInfo = {};
+  const saveChange = async () => {
+    // 建立一個物件 只包含有變更的資料
+    const updatedFields = {};
+
+    // 檢查每個欄位是否有變動
+    for (const key in userInfo) {
+      if (userInfo[key] !== originalUserInfo[key]) {
+        updatedFields[key] = userInfo[key];
+      }
+    }
+
+    // 如果沒有任何資料變動
+    if (Object.keys(updatedFields).length === 0) {
+      Swal.fire({
+        icon: 'info',
+        title: '沒有任何變更',
+        text: '您沒有修改任何資料。',
+      });
+      // 取消編輯模式
+      isEdit.value = false;
+      originalUserInfo = {};
+      return;
+    }
+
+    // 檢查必填欄位
+    if ('name' in updatedFields && updatedFields.name.trim() === '') {
+      Swal.fire({
+        icon: 'error',
+        title: '儲存失敗',
+        text: '姓名欄位不能為空。',
+      });
+      return;
+    }
+
+    // 移除電話號碼的-字號 確保傳送給後端的是純數字
+    if ('phone' in updatedFields) {
+      updatedFields.phone = updatedFields.phone.replace(/[^0-9]/g, '');
+    }
+
+    try {
+      // 呼叫api並傳送更新後的資料
+      const response = await patchProfile(updatedFields);
+
+      if (response.data.status === 'success') {
+        Swal.fire({
+          icon: 'success',
+          title: '修改成功',
+          text: response.data.message,
+        });
+        // 呼叫 Pinia store 獲得最新資料並同步到本地狀態
+        await userStore.fetchUserInfo();
+        syncDataFromStore();
+        isEdit.value = false;
+        originalUserInfo = {};
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '修改失敗',
+          text: response.data.message,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '儲存失敗',
+        text: '網路或伺服器錯誤，請稍後再試。',
+      });
+      console.error('API 呼叫失敗:', error);
+    }
   };
 
   // 取消編輯
