@@ -6,7 +6,6 @@
   import IngredientsCards from '@/components/school/IngredientsCards.vue';
   import SearchBar from '@/components/common/SearchBar.vue';
   import IngredientLightBox from '@/components/school/IngredientLightBox.vue';
-  import Pagination from '@/components/Pagination.vue';
 </script>
 
 <template>
@@ -27,7 +26,6 @@
       @click="ingredient.updateActive(null)"
     ></div>
     <!-- </Transition> -->
-    <Pagination />
   </div>
 </template>
 
