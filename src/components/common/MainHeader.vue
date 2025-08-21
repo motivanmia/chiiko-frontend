@@ -1,12 +1,15 @@
 <script setup>
-  import { ref, computed, onMounted, onUnmounted } from 'vue';
+  import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
   import Icon from '@/components/common/Icon.vue';
   import LoginModal from '@/components/user/Login.vue';
   import SigninModal from '@/components/user/signin.vue';
   import ForgetPswModal from '@/components/user/ForgetPsw.vue';
-  import axios from 'axios';
+  import { useAuthStore } from '@/stores/auth';
+  import { useRouter, useRoute } from 'vue-router';
 
-  const apiBase = import.meta.env.VITE_API_BASE;
+  const authStore = useAuthStore();
+  const router = useRouter();
+  const route = useRoute();
 
   // nav選單項目
   const navLinks = ref([
@@ -32,36 +35,21 @@
   ];
 
   // 登入狀態
-  const isLogin = ref(localStorage.getItem('isLogin') === 'true');
-
-  const memberMenuItem = computed(() => (isLogin.value ? menuItemLogin : menuItemLogout));
+  const memberMenuItem = computed(() => (authStore.isLoggedIn ? menuItemLogin : menuItemLogout));
 
   // 登出
-  const logout = () => {
-    // 向後端發出登出請求
-    axios
-      .post(
-        `${apiBase}/users/logout.php`,
-        {},
-        {
-          withCredentials: true,
-        },
-      )
-      .then((response) => {
-        // 檢查後端的回應狀態
-        if (response.data.status === 'success') {
-          console.log(response.data.message);
-          // 如果後端登出成功 才在前端清除狀態
-          isLogin.value = false;
-          localStorage.removeItem('isLogin');
-        } else {
-          console.error('Server reported a logout error:', response.data.message);
-        }
-      })
-      .catch((error) => {
-        console.error('An error occurred during logout:', error);
-        alert('登出失敗，請稍後再試。');
-      });
+  const handLogout = async () => {
+    // 在執行登出之前，先檢查當前頁面是否是受保護的
+    const wasOnProtectedPage = route.meta.requiresAuth;
+
+    // 執行登出 action
+    await authStore.logout();
+
+    // 從受保護的頁面登出時，才需要跳轉到首頁
+    if (wasOnProtectedPage) {
+      router.push({ name: 'home' });
+    }
+    // 如果是在公開頁面登出，則不做任何事，停留在原地
   };
 
   // 登入前的會員選單
@@ -144,49 +132,66 @@
   });
 
   // 登入/註冊彈窗
-  const activeModal = ref(null);
+  // const activeModal = ref(null);
   const ModalComponents = {
     login: LoginModal,
     signin: SigninModal,
     forgetpsw: ForgetPswModal,
   };
   const currentModalComponent = computed(() => {
-    return activeModal.value ? ModalComponents[activeModal.value] : null;
+    if (!authStore.activeModalName) return null;
+    return ModalComponents[authStore.activeModalName];
   });
 
   const handleAction = (action) => {
     if (action === 'logout') {
-      logout();
+      handLogout();
     } else {
-      openModal(action);
+      authStore.openModal(action);
     }
   };
 
-  const openModal = (modalKey) => {
-    // console.log(modalKey);
-    activeModal.value = modalKey;
-  };
   const closeModal = () => {
-    activeModal.value = null;
-  };
-  const loginSuccess = () => {
-    isLogin.value = true;
-    localStorage.setItem('isLogin', 'true');
-    closeModal();
-    showToast.value = true;
-    setTimeout(() => {
-      showToast.value = false;
-    }, 2000);
+    authStore.closeModal();
   };
 
   const showToast = ref(false); // 顯示登入成功提示
   const showSignin = ref(false); // 顯示註冊成功前往登入提示
 
+  // 處理登入成功事件
+  const handleLoginSuccess = () => {
+    // 1. 呼叫 store action 來觸發關閉
+    authStore.closeModal();
+
+    showToast.value = true;
+    setTimeout(() => {
+      showToast.value = false;
+    }, 3000);
+
+    // 2. 仍然使用 setTimeout 等待動畫結束再跳轉
+    setTimeout(() => {
+      if (authStore.redirectPath) {
+        router.push(authStore.redirectPath).then(() => {
+          authStore.setRedirectPath(null);
+        });
+      }
+    }, 50); // 根據你的 CSS 動畫時長設定
+  };
+
+  watch(
+    () => authStore.loginSuccessSignal,
+    (newValue, oldValue) => {
+      if (newValue > oldValue) {
+        handleLoginSuccess();
+      }
+    },
+  );
+
   const signinSuccess = () => {
     showSignin.value = true;
     setTimeout(() => {
       showSignin.value = false;
-      openModal('login');
+      authStore.openModal('login');
     }, 2000);
   };
 </script>
@@ -520,15 +525,14 @@
       mode="out-in"
     >
       <component
-        :key="activeModal"
-        v-if="activeModal"
+        :key="authStore.activeModalName"
+        v-if="authStore.activeModalName"
         :is="currentModalComponent"
         @close="closeModal"
-        @login-success="loginSuccess"
         @signin-success="signinSuccess"
-        @switch-to-signin="openModal('signin')"
-        @switch-to-login="openModal('login')"
-        @switch-to-forgetpsw="openModal('forgetpsw')"
+        @switch-to-signin="authStore.openModal('signin')"
+        @switch-to-login="authStore.openModal('login')"
+        @switch-to-forgetpsw="authStore.openModal('forgetpsw')"
       />
     </transition>
   </teleport>

@@ -19,29 +19,29 @@
     <div class="cart-item__pic">
       <img
         class="cart-item__image"
-        :src="product.image"
-        :alt="product.name"
+        :src="product?.preview_image"
+        :alt="product?.name"
       />
     </div>
     <div class="cart-item__info">
-      <h3 class="cart-item__name">{{ product.name }}</h3>
+      <h3 class="cart-item__name">{{ product?.name }}</h3>
       <span class="cart-item__unit-price">
         NT$
-        <span class="cart-item__unit-price-number">{{ product.price }}</span>
+        <span class="cart-item__unit-price-number">{{ product?.unit_price }}</span>
       </span>
     </div>
     <QuantityControl
-      :quantity="product.quantity"
-      :product-id="product.id"
+      :quantity="product?.quantity"
+      :product-id="product?.product_id"
       class="cart-item__quantity"
     />
     <div class="cart-item__subtotal">
       NT$
-      <span class="cart-item__subtotal-number">{{ product.price * product.quantity }}</span>
+      <span class="cart-item__subtotal-number">{{ product?.unit_price * product?.quantity }}</span>
     </div>
     <button
       class="cart-item__remove"
-      @click="removeProduct(product.id)"
+      @click="removeProduct(product?.product_id)"
     >
       <Icon icon-name="remove" />
     </button>

@@ -5,7 +5,7 @@
   import tomato from '@/assets/image/signin/cut-tomato.png';
   import axios from 'axios';
 
-  const emit = defineEmits(['close', 'signin-success']);
+  const emit = defineEmits(['close', 'signin-success', 'switch-to-login']);
   const name = ref('');
   const account = ref(''); // 這是 email，作為登入帳號
   const password = ref('');
@@ -86,8 +86,6 @@
       password: password.value,
       phone: phone.value,
     };
-
-
 
     const API_URL = `${apiBase}/users/signup.php`; // 替換為你的後端 API URL
 
