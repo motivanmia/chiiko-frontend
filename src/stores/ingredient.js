@@ -1,6 +1,6 @@
 import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
-const apiBase = import.meta.env.VITE_API_URL;
+const apiBase = import.meta.env.VITE_API_BASE;
 
 export const useIngredientStore = defineStore('ingredient', () => {
   const list = ref([]);
