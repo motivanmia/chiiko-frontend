@@ -48,6 +48,14 @@ export function patchProfile(data) {
   });
 }
 
+export function patchPassword(data) {
+  return request({
+    url: `${url.member}/patch_password.php`,
+    method: 'patch',
+    data,
+  });
+}
+
 export function getCarts() {
   return request({
     url: `${url.cart}/get_carts.php`,

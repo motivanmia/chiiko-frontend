@@ -4,6 +4,7 @@
   import ConfirmButton from '@/components/button/ConfirmButton.vue';
   import { useRouter } from 'vue-router';
   import Swal from 'sweetalert2';
+  import { patchPassword } from '@/api/fetch';
 
   // 找第一個輸入框
   const firstInput = ref(null);
@@ -20,6 +21,19 @@
 
   // 初始化router
   const router = useRouter();
+
+  // 驗證訊息
+  const errors = reactive({
+    oldPassword: '',
+    newPassword: '',
+    checkNewPassword: '',
+  });
+
+  const cleanErrors = () => {
+    errors.oldPassword = '';
+    errors.newPassword = '';
+    errors.checkNewPassword = '';
+  };
 
   /**
    * 驗證新密碼的強度與格式
@@ -40,22 +54,7 @@
     return true;
   };
 
-  // -------模擬用
-  const fack_old_password = 'test123';
-
-  const errors = reactive({
-    oldPassword: '',
-    newPassword: '',
-    checkNewPassword: '',
-  });
-
-  const cleanErrors = () => {
-    errors.oldPassword = '';
-    errors.newPassword = '';
-    errors.checkNewPassword = '';
-  };
-
-  const savePassword = () => {
+  const savePassword = async () => {
     cleanErrors();
     let isValid = true;
 
@@ -73,15 +72,6 @@
       isValid = false;
     }
 
-    // 如果前面的欄位已經有錯誤就返回不進行下一步驗證
-    // if (!isValid) return;
-
-    //-----------模擬用
-    if (oldPassword.value !== fack_old_password) {
-      errors.oldPassword = '！密碼錯誤';
-      isValid = false;
-    }
-
     // 驗證格式
     if (!validatePassword(newPassword.value)) {
       errors.newPassword = '！請輸入6個字元以上的英數字組合，且不可使用特殊符號';
@@ -95,6 +85,7 @@
       errors.checkNewPassword = '！與新密碼不符';
       isValid = false;
     }
+
     // 有任何驗證失敗則終止函式
     if (!isValid) {
       return;
@@ -102,18 +93,74 @@
 
     isSubmit.value = true;
 
+    // 將資料格式化以符合api需求
+    const updateData = {
+      current_pwd: oldPassword.value,
+      new_pwd: newPassword.value,
+    };
+
     try {
-      // api放這
-      Swal.fire({
-        icon: 'success',
-        title: '密碼更新成功',
-      });
-      router.go(-1);
+      const response = await patchPassword(updateData);
+
+      if (response.data.status === 'success') {
+        Swal.fire({
+          icon: 'success',
+          title: '密碼更新成功',
+          text: response.data.message,
+        });
+
+        // 成功後清空表單
+        oldPassword.value = '';
+        newPassword.value = '';
+        checkNewPassword.value = '';
+
+        // 返回上一頁
+        router.go(-1);
+      } else {
+        // 從api回傳的錯誤訊息來判斷
+        Swal.fire({
+          icon: 'error',
+          title: '密碼更新失敗',
+          text: response.data.message,
+        });
+      }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: '密碼更新失敗',
-      });
+      // 檢查是否有伺服器回應
+      if (error.response) {
+        // 伺服器有回應 根據狀態碼進行處理
+        if (error.response.status === 401) {
+          // 401 狀態碼：表示認證失敗，即舊密碼錯誤
+          Swal.fire({
+            icon: 'error',
+            title: '輸入資料有誤',
+            text: error.response.data.message,
+          });
+          error.oldPassword = '！密碼錯誤';
+        } else if (error.response.status === 400) {
+          // 400 狀態碼：表示請求資料格式不正確
+          Swal.fire({
+            icon: 'error',
+            title: '輸入資料有誤',
+            text: error.response.data.message,
+          });
+        } else {
+          // 其他伺服器錯誤 (例如 500)
+          Swal.fire({
+            icon: 'error',
+            title: '密碼更新失敗',
+            text: '伺服器錯誤，請稍後再試。',
+          });
+          console.error('未預期的伺服器錯誤:', error);
+        }
+      } else {
+        // 沒有伺服器回應，通常是網路問題
+        Swal.fire({
+          icon: 'error',
+          title: '網路錯誤',
+          text: '無法連線到伺服器，請檢查您的網路。',
+        });
+        console.error('網路錯誤:', error);
+      }
     } finally {
       isSubmit.value = false;
     }
