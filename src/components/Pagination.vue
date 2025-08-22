@@ -11,7 +11,7 @@
     page: { type: Number, default: 1 },
   });
 
-  const emit = defineEmits(['update:page', 'change']);
+  const emit = defineEmits(['update:page', 'change', 'click']);
 
   const router = useRouter();
   const route = useRoute();
@@ -80,11 +80,21 @@
     emit('change', page);
   }
 
+  function userGoToPage(p) {
+    goToPage(p);
+    emit('click', clamp(p, 1, totalPages.value), 'number');
+  }
   function prev() {
-    if (currentPage.value > 1) goToPage(currentPage.value - 1);
+    if (currentPage.value > 1) {
+      goToPage(currentPage.value - 1);
+      emit('click', currentPage.value, 'prev');
+    }
   }
   function next() {
-    if (currentPage.value < totalPages.value) goToPage(currentPage.value + 1);
+    if (currentPage.value < totalPages.value) {
+      goToPage(currentPage.value + 1);
+      emit('click', currentPage.value, 'next');
+    }
   }
 </script>
 
@@ -112,7 +122,7 @@
       :key="p"
       class="pagination-button"
       :class="{ '-on': p === currentPage }"
-      @click="goToPage(p)"
+      @click="userGoToPage(p)"
       :aria-current="p === currentPage ? 'page' : undefined"
     >
       {{ p }}
