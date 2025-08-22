@@ -23,7 +23,7 @@
   );
 
   // --- 分頁狀態 ---
-  const pageSize = 12; // 每頁幾筆
+  const pageSize = 24; // 每頁幾筆
   const page = ref(Number(route.query.page ?? 1) || 1);
 
   // 類別切換時回到第 1 頁（並同步 URL）
@@ -61,8 +61,15 @@
     return filteredList.value.slice(start, start + pageSize);
   });
 
-  // 分頁變更時作用
-  function onPageChange(p) {}
+  // 點擊分頁按鈕時作用
+  function onclick(p) {
+    setTimeout(() => {
+      window.scrollTo({
+        top: 780,
+        behavior: 'smooth',
+      });
+    }, 0);
+  }
 </script>
 
 <template>
@@ -88,7 +95,7 @@
     :total="filteredList.length"
     :page-size="pageSize"
     :max-buttons="5"
-    @change="onPageChange"
+    @click="onclick"
   />
 </template>
 
