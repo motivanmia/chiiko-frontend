@@ -3,10 +3,12 @@
   import { useRoute, useRouter } from 'vue-router';
   import Pagination from '@/components/Pagination.vue';
   import { useIngredientStore } from '@/stores/ingredient';
+  import SearchBar from '../common/SearchBar.vue';
 
   const ingredient = useIngredientStore();
   const route = useRoute();
   const router = useRouter();
+  const noResult = computed(() => filteredList.value.length === 0);
 
   onMounted(async () => {
     await ingredient.loadIngredients();
@@ -25,6 +27,7 @@
   // --- 分頁狀態 ---
   const pageSize = 24; // 每頁幾筆
   const page = ref(Number(route.query.page ?? 1) || 1);
+  const keyword = ref(typeof route.query.q === 'string' ? route.query.q : '');
 
   // 類別切換時回到第 1 頁（並同步 URL）
   watch(category, (val) => {
@@ -32,7 +35,16 @@
     router.push({ query: { ...route.query, category: val || undefined, page: '1' } });
   });
 
-  // 篩選清單（只顯示 status = 0）
+  watch(keyword, (val) => {
+    page.value = 1;
+    router.push({ query: { ...route.query, q: val || undefined, page: '1' } });
+  });
+
+  const norm = (s) =>
+    String(s ?? '')
+      .normalize('NFKC')
+      .toLowerCase()
+      .replace(/\s+/g, '');
   const vegetableList = computed(() =>
     ingredient.list.filter((item) => item.ingredients_category_id === '1'),
   );
@@ -47,7 +59,18 @@
         : category.value === 'meat'
           ? meatList.value
           : ingredient.list;
-    return base.filter((item) => Number(item.status) === 0);
+
+    const onlyActive = base.filter((item) => Number(item.status) === 0);
+
+    const k = norm(keyword.value);
+    if (!k) return onlyActive;
+
+    return onlyActive.filter((item) => {
+      const haystack = [item.name, ...(Array.isArray(item.tags) ? item.tags : [])]
+        .map(norm)
+        .join('|');
+      return haystack.includes(k);
+    });
   });
 
   // 目前頁面的資料（父層 slice）
@@ -73,7 +96,33 @@
 </script>
 
 <template>
-  <div class="Ingredients">
+  <div class="search-container">
+    <SearchBar
+      v-model="keyword"
+      placeholder="輸入想要了解的食材"
+    />
+  </div>
+  <!-- 空狀態 -->
+  <div
+    v-if="noResult"
+    class="empty"
+  >
+    查無食材
+    <span v-if="keyword">「{{ keyword }}」</span>
+    ，請嘗試其他關鍵字或清除篩選
+    <button
+      class="empty__clear"
+      @click="keyword = ''"
+    >
+      清除關鍵字
+    </button>
+  </div>
+
+  <!-- 資料處理後顯示 -->
+  <div
+    v-else
+    class="Ingredients"
+  >
     <div
       class="Ingredients__card"
       v-for="item in pagedItems"
@@ -91,6 +140,7 @@
   </div>
 
   <Pagination
+    v-if="!noResult"
     v-model:page="page"
     :total="filteredList.length"
     :page-size="pageSize"
@@ -187,5 +237,31 @@
         }
       }
     }
+  }
+  .empty {
+    max-width: 1200px;
+    margin: 120px auto 40px;
+    text-align: center;
+    color: color(text, dark);
+    .empty__clear {
+      margin-left: 8px;
+      border: none;
+      border-radius: 999px;
+      padding: 6px 12px;
+      cursor: pointer;
+      background: color(button, main);
+      color: color(text, light);
+    }
+  }
+  .search-container {
+    margin-top: 80px;
+    @include rwdmax(768) {
+      margin-top: 30px;
+    }
+  }
+  .search-container > * {
+    width: 100%; // 讓子元素的寬度都佔父容器的 60%
+    max-width: 800px; // 避免在寬螢幕下過長
+    box-sizing: border-box;
   }
 </style>
