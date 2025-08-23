@@ -33,6 +33,48 @@
   const inc = () => qty.value++;
   const addToCart = () => alert(`已加入購物車，數量：${qty.value}`);
   const toggleWishlist = () => (inWishlist.value = !inWishlist.value);
+
+  // ==========
+
+  const swiperRef = ref(null);
+
+  const products = [
+    {
+      name: '韓式雪平鍋 18cm',
+      sub: '可用於煮湯、熱牛奶、煮醬汁、煮粥',
+      price: 329,
+      image: '/src/assets/image/Product/product-pot.png',
+    },
+    {
+      name: '魚鱗刨刀',
+      sub: '用於刮魚鱗',
+      price: 29,
+      image: '/src/assets/image/Product/product-fish.png',
+    },
+    {
+      name: '日式和風筷架',
+      sub: '好筷架 不用嗎',
+      price: 29,
+      image: '/src/assets/image/Product/product-chopsticks.png',
+    },
+    {
+      name: '削皮器',
+      sub: '用於去果皮或蔬菜皮',
+      price: 59,
+      image: '/src/assets/image/Product/product-peel.png',
+    },
+  ];
+
+  const onSwiper = (swiper) => {
+    swiperRef.value = swiper;
+  };
+
+  const prevSlide = () => {
+    swiperRef.value.slidePrev();
+  };
+  const nextSlide = () => {
+    swiperRef.value.slideNext();
+  };
 </script>
 
 <template>
@@ -55,6 +97,7 @@
         :modules="[Navigation, Thumbs]"
         :navigation="true"
         :thumbs="{ swiper: thumbsSwiper }"
+        :loop="true"
       >
         <SwiperSlide
           v-for="(img, i) in images"
@@ -210,66 +253,151 @@
   <!-- 搭配好物 swiper -->
   <section class="related-section">
     <h3 class="related-title">搭配好物</h3>
+
+    <!-- 左箭頭 -->
+    <div class="related-button-prev swiper-button-prev"></div>
+
     <Swiper
-      class="related-swiper"
       :modules="[Navigation]"
-      :slides-per-view="3"
+      :navigation="{
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      }"
       :space-between="20"
-      navigation
+      :loop="true"
+      :breakpoints="{
+        0: { slidesPerView: 1 },
+        640: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 },
+      }"
+      class="related-swiper"
     >
-      <SwiperSlide>
-        <RouterLink
-          to="/product-detail"
-          class="related-card"
-        >
+      <SwiperSlide
+        v-for="(p, i) in products"
+        :key="i"
+      >
+        <div class="related-card">
           <img
-            src="/src/assets/image/Product/product-pot.png"
+            :src="p.image"
             class="related-img"
           />
           <div class="related-text">
-            <p class="related-name">韓式雪平鍋 18cm</p>
-            <p class="related-sub">可用於煮湯、熱牛奶、煮醬汁、煮粥</p>
-            <p class="related-price">$329</p>
+            <p class="related-name">{{ p.name }}</p>
+            <p class="related-sub">{{ p.sub }}</p>
+            <p class="related-price">${{ p.price }}</p>
           </div>
-        </RouterLink>
-      </SwiperSlide>
-      <SwiperSlide>
-        <RouterLink
-          to="/product-detail"
-          class="related-card"
-        >
-          <img
-            src="/src/assets/image/Product/product-fish.png"
-            class="related-img"
-          />
-          <div class="related-text">
-            <p class="related-name">魚鱗刨刀</p>
-            <p class="related-sub">用於括魚鱗</p>
-            <p class="related-price">$29</p>
-          </div>
-        </RouterLink>
-      </SwiperSlide>
-      <SwiperSlide>
-        <RouterLink
-          to="/product-detail"
-          class="related-card"
-        >
-          <img
-            src="/src/assets/image/Product/product-chopsticks.png"
-            class="related-img"
-          />
-          <div class="related-text">
-            <p class="related-name">日式和風筷架</p>
-            <p class="related-sub">好筷架 不用嗎</p>
-            <p class="related-price">$29</p>
-          </div>
-        </RouterLink>
+        </div>
       </SwiperSlide>
     </Swiper>
+
+    <!-- 右箭頭 -->
+    <div class="related-button-next swiper-button-next"></div>
   </section>
 </template>
 
 <style scoped>
+  :deep(.related-button-prev) {
+    left: -35px;
+  }
+
+  :deep(.related-button-next) {
+    right: -35px;
+  }
+  :deep(.thumbs-button-prev),
+  :deep(.thumbs-button-next) {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #333;
+    background: #ffffffaa;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    cursor: pointer;
+  }
+
+  :deep(.thumbs-button-prev) {
+    left: 10px;
+  }
+
+  :deep(.thumbs-button-next) {
+    right: 10px;
+  }
+  .related-section {
+    position: relative;
+  }
+
+  :deep(.swiper-button-next),
+  :deep(.swiper-button-prev) {
+    background: none !important;
+    box-shadow: none !important;
+    color: #d97c48 !important;
+    width: 40px;
+    height: 40px;
+  }
+
+  :deep(.swiper-button-next)::after,
+  :deep(.swiper-button-prev)::after {
+    font-size: 42px;
+    font-weight: normal;
+  }
+  .related-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  .related-swiper {
+    flex: 1;
+    position: relative;
+  }
+
+  .related-img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+  }
+  .related-text {
+    padding: 0px;
+  }
+  .arrow-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 20px;
+    color: #d97c48; /* 箭頭顏色 */
+  }
+
+  /* :deep(.swiper-button-next) {
+    right: 20px;
+  }
+
+  :deep(.swiper-button-prev) {
+    left: 20px;
+  } */
+
+  :deep(.main-swiper .swiper-button-next) {
+    right: 20px;
+  }
+  :deep(.main-swiper .swiper-button-prev) {
+    left: 20px;
+  }
+
+  :deep(.thumbs-swiper .swiper-button-next) {
+    right: 50px;
+  }
+  :deep(.thumbs-swiper .swiper-button-prev) {
+    left: 50px;
+  }
+
+  /* ===== */
+
+  .product-gallery {
+    position: relative; /* 新增 */
+  }
+
   .notice-wrap {
     max-width: 820px;
     margin: 24px auto;
@@ -452,31 +580,8 @@
     transition: border 0.2s ease;
   }
 
-  /* :deep(.swiper-slide-thumb-active) .thumb-image {
-      border-color: #d6b59c;
-    } */
-
-  :deep(.thumbs-button-prev),
-  :deep(.thumbs-button-next) {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #333;
-    background: #ffffffaa;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    z-index: 5;
-    cursor: pointer;
-  }
-
-  :deep(.thumbs-button-prev) {
-    left: -20px;
-  }
-
-  :deep(.thumbs-button-next) {
-    right: -20px;
+  :deep(.swiper-slide-thumb-active) .thumb-image {
+    border-color: #d6b59c;
   }
 
   .card {
