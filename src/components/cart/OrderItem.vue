@@ -12,21 +12,21 @@
     <div class="order-item__pic">
       <img
         class="order-item__image"
-        :src="product.image"
-        :alt="product.name"
+        :src="product.preview_image"
+        :alt="product.product_name"
       />
     </div>
     <div class="order-item__info">
-      <h3 class="order-item__name">{{ product.name }}</h3>
+      <h3 class="order-item__name">{{ product.product_name }}</h3>
       <span class="order-item__unit-price">
         NT$
-        <span class="order-item__unit-price-number">{{ product.price }}</span>
+        <span class="order-item__unit-price-number">{{ product.unit_price }}</span>
       </span>
     </div>
     <div class="order-item__quantity">數量 {{ product.quantity }}</div>
     <div class="order-item__subtotal">
       NT$
-      <span class="order-item__subtotal-number">{{ product.price * product.quantity }}</span>
+      <span class="order-item__subtotal-number">{{ product.subtotal }}</span>
     </div>
   </div>
 </template>

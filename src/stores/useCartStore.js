@@ -1,6 +1,17 @@
 import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
-import { patchCart, deleteCart, deleteCarts } from '@/api/fetch';
+import {
+  getCarts,
+  patchCart,
+  deleteCart,
+  deleteCarts,
+  getUserProfile,
+  postOrder,
+  getOrderItem,
+  getOrders,
+  patchOrder,
+} from '@/api/fetch';
+import twZipcodes from '@/assets/taiwan_districts.json';
 import Swal from 'sweetalert2';
 
 // 表單預設值函式，避免重複
@@ -18,12 +29,12 @@ function getDefaultPaymentForm() {
 
 function getDefaultRecipientForm() {
   return {
-    buyerName: '小胖子',
-    buyerPhone: '0912345678',
-    buyerCity: '桃園市',
-    buyerDistrict: '中壢區',
-    buyerPostal: '320',
-    buyerAddress: '復興路46號9樓',
+    buyerName: '',
+    buyerPhone: '',
+    buyerCity: '',
+    buyerDistrict: '',
+    buyerPostal: '',
+    buyerAddress: '',
     recipientName: '',
     recipientPhone: '',
     recipientCity: '',
@@ -34,41 +45,9 @@ function getDefaultRecipientForm() {
 }
 
 export const useCartStore = defineStore('cart', () => {
+  /* 購物車 */
   // 購物車商品
   const products = ref([]);
-
-  // 付款表單
-  const paymentForm = ref(getDefaultPaymentForm());
-
-  // 收貨人表單
-  const recipientForm = ref(getDefaultRecipientForm());
-
-  // 收件人同購買人
-  const sameAsRecipient = ref(false);
-
-  // 內部標記，防止循環更新
-  let isUpdatingFromBuyer = false;
-
-  // 步驟
-  const currentStep = ref(1);
-
-  // 驗證
-  const errors = ref({
-    payment: {
-      cardNumber: '',
-      expMonth: '',
-      cvv: '',
-      cardHolder: '',
-    },
-    recipient: {
-      name: '',
-      phone: '',
-      city: '',
-      district: '',
-      postal: '',
-      address: '',
-    },
-  });
 
   // 小計
   const subtotal = computed(() => {
@@ -77,42 +56,9 @@ export const useCartStore = defineStore('cart', () => {
     }, 0);
   });
 
-  // 運費
-  const shippingCost = computed(() => {
-    if (subtotal.value >= 1000) return 0;
-    return paymentForm.value.location === 'mainIsland' ? 100 : 200;
-  });
-
-  // 總價
-  const total = computed(() => {
-    return subtotal.value + shippingCost.value;
-  });
-
   // 商品數量
   const productCount = computed(() => {
     return products.value.reduce((count, product) => count + product.quantity, 0);
-  });
-
-  // 計算收件人資料：根據 sameAsRecipient 來決定用哪一組資料
-  const recipientData = computed(() => {
-    if (sameAsRecipient.value) {
-      return {
-        name: recipientForm.value.buyerName,
-        phone: recipientForm.value.buyerPhone,
-        city: recipientForm.value.buyerCity,
-        district: recipientForm.value.buyerDistrict,
-        postal: recipientForm.value.buyerPostal,
-        address: recipientForm.value.buyerAddress,
-      };
-    }
-    return {
-      name: recipientForm.value.recipientName,
-      phone: recipientForm.value.recipientPhone,
-      city: recipientForm.value.recipientCity,
-      district: recipientForm.value.recipientDistrict,
-      postal: recipientForm.value.recipientPostal,
-      address: recipientForm.value.recipientAddress,
-    };
   });
 
   // 增加商品數量
@@ -216,6 +162,74 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
+  // 清空購物車
+  const clearCart = async () => {
+    try {
+      const { data } = await deleteCarts();
+
+      if (data.status === 'success') {
+        products.value = [];
+      } else {
+        // console.error('清空失敗', data.message);
+        Swal.fire({
+          icon: 'error',
+          title: '清空失敗',
+          text: data.message,
+        });
+      }
+    } catch (error) {
+      // console.error('清空購物車錯誤:', error.message || error);
+      Swal.fire({
+        icon: 'error',
+        title: '系統錯誤',
+        text: error.response?.data?.message || error.message || '請稍後再試',
+      });
+    }
+  };
+
+  const loadCart = async () => {
+    try {
+      const { data } = await getCarts();
+
+      if (data.status === 'success') {
+        products.value = data.data.map((item) => ({
+          ...item,
+          user_id: Number(item.user_id),
+          product_id: Number(item.product_id),
+          quantity: Number(item.quantity),
+          unit_price: Number(item.unit_price),
+        }));
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '取得購物車失敗',
+          text: data.message,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '系統錯誤',
+        text: error.response?.data?.message || error.message,
+      });
+    }
+  };
+
+  /* 付款 */
+  // 付款表單
+  const paymentForm = ref(getDefaultPaymentForm());
+
+  // 運費
+  const shippingCost = computed(() => {
+    if (subtotal.value >= 1000) return 0;
+    return paymentForm.value.location === 'mainIsland' ? 100 : 200;
+  });
+
+  // 總價
+  const total = computed(() => {
+    return subtotal.value + shippingCost.value;
+  });
+
   // 付款方式操作
   const updatePaymentForm = (field, value) => {
     paymentForm.value[field] = value;
@@ -261,6 +275,101 @@ export const useCartStore = defineStore('cart', () => {
     }
     errors.value.payment[field] = '';
     return true;
+  };
+
+  /* 收件人 */
+  // 收貨人表單
+  const recipientForm = ref(getDefaultRecipientForm());
+
+  // 收件人同購買人
+  const sameAsRecipient = ref(false);
+
+  // 內部標記，防止循環更新
+  let isUpdatingFromBuyer = false;
+
+  // 驗證
+  const errors = ref({
+    payment: {
+      cardNumber: '',
+      expMonth: '',
+      cvv: '',
+      cardHolder: '',
+    },
+    recipient: {
+      name: '',
+      phone: '',
+      city: '',
+      district: '',
+      postal: '',
+      address: '',
+    },
+  });
+
+  // 計算收件人資料：根據 sameAsRecipient 來決定用哪一組資料
+  const recipientData = computed(() => {
+    if (sameAsRecipient.value) {
+      return {
+        name: recipientForm.value.buyerName,
+        phone: recipientForm.value.buyerPhone,
+        city: recipientForm.value.buyerCity,
+        district: recipientForm.value.buyerDistrict,
+        postal: recipientForm.value.buyerPostal,
+        address: recipientForm.value.buyerAddress,
+      };
+    }
+    return {
+      name: recipientForm.value.recipientName,
+      phone: recipientForm.value.recipientPhone,
+      city: recipientForm.value.recipientCity,
+      district: recipientForm.value.recipientDistrict,
+      postal: recipientForm.value.recipientPostal,
+      address: recipientForm.value.recipientAddress,
+    };
+  });
+
+  const toggleSameAsRecipient = (value) => {
+    sameAsRecipient.value = value;
+    if (value) {
+      // 如果選擇同購買人資料，將購買人資料同步到收件人
+      syncBuyerToRecipient();
+    } else {
+      // 如果取消同購買人資料，清空收貨人獨立資料
+      isUpdatingFromBuyer = true;
+      recipientForm.value.recipientName = '';
+      recipientForm.value.recipientPhone = '';
+      recipientForm.value.recipientCity = '';
+      recipientForm.value.recipientDistrict = '';
+      recipientForm.value.recipientPostal = '';
+      recipientForm.value.recipientAddress = '';
+      isUpdatingFromBuyer = false;
+    }
+  };
+
+  // 同步購買人資料到收件人 - 使用 setTimeout 避免 watch 干擾
+  const syncBuyerToRecipient = () => {
+    isUpdatingFromBuyer = true;
+
+    // 先更新基本資料
+    recipientForm.value.recipientName = recipientForm.value.buyerName;
+    recipientForm.value.recipientPhone = recipientForm.value.buyerPhone;
+    recipientForm.value.recipientAddress = recipientForm.value.buyerAddress;
+
+    // 地址需要按順序更新，避免被 AddressGroup 的 watch 重置
+    setTimeout(() => {
+      // 先更新縣市
+      recipientForm.value.recipientCity = recipientForm.value.buyerCity;
+
+      setTimeout(() => {
+        // 再更新區域
+        recipientForm.value.recipientDistrict = recipientForm.value.buyerDistrict;
+
+        setTimeout(() => {
+          // 最後更新郵遞區號
+          recipientForm.value.recipientPostal = recipientForm.value.buyerPostal;
+          isUpdatingFromBuyer = false;
+        }, 10);
+      }, 10);
+    }, 10);
   };
 
   // 驗證單一欄位
@@ -340,49 +449,63 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
-  const toggleSameAsRecipient = (value) => {
-    sameAsRecipient.value = value;
-    if (value) {
-      // 如果選擇同購買人資料，將購買人資料同步到收件人
-      syncBuyerToRecipient();
+  // 解析地址
+  function parseTaiwanAddress(address) {
+    let cityName = '';
+    let districtName = '';
+    let postal = '';
+    let detail = '';
+
+    const city = twZipcodes.find((c) => address.startsWith(c.name));
+    if (city) {
+      cityName = city.name;
+      const district = city.districts.find((d) => address.includes(d.name));
+      if (district) {
+        districtName = district.name;
+        postal = district.zip;
+        detail = address.replace(cityName, '').replace(districtName, '');
+      } else {
+        detail = address.replace(cityName, '');
+      }
     } else {
-      // 如果取消同購買人資料，清空收貨人獨立資料
-      isUpdatingFromBuyer = true;
-      recipientForm.value.recipientName = '';
-      recipientForm.value.recipientPhone = '';
-      recipientForm.value.recipientCity = '';
-      recipientForm.value.recipientDistrict = '';
-      recipientForm.value.recipientPostal = '';
-      recipientForm.value.recipientAddress = '';
-      isUpdatingFromBuyer = false;
+      detail = address;
     }
-  };
 
-  // 同步購買人資料到收件人 - 使用 setTimeout 避免 watch 干擾
-  const syncBuyerToRecipient = () => {
-    isUpdatingFromBuyer = true;
+    return { city: cityName, district: districtName, postal, detail };
+  }
 
-    // 先更新基本資料
-    recipientForm.value.recipientName = recipientForm.value.buyerName;
-    recipientForm.value.recipientPhone = recipientForm.value.buyerPhone;
-    recipientForm.value.recipientAddress = recipientForm.value.buyerAddress;
+  // 將購買人寫入
+  function setRecipientForm(profile) {
+    const { city, district, postal, detail } = parseTaiwanAddress(profile.address || '');
 
-    // 地址需要按順序更新，避免被 AddressGroup 的 watch 重置
-    setTimeout(() => {
-      // 先更新縣市
-      recipientForm.value.recipientCity = recipientForm.value.buyerCity;
+    recipientForm.value.buyerName = profile.name || '';
+    recipientForm.value.buyerPhone = profile.phone || '';
+    recipientForm.value.buyerCity = city;
+    recipientForm.value.buyerDistrict = district;
+    recipientForm.value.buyerPostal = postal;
+    recipientForm.value.buyerAddress = detail;
+  }
 
-      setTimeout(() => {
-        // 再更新區域
-        recipientForm.value.recipientDistrict = recipientForm.value.buyerDistrict;
-
-        setTimeout(() => {
-          // 最後更新郵遞區號
-          recipientForm.value.recipientPostal = recipientForm.value.buyerPostal;
-          isUpdatingFromBuyer = false;
-        }, 10);
-      }, 10);
-    }, 10);
+  // 抓購買人資訊
+  const loadUserProfile = async () => {
+    try {
+      const { data } = await getUserProfile();
+      if (data.status === 'success') {
+        setRecipientForm(data.data);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '取得會員資料失敗',
+          text: data.message || '',
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '系統錯誤',
+        text: error.response?.data?.message || error.message || '',
+      });
+    }
   };
 
   // 監聽購買人資料變化，如果開啟同步則自動更新收件人資料
@@ -402,6 +525,10 @@ export const useCartStore = defineStore('cart', () => {
     },
   );
 
+  /* 步驟 */
+  // 步驟
+  const currentStep = ref(1);
+
   // 步驟控制
   const setCurrentStep = (step) => {
     currentStep.value = step;
@@ -419,43 +546,134 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
+  /* 訂單 */
   // 訂單提交
-  const submitOrder = () => {
-    return {
-      products: products.value,
-      payment: paymentForm.value,
-      recipient: recipientData.value,
-      subtotal: subtotal.value,
-      shippingCost: shippingCost.value,
-      total: total.value,
-      orderTime: new Date().toISOString(),
-    };
+  const lastOrderId = ref(null);
+  const orderDetail = ref({ order: null, items: [] });
+  const orders = ref(null);
+
+  const setLastOrderId = (id) => {
+    lastOrderId.value = id;
   };
 
-  // 清空購物車
-  const clearCart = async () => {
-    try {
-      const { data } = await deleteCarts();
+  // API 需要的 payload
+  const orderPayload = computed(() => {
+    return {
+      recipient: recipientData.value.name,
+      recipient_phone: recipientData.value.phone,
+      shopping_address: `${recipientData.value.city}${recipientData.value.district}${recipientData.value.address}`,
+      payment_type: paymentForm.value.paymentMethod,
+      payment_location: paymentForm.value.location,
+    };
+  });
 
+  // 打 API
+  const createOrder = async () => {
+    try {
+      const { data } = await postOrder(orderPayload.value);
       if (data.status === 'success') {
-        products.value = [];
+        setLastOrderId(data.data.order_id);
+        Swal.fire({
+          icon: 'success',
+          title: '訂單建立成功',
+        });
+        return true;
       } else {
-        // console.error('清空失敗', data.message);
         Swal.fire({
           icon: 'error',
-          title: '清空失敗',
+          title: '建立訂單失敗',
+          text: data.message,
+        });
+        return false;
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '系統錯誤',
+        text: error.response?.data?.message || error.message,
+      });
+      return false;
+    }
+  };
+
+  const loadOrderItem = async () => {
+    if (!lastOrderId.value) return;
+    try {
+      const { data } = await getOrderItem({ order_id: lastOrderId.value });
+      if (data.status === 'success') {
+        orderDetail.value = data.data;
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '取得訂單失敗',
           text: data.message,
         });
       }
     } catch (error) {
-      // console.error('清空購物車錯誤:', error.message || error);
       Swal.fire({
         icon: 'error',
         title: '系統錯誤',
-        text: error.response?.data?.message || error.message || '請稍後再試',
+        text: error.response?.data?.message || error.message,
       });
     }
   };
+
+  const loadOrders = async () => {
+    try {
+      const { data } = await getOrders();
+      if (data.status === 'success') {
+        orders.value = data.data;
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '取得訂單失敗',
+          text: data.message,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '系統錯誤',
+        text: error.response?.data?.message || error.message,
+      });
+    }
+  };
+
+  const changeOrder = async (payload) => {
+    try {
+      const { data } = await patchOrder(payload); // payload 帶 order_id, order_status
+
+      if (data.status === 'success') {
+        Swal.fire({
+          icon: 'success',
+          title: '更新成功',
+          text: data.message || '訂單已更新',
+        });
+        // 更新訂單列表（確保畫面同步）
+        await loadOrders();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '更新失敗',
+          text: data.message,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '系統錯誤',
+        text: error.response?.data?.message || error.message,
+      });
+    }
+  };
+
+  watch(
+    orderDetail,
+    (val) => {
+      console.log('orderDetail', val);
+    },
+    { deep: true, immediate: true },
+  );
 
   // 重置表單
   const resetForms = () => {
@@ -466,46 +684,51 @@ export const useCartStore = defineStore('cart', () => {
   };
 
   return {
-    // 狀態
+    // 購物車
     products,
-    paymentForm,
-    recipientForm,
-    sameAsRecipient,
-    currentStep,
-    errors,
-
-    // 計算屬性
     subtotal,
-    shippingCost,
-    total,
     productCount,
-    recipientData,
-
-    // 商品方法
     increaseQuantity,
     decreaseQuantity,
     removeProduct,
     addProduct,
+    clearCart,
+    loadCart,
 
-    // 付款方法
+    // 付款
+    paymentForm,
+    shippingCost,
+    total,
     updatePaymentForm,
     updateCardData,
     validateCreditCardField,
+
+    // 收件人
+    recipientForm,
+    sameAsRecipient,
+    errors,
+    recipientData,
+    toggleSameAsRecipient,
     validateRecipientField,
     validateCheckoutForm,
-
-    // 收貨人方法
     updateRecipientForm,
-    toggleSameAsRecipient,
+    loadUserProfile,
 
-    // 步驟控制
+    // 步驟
+    currentStep,
     setCurrentStep,
     nextStep,
     prevStep,
 
-    // 訂單方法
-    submitOrder,
-    clearCart,
+    // 訂單
+    lastOrderId,
+    orderDetail,
+    orders,
+    setLastOrderId,
+    loadOrderItem,
+    loadOrders,
+    createOrder,
+    changeOrder,
     resetForms,
   };
 });

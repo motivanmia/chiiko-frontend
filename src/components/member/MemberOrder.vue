@@ -1,56 +1,20 @@
 <script setup>
   import Icon from '@/components/common/Icon.vue';
-  import { ref, computed } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
+  import { useCartStore } from '@/stores/useCartStore';
+  import { storeToRefs } from 'pinia';
+
+  const cart = useCartStore();
+  const { orders } = storeToRefs(cart);
+  const { loadOrders, changeOrder } = cart;
 
   const filter = ref('所有訂單');
-
-  const orders = ref([
-    {
-      id: '12345',
-      date: '2025-07-01',
-      status: '待確認',
-      payment: '已付款',
-      product: {
-        name: '不鏽鋼奶油鋼刀',
-        image: new URL('@/assets/image/Product/product-knife.png', import.meta.url).href,
-      },
-      quantity: '3',
-      price: '187',
-      trackingNumber: null,
-    },
-    {
-      id: '12346',
-      date: '2025-07-01',
-      status: '已出貨',
-      payment: '已付款',
-      product: {
-        name: '不鏽鋼奶油鋼刀',
-        image: new URL('@/assets/image/Product/product-knife.png', import.meta.url).href,
-      },
-      quantity: '3',
-      price: '187',
-      trackingNumber: 'S12345',
-    },
-    {
-      id: '12347',
-      date: '2025-07-01',
-      status: '已完成',
-      payment: '已付款',
-      product: {
-        name: '不鏽鋼奶油鋼刀',
-        image: new URL('@/assets/image/Product/product-knife.png', import.meta.url).href,
-      },
-      quantity: '3',
-      price: '187',
-      trackingNumber: 'S12345',
-    },
-  ]);
 
   const filteredOrder = computed(() => {
     if (filter.value === '所有訂單') {
       return orders.value;
     }
-    return orders.value.filter((order) => order.status === filter.value);
+    return orders.value.filter((order) => order.order_status_text === filter.value);
   });
 
   const getStatusClass = (status) => {
@@ -78,6 +42,17 @@
     }
   };
   const showToast = ref(false); // 顯示複製成功提示
+
+  const cancelOrder = (orderId) => {
+    changeOrder({
+      order_id: orderId,
+      order_status: '取消/退貨',
+    });
+  };
+
+  onMounted(() => {
+    loadOrders();
+  });
 </script>
 
 <template>
@@ -116,28 +91,29 @@
     </div>
 
     <div class="orders">
-      <div
+      <router-link
+        :to="`/account/order-detail/${order.order_id}`"
         class="order__card"
         v-for="order in filteredOrder"
-        :key="order.id"
+        :key="order.order_id"
       >
         <div class="order__header">
           <span>
             訂單編號
-            <p>#{{ order.id }}</p>
+            <p>#{{ order.order_id }}</p>
           </span>
           <span>
             訂購日期
-            <p>{{ order.date }}</p>
+            <p>{{ order.created_at.split(' ')[0] }}</p>
           </span>
           <span
-            v-if="order.trackingNumber"
+            v-if="order.order_status_text !== '待確認' && order.order_status_text !== '取消/退貨'"
             class="tracking__number"
           >
             物流單號
-            <p>{{ order.trackingNumber }}</p>
+            <p>{{ order.tracking_number }}</p>
             <button
-              @click="copyTrackingNumber(order.trackingNumber)"
+              @click="copyTrackingNumber(order.tracking_number)"
               class="copy__btn"
             >
               <Icon
@@ -147,8 +123,9 @@
             </button>
           </span>
           <button
-            v-if="order.status === '待確認'"
+            v-if="order.order_status_text === '待確認'"
             class="cancel__btn"
+            @click.prevent.stop="cancelOrder(order.order_id)"
           >
             取消
           </button>
@@ -156,13 +133,13 @@
 
         <div class="order__body">
           <img
-            :src="order.product.image"
-            :alt="order.product.name"
+            :src="order.first_preview_image"
+            :alt="order.first_product_name"
             class="product__img"
           />
           <div class="product__details">
-            <p>{{ order.product.name }}</p>
-            <p>商品總數：{{ order.quantity }}</p>
+            <p>{{ order.first_product_name }}</p>
+            <p>商品總數：{{ order.total_items }}</p>
           </div>
         </div>
 
@@ -170,18 +147,20 @@
           <div class="status">
             <div class="status__section">
               <span class="label">訂單狀態</span>
-              <span :class="['status-tag', getStatusClass(order.status)]">{{ order.status }}</span>
+              <span :class="['status-tag', getStatusClass(order.order_status_text)]">
+                {{ order.order_status_text }}
+              </span>
             </div>
             <div class="payment__section">
               <span class="label">付款狀態</span>
-              <span>{{ order.payment }}</span>
+              <span>{{ order.payment_status_text }}</span>
             </div>
           </div>
           <div class="order__info">
-            <p class="order__total">訂單金額 ${{ order.price }}</p>
+            <p class="order__total">訂單金額 ${{ order.final_price }}</p>
           </div>
         </div>
-      </div>
+      </router-link>
     </div>
   </div>
 
@@ -196,6 +175,10 @@
 </template>
 
 <style lang="scss" scoped>
+  a {
+    text-decoration: none;
+  }
+
   .order__container {
     width: 100%;
     min-height: 600px;
@@ -267,6 +250,7 @@
       background: color(search, placeholder);
       border-radius: 20px;
       box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
+      cursor: pointer;
       @include fontSet(
         $font: $basic-font,
         $fw: normal,
@@ -304,12 +288,14 @@
       height: 125px;
       border-radius: 20px;
       object-fit: cover;
+      color: color(text, dark);
     }
     .product__details {
       flex-grow: 1;
       display: flex;
       flex-direction: row;
       justify-content: space-around;
+      color: color(text, dark);
       @include font-size(20);
     }
   }
@@ -328,6 +314,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      color: color(text, dark);
     }
     .label {
       color: color(text, base);
@@ -340,6 +327,9 @@
     }
     .order__info {
       @include font-size(24);
+    }
+    .order__total {
+      color: color(text, dark);
     }
   }
 

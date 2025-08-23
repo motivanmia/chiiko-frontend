@@ -1,40 +1,49 @@
 <script setup>
   import Icon from '@/components/common/Icon.vue';
   import OrderItem from '../cart/OrderItem.vue';
-  import { ref, computed } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
+  import { useRoute } from 'vue-router';
+  import { useCartStore } from '@/stores/useCartStore';
+  import { storeToRefs } from 'pinia';
+
+  const route = useRoute();
+
+  const cart = useCartStore();
+  const { orderDetail } = storeToRefs(cart);
+  const { loadOrderItem, setLastOrderId } = cart;
 
   // const filter = ref('所有訂單');
 
-  const orders = ref([
-    {
-      id: '12345',
-      date: '2025-07-01',
-      number: 'SS123456889',
-      status: '已完成',
-      payment: '已付款',
-      products: [
-        {
-          name: '不鏽鋼奶油刀',
-          image: new URL('@/assets/image/Product/product-knife.png', import.meta.url).href,
-          quantity: 1,
-          price: 29,
-        },
-        {
-          name: '魚鱗刨刀',
-          image: new URL('@/assets/image/Product/product-knife.png', import.meta.url).href,
-          quantity: 1,
-          price: 29,
-        },
-        {
-          name: '日式和風筷架',
-          image: new URL('@/assets/image/Product/product-knife.png', import.meta.url).href,
-          quantity: 1,
-          price: 29,
-        },
-      ],
-      shippingCost: 100,
-    },
-  ]);
+  // const orders = ref([
+  //   {
+  //     id: '12345',
+  //     date: '2025-07-01',
+  //     number: 'SS123456889',
+  //     status: '已完成',
+  //     payment: '已付款',
+  //     products: [
+  //       {
+  //         name: '不鏽鋼奶油刀',
+  //         image: new URL('@/assets/image/Product/product-knife.png', import.meta.url).href,
+  //         quantity: 1,
+  //         price: 29,
+  //       },
+  //       {
+  //         name: '魚鱗刨刀',
+  //         image: new URL('@/assets/image/Product/product-knife.png', import.meta.url).href,
+  //         quantity: 1,
+  //         price: 29,
+  //       },
+  //       {
+  //         name: '日式和風筷架',
+  //         image: new URL('@/assets/image/Product/product-knife.png', import.meta.url).href,
+  //         quantity: 1,
+  //         price: 29,
+  //       },
+  //     ],
+  //     shippingCost: 100,
+  //   },
+  // ]);
 
   const total = computed(() => {
     const order = orders.value[0]; // 取第一筆
@@ -76,21 +85,27 @@
     }
   };
   const showToast = ref(false); // 顯示複製成功提示
+
+  onMounted(() => {
+    setLastOrderId(route.params.id);
+    loadOrderItem();
+  });
 </script>
 
 <template>
-  <div class="order-detail__container">
-    <div
-      class="order-detail"
-      v-for="order in orders"
-      :key="order.id"
-    >
+  <div
+    class="order-detail__container"
+    v-if="orderDetail?.order"
+  >
+    <div class="order-detail">
       <section class="order-detail__product">
         <header class="order-detail__header">
           <div class="order-detail__header-top">
-            <div class="order-detail__id">訂單編號 #{{ order.id }}</div>
-            <div class="order-detail__date">訂購日期 {{ order.date }}</div>
-            <div class="order-detail__number">物流單號 {{ order.number }}</div>
+            <div class="order-detail__id">訂單編號 #{{ orderDetail.order.order_id }}</div>
+            <div class="order-detail__date">
+              訂購日期 {{ orderDetail.order.created_at.split(' ')[0] }}
+            </div>
+            <div class="order-detail__number">物流單號 {{ orderDetail.order.tracking_number }}</div>
 
             <button class="order-detail__cancel__btn">退貨</button>
           </div>
@@ -99,17 +114,21 @@
             <div class="order-detail__status">
               <div class="order-detail__status-section">
                 <span class="order-detail__label">訂單狀態</span>
-                <span class="order-detail__status-tag">{{ order.status }}</span>
+                <span class="order-detail__status-tag">
+                  {{ orderDetail.order.order_status_text }}
+                </span>
               </div>
               <div class="order-detail__payment-section">
                 <span class="order-detail__label">付款狀態</span>
-                <span>{{ order.payment }}</span>
+                <span>{{ orderDetail.order.payment_status_text }}</span>
               </div>
             </div>
             <div class="order-detail__info">
               <p class="order-detail__header-total">
                 訂單金額
-                <span class="order-detail__header-total-price">${{ total }}</span>
+                <span class="order-detail__header-total-price">
+                  ${{ orderDetail.order.final_price }}
+                </span>
               </p>
             </div>
           </div>
@@ -118,40 +137,42 @@
         <div class="order-detail__items">
           <div
             class="order-detail__item"
-            v-for="product in order.products"
+            v-for="product in orderDetail.items"
           >
             <div class="order-detail__item-pic">
               <img
                 class="order-detail__item-image"
-                :src="product.image"
-                :alt="product.name"
+                :src="product.preview_image"
+                :alt="product.product_name"
               />
             </div>
             <div class="order-detail__item-info">
-              <h3 class="order-detail__item-name">{{ product.name }}</h3>
+              <h3 class="order-detail__item-name">{{ product.product_name }}</h3>
               <span class="order-detail__item-unit-price">
                 NT$
-                <span class="order-detail__item-unit-price-number">{{ product.price }}</span>
+                <span class="order-detail__item-unit-price-number">{{ product.unit_price }}</span>
               </span>
             </div>
             <div class="order-detail__item-quantity">數量 {{ product.quantity }}</div>
             <div class="order-detail__item-subtotal">
               NT$
               <span class="order-detail__item-subtotal-number">
-                {{ product.price * product.quantity }}
+                {{ product.subtotal }}
               </span>
             </div>
           </div>
           <div class="order-detail__shipping-cost">
             <div class="order-detail__shipping-cost-content">
               運費
-              <span class="order-detail__shipping-cost-price">NT${{ order.shippingCost }}</span>
+              <span class="order-detail__shipping-cost-price">
+                NT${{ orderDetail.order.freight }}
+              </span>
             </div>
           </div>
           <div class="order-detail__total">
             <div class="order-detail__total-content">
               總金額
-              <span class="order-detail__total-price">NT${{ total }}</span>
+              <span class="order-detail__total-price">NT${{ orderDetail.order.final_price }}</span>
             </div>
           </div>
         </div>
@@ -161,7 +182,7 @@
         <header class="order-detail__payment-title">付款資訊</header>
         <div class="order-detail__payment-content">
           <div class="order-detail__payment-label">付款方式</div>
-          <span class="order-detail__payment-desc">信用卡</span>
+          <span class="order-detail__payment-desc">{{ orderDetail.order.payment_type_text }}</span>
         </div>
       </section>
       <section class="order-detail__user-info">
@@ -169,11 +190,11 @@
 
         <div class="order-detail__user-info-content">
           <div class="order-detail__user-info-label">收件人</div>
-          <span class="order-detail__user-info-desc">小胖子</span>
+          <span class="order-detail__user-info-desc">{{ orderDetail.order.recipient }}</span>
           <div class="order-detail__user-info-label">連絡電話</div>
-          <span class="order-detail__user-info-desc">0912345678</span>
+          <span class="order-detail__user-info-desc">{{ orderDetail.order.recipient_phone }}</span>
           <div class="order-detail__user-info-label">收件地址</div>
-          <span class="order-detail__user-info-desc">230 桃園市中壢區復興路46號9樓</span>
+          <span class="order-detail__user-info-desc">{{ orderDetail.order.shopping_address }}</span>
         </div>
       </section>
     </div>

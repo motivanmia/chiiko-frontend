@@ -1,35 +1,38 @@
 <script setup>
   import OrderItem from './OrderItem.vue';
   import { useCartStore } from '@/stores/useCartStore';
+  import { storeToRefs } from 'pinia';
 
   const cart = useCartStore();
-  const { submitOrder } = cart;
-  const { products, shippingCost, total } = submitOrder();
+  const { orderDetail } = storeToRefs(cart);
 </script>
 
 <template>
-  <section class="order-list">
+  <section
+    class="order-list"
+    v-if="orderDetail?.order"
+  >
     <header class="order-list__header">
-      <div class="order-list__id">您的訂單編號 #12345</div>
-      <div class="order-list__date">訂購日期 2025-07-01</div>
+      <div class="order-list__id">您的訂單編號 #{{ orderDetail?.order.order_id }}</div>
+      <div class="order-list__date">訂購日期 {{ orderDetail?.order.created_at.split(' ')[0] }}</div>
     </header>
 
     <div class="order-list__items">
       <OrderItem
-        v-for="product in products"
-        :key="product.id"
+        v-for="product in orderDetail?.items"
+        :key="product.product_id"
         :product="product"
       />
       <div class="order-list__shipping-cost">
         <div class="order-list__shipping-cost-content">
           運費
-          <span class="order-list__shipping-cost-price">NT${{ shippingCost }}</span>
+          <span class="order-list__shipping-cost-price">NT${{ orderDetail?.order.freight }}</span>
         </div>
       </div>
       <div class="order-list__total">
         <div class="order-list__total-content">
           總金額
-          <span class="order-list__total-price">NT${{ total }}</span>
+          <span class="order-list__total-price">NT${{ orderDetail?.order.final_price }}</span>
         </div>
       </div>
     </div>

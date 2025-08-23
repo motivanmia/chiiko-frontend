@@ -101,7 +101,7 @@ const router = createRouter({
           component: () => import('@/components/member/MemberOrder.vue'),
         },
         {
-          path: 'order-detail',
+          path: 'order-detail/:id',
           name: 'order-detail',
           component: () => import('@/components/member/MemberOrderDetail.vue'),
         },

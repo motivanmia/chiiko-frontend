@@ -3,8 +3,6 @@
   import { useRouter } from 'vue-router';
   import { storeToRefs } from 'pinia';
   import { useCartStore } from '@/stores/useCartStore';
-  import { getCarts } from '@/api/fetch';
-  import Swal from 'sweetalert2';
   import CartStep from '@/components/cart/CartStep.vue';
   import CartList from '@/components/cart/CartList.vue';
   import PaymentSection from '@/components/cart/PaymentSection.vue';
@@ -16,37 +14,7 @@
 
   const cart = useCartStore();
   const { products } = storeToRefs(cart);
-  const { setCurrentStep, resetForms } = cart;
-
-  const getCartList = async () => {
-    try {
-      const { data } = await getCarts();
-
-      if (data.status === 'success') {
-        products.value = data.data.map((item) => ({
-          ...item,
-          user_id: Number(item.user_id),
-          product_id: Number(item.product_id),
-          quantity: Number(item.quantity),
-          unit_price: Number(item.unit_price),
-        }));
-      } else {
-        // console.error('取得購物車失敗:', data.message);
-        Swal.fire({
-          icon: 'error',
-          title: '取得購物車失敗',
-          text: data.message,
-        });
-      }
-    } catch (error) {
-      // console.error('取得購物車時發生錯誤:', error.response?.data?.message || error.message);
-      Swal.fire({
-        icon: 'error',
-        title: '系統錯誤',
-        text: error.response?.data?.message || error.message,
-      });
-    }
-  };
+  const { setCurrentStep, resetForms, loadCart, loadUserProfile } = cart;
 
   const goToProduct = () => {
     router.push({
@@ -57,7 +25,8 @@
   onMounted(() => {
     setCurrentStep(1);
     resetForms();
-    getCartList();
+    loadCart();
+    loadUserProfile();
   });
 </script>
 

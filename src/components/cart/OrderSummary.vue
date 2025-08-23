@@ -7,13 +7,14 @@
   const router = useRouter();
   const cart = useCartStore();
   const { subtotal, shippingCost, total } = storeToRefs(cart);
-  const { submitOrder, validateCheckoutForm } = cart;
+  const { validateCheckoutForm, createOrder } = cart;
 
-  const handleSubmitOrder = () => {
+  const handleSubmitOrder = async () => {
     if (!validateCheckoutForm()) return;
-    const data = submitOrder();
-    router.push({ path: '/order-success' });
-    console.log('submit', data);
+    const success = await createOrder();
+    if (success) {
+      router.push({ path: '/order-success' });
+    }
   };
 </script>
 

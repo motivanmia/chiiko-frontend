@@ -2,7 +2,7 @@
   import { ref, computed, watch, onMounted } from 'vue';
   import BaseSelect from './BaseSelect.vue';
   import BaseInput from './BaseInput.vue';
-  import Swal from 'sweetalert2';
+  import twZipcodes from '@/assets/taiwan_districts.json';
 
   const props = defineProps({
     label: {
@@ -80,30 +80,22 @@
   const postalMapping = ref({});
 
   const loadTaiwanDistricts = async () => {
-    try {
-      const { VITE_TAIWAN_DISTRICTS } = import.meta.env;
-      const res = await fetch(VITE_TAIWAN_DISTRICTS);
-      const data = await res.json();
+    cityOptions.value = [];
+    districtMapping.value = {};
+    postalMapping.value = {};
 
-      // 初始化縣市、區域、郵遞區號
-      data.forEach((city) => {
-        cityOptions.value.push({ value: city.name, label: city.name });
-        districtMapping.value[city.name] = city.districts.map((d) => ({
-          value: d.name,
-          label: d.name,
-          zip: d.zip,
-        }));
-        city.districts.forEach((d) => {
-          postalMapping.value[d.name] = d.zip;
-        });
+    twZipcodes.forEach((city) => {
+      cityOptions.value.push({ value: city.name, label: city.name });
+      districtMapping.value[city.name] = city.districts.map((d) => ({
+        value: d.name,
+        label: d.name,
+        zip: d.zip,
+      }));
+
+      city.districts.forEach((d) => {
+        postalMapping.value[d.name] = d.zip;
       });
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: '載入台灣縣市資料失敗',
-        text: error.response?.data?.message || error.message || '',
-      });
-    }
+    });
   };
 
   const districtOptions = computed(() => districtMapping.value[cityLocal.value] || []);

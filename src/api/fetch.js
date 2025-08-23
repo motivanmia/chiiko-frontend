@@ -95,35 +95,32 @@ export function deleteCarts(data) {
   });
 }
 
-/**
- * 建立訂單 POST
- * @export
- * @param {String} postId 貼文ID
- * @param {Number} amt 金額
- * @param {String} description 商品說明
- * @return {Object} - HTTP request post
- */
-export function postCreateOrder({ postId, amt, description }) {
+export function getOrders() {
   return request({
-    url: `${url.payment}/createOrder`,
-    method: 'post',
-    data: {
-      postId,
-      amt,
-      description,
-    },
+    url: `${url.order}/get_orders.php`,
+    method: 'get',
   });
 }
 
-/**
- * 取得訂單資訊 GET
- * @export
- * @param {String} orderId 訂單ID
- * @return {Object} - HTTP request get
- */
-export function getOrderInfo(orderId) {
+export function getOrderItem(data) {
   return request({
-    url: `${url.payment}/getOrderInfo/${orderId}`,
+    url: `${url.order}/get_order_items.php?order_id=${data.order_id}`,
     method: 'get',
+  });
+}
+
+export function postOrder(data) {
+  return request({
+    url: `${url.order}/post_order.php`,
+    method: 'post',
+    data,
+  });
+}
+
+export function patchOrder(data) {
+  return request({
+    url: `${url.order}/patch_order.php`,
+    method: 'patch',
+    data,
   });
 }

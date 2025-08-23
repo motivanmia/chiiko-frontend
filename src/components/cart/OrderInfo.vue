@@ -1,19 +1,13 @@
 <script setup>
+  import { storeToRefs } from 'pinia';
   import { useCartStore } from '@/stores/useCartStore';
   import { useRouter } from 'vue-router';
-  import { paymentOptions } from '@/constants/cartOption';
   import CancelButton from '../button/CancelButton.vue';
   import ConfirmButton from '../button/ConfirmButton.vue';
   const cart = useCartStore();
   const router = useRouter();
 
-  const { submitOrder } = cart;
-  const { recipient, payment } = submitOrder();
-
-  function getPaymentLabel(value) {
-    const option = paymentOptions.find((opt) => opt.value === value);
-    return option ? option.label : value;
-  }
+  const { orderDetail } = storeToRefs(cart);
 
   const goHome = () => {
     router.push({ path: '/' });
@@ -25,7 +19,10 @@
 </script>
 
 <template>
-  <section class="order-info">
+  <section
+    class="order-info"
+    v-if="orderDetail?.order"
+  >
     <header class="order-info__header">
       <h2 class="order-info__title">收件資訊</h2>
     </header>
@@ -33,15 +30,15 @@
     <div class="order-info__list">
       <div class="order-info__content">
         <div class="order-info__label">收件人</div>
-        <span class="order-info__desc">{{ recipient.name }}</span>
+        <span class="order-info__desc">{{ orderDetail?.order.recipient }}</span>
         <div class="order-info__label">連絡電話</div>
-        <span class="order-info__desc">{{ recipient.phone }}</span>
+        <span class="order-info__desc">{{ orderDetail?.order.recipient_phone }}</span>
         <div class="order-info__label">收件地址</div>
         <span class="order-info__desc">
-          {{ recipient.postal }} {{ recipient.city }}{{ recipient.district }}{{ recipient.address }}
+          {{ orderDetail?.order.shopping_address }}
         </span>
         <div class="order-info__label">付款方式</div>
-        <span class="order-info__desc">{{ getPaymentLabel(payment.paymentMethod) }}</span>
+        <span class="order-info__desc">{{ orderDetail?.order.payment_type_text }}</span>
       </div>
 
       <div class="order-info__button-container">
