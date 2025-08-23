@@ -16,21 +16,21 @@
           <!-- 核心修正：將原本的 div v-for 整個替換成 RouterLink v-for -->
           <RouterLink
             v-for="(item, index) in displayItems"
-            :key="item.id + '-' + index"
-            to="/Recipe-Detail"
+            :key="item.recipe_id + '-' + index"
+            :to="`/recipe-detail/${item.recipe_id}`"
             class="carousel-item"
             :class="getItemClass(index)"
           >
             <!-- 卡片內部內容不變 -->
             <img
-              :src="item.imageUrl"
-              :alt="item.title"
+              :src="item.image"
+              :alt="item.name"
               class="carousel-image"
             />
             <div class="carousel-caption">
-              <h3>{{ item.title }}</h3>
-              <p class="description">{{ item.description }}</p>
-              <span class="author">{{ item.author }}</span>
+              <h3>{{ item.name }}</h3>
+              <p class="description">{{ item.content }}</p>
+              <span class="author">{{ item.author_name }}</span>
             </div>
           </RouterLink>
           <!-- 這裡沒有多餘的 </div>，結構是乾淨的 -->
@@ -85,15 +85,17 @@
   // 我們將沿用最穩定的 handleResize 函式。
   import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
   import SeeMoreButton from '@/components/button/SeeMoreButton.vue';
-  import avatarImage1 from '@/assets/image/NewRecipes/braised_chicken_thigh.png';
-  import avatarImage2 from '@/assets/image/NewRecipes/creamy_white_sauce_shell_pasta.png';
-  import avatarImage3 from '@/assets/image/NewRecipes/yuzu_pepper_chicken_soba.png';
-  import avatarImage4 from '@/assets/image/NewRecipes/lemon_glazed_pound_cake.png';
-  import avatarImage5 from '@/assets/image/NewRecipes/braised_tofu.png';
-  import avatarImage6 from '@/assets/image/NewRecipes/recipe031-min.png';
-  import avatarImage7 from '@/assets/image/NewRecipes/recipe051-min.png';
-  import avatarImage8 from '@/assets/image/NewRecipes/recipe056-min.png';
+  import { useRecipeStore } from '@/stores/recipeCollectStore';
+  // import avatarImage1 from '@/assets/image/NewRecipes/braised_chicken_thigh.png';
+  // import avatarImage2 from '@/assets/image/NewRecipes/creamy_white_sauce_shell_pasta.png';
+  // import avatarImage3 from '@/assets/image/NewRecipes/yuzu_pepper_chicken_soba.png';
+  // import avatarImage4 from '@/assets/image/NewRecipes/lemon_glazed_pound_cake.png';
+  // import avatarImage5 from '@/assets/image/NewRecipes/braised_tofu.png';
+  // import avatarImage6 from '@/assets/image/NewRecipes/recipe031-min.png';
+  // import avatarImage7 from '@/assets/image/NewRecipes/recipe051-min.png';
+  // import avatarImage8 from '@/assets/image/NewRecipes/recipe056-min.png';
   const VISIBLE_ITEMS = 5;
+  const recipeStore = useRecipeStore();
   const CLONE_COUNT = VISIBLE_ITEMS;
   const TRANSITION_DURATION = 500;
   const MOBILE_BREAKPOINT = 768;
@@ -105,64 +107,67 @@
   const isDragging = ref(false);
   const touchStartX = ref(0);
   const touchMoveX = ref(0);
-  const recipeItems = ref([
-    {
-      id: 1,
-      title: '紅燒雞腿',
-      description: '奶油5g、貝殼麵......',
-      author: '鹹魚',
-      imageUrl: avatarImage1,
-    },
-    {
-      id: 2,
-      title: '奶油白醬小貝殼麵',
-      description: '奶油5g、貝殼麵......',
-      author: '鹹魚',
-      imageUrl: avatarImage2,
-    },
-    {
-      id: 3,
-      title: '柚子胡椒雞肉蕎麥麵',
-      description: '胡椒 些許、雞肉100g......',
-      author: '小胖子',
-      imageUrl: avatarImage3,
-    },
-    {
-      id: 4,
-      title: '檸檬糖霜磅蛋糕',
-      description: '雞蛋 2顆，低筋麵粉100g......',
-      author: '我只是愛吃',
-      imageUrl: avatarImage4,
-    },
-    {
-      id: 5,
-      title: '紅燒豆腐',
-      description: '雞蛋 2顆，低筋麵粉100g......',
-      author: '我只是愛吃',
-      imageUrl: avatarImage5,
-    },
-    {
-      id: 6,
-      title: '巧克力醬油炒泡麵',
-      description: '濃郁滑順，香氣十足。',
-      author: '黑暗料理人',
-      imageUrl: avatarImage6,
-    },
-    {
-      id: 7,
-      title: '香煎蘿蔔糕',
-      description: '台式好味道。',
-      author: '隔壁王媽媽',
-      imageUrl: avatarImage7,
-    },
-    {
-      id: 8,
-      title: '滷香筍絲肉片',
-      description: '偷情家常菜。',
-      author: '外遇的蔡媽媽',
-      imageUrl: avatarImage8,
-    },
-  ]);
+
+  const recipeItems = computed(() => recipeStore.latestRecipes);
+
+  // const recipeItems = ref([
+  //   {
+  //     id: 1,
+  //     title: '紅燒雞腿',
+  //     description: '奶油5g、貝殼麵......',
+  //     author: '鹹魚',
+  //     imageUrl: avatarImage1,
+  //   },
+  //   {
+  //     id: 2,
+  //     title: '奶油白醬小貝殼麵',
+  //     description: '奶油5g、貝殼麵......',
+  //     author: '鹹魚',
+  //     imageUrl: avatarImage2,
+  //   },
+  //   {
+  //     id: 3,
+  //     title: '柚子胡椒雞肉蕎麥麵',
+  //     description: '胡椒 些許、雞肉100g......',
+  //     author: '小胖子',
+  //     imageUrl: avatarImage3,
+  //   },
+  //   {
+  //     id: 4,
+  //     title: '檸檬糖霜磅蛋糕',
+  //     description: '雞蛋 2顆，低筋麵粉100g......',
+  //     author: '我只是愛吃',
+  //     imageUrl: avatarImage4,
+  //   },
+  //   {
+  //     id: 5,
+  //     title: '紅燒豆腐',
+  //     description: '雞蛋 2顆，低筋麵粉100g......',
+  //     author: '我只是愛吃',
+  //     imageUrl: avatarImage5,
+  //   },
+  //   {
+  //     id: 6,
+  //     title: '巧克力醬油炒泡麵',
+  //     description: '濃郁滑順，香氣十足。',
+  //     author: '黑暗料理人',
+  //     imageUrl: avatarImage6,
+  //   },
+  //   {
+  //     id: 7,
+  //     title: '香煎蘿蔔糕',
+  //     description: '台式好味道。',
+  //     author: '隔壁王媽媽',
+  //     imageUrl: avatarImage7,
+  //   },
+  //   {
+  //     id: 8,
+  //     title: '滷香筍絲肉片',
+  //     description: '偷情家常菜。',
+  //     author: '外遇的蔡媽媽',
+  //     imageUrl: avatarImage8,
+  //   },
+  // ]);
   const displayItems = computed(() => {
     if (recipeItems.value.length === 0) return [];
     const headClones = recipeItems.value.slice(-CLONE_COUNT);
@@ -249,6 +254,8 @@
     trackRef.value.addEventListener('transitionend', handleTransitionEnd);
     window.addEventListener('resize', handleResize);
     handleResize();
+
+    recipeStore.fetchLatestRecipes();
   });
   onUnmounted(() => {
     if (trackRef.value) {

@@ -33,7 +33,6 @@
       const apiResponse = response.data;
 
       if (apiResponse.success) {
-        // 檢查後端回傳是否成功
         const apiData = apiResponse.data; 
         allRecipes.value = {
           mostFavorite: apiData.mostBookmarked, 
@@ -89,12 +88,6 @@
     return allRecipes.value.newest ? allRecipes.value.newest.slice(0, 9) : [];
   });
 
-  // =======================================================
-
-  // const goToPage = () => {
-  //   router.push('/recipe-detail');
-  // };
-  // =======================================================
 </script>
 
 <template>
@@ -125,7 +118,6 @@
   ></SectionTitle>
   <RecipeCards :recipes="latestRecipes" />
 
-  <!-- goToPage後續要做刪除的動作 -->
 </template>
 
 <style lang="scss" scoped>

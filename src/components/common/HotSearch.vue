@@ -2,7 +2,6 @@
   import { defineEmits, ref, onMounted } from 'vue';
   import axios from 'axios';
 
-  // 宣告一個 'search' 事件，用於向父組件發送搜尋文字
   const emits = defineEmits(['search']);
 
   const hotSearches = ref([]);

@@ -17,7 +17,7 @@
 
       if (apiResponse.success) {
         (allRecipes.value = apiResponse.data), console.log('成功取得收藏資料', allRecipes.value);
-      } else {
+        } else {
         console.error('API錯誤:', apiResponse.error);
         allRecipes.value = [];
       }

@@ -74,7 +74,7 @@
               @click="toggleCollect"
             >
               <Icon
-                :icon-name="isCollected ? 'markF' : 'markL'"
+                :icon-name="isCollected ? 'mark' : 'markL'"
                 class="icon"
               />
               {{ isCollected ? '已收藏' : '收藏' }}
@@ -160,122 +160,155 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, computed } from 'vue';
-  import { useRoute } from 'vue-router';
+import { ref, watch, computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+import { useRecipeStore } from '@/stores/recipeCollectStore';
+import Icon from '@/components/common/Icon.vue';
+import CommentSection from '@/components/CommentSection.vue';
+import ProductCard from '@/components/ProductCard.vue';
+import avatarImage from '@/assets/image/NewRecipes/Mask_group.png';
 
-  import Icon from '@/components/common/Icon.vue';
-  import CommentSection from '@/components/CommentSection.vue';
-  import ProductCard from '@/components/ProductCard.vue';
-  import avatarImage from '@/assets/image/NewRecipes/Mask_group.png';
+// ----------------------------------------------------
+// 修正：將 store 和 computed 變數定義在最上方
+// 確保它們可以被後續的程式碼正確存取
+// ----------------------------------------------------
+const route = useRoute();
+const memberStore = useAuthStore();
+const recipeStore = useRecipeStore();
+const recipeData = ref(null);
+const recipeId = computed(() => route.params.id);
+const isCollected = computed(() => recipeStore.favoriteRecipesStatus[recipeId.value] || false);
 
-  const recipeData = ref(null);
-  const route = useRoute();
 
-  onMounted(async () => {
-    const recipeId = route.params.id;
-    if (!recipeId) return;
-
-    try {
-      const apiUrl = `http://localhost:8888/front/recipe/get_recipe.php?recipe_id=${recipeId}`;
-      const response = await fetch(apiUrl);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
-      if (result.status === 'success') {
-        recipeData.value = result.data;
-        console.log('食譜資料已成功載入 (包含所有關聯資料):', recipeData.value);
-      } else {
-        console.error('後端回傳錯誤:', result.message);
-      }
-    } catch (error) {
-      console.error('獲取食譜資料失敗:', error);
+const fetchRecipeData = async (id) => {
+    if (!id) {
+        recipeData.value = null;
+        return;
     }
-  });
+    try {
+        const apiUrl = `http://localhost:8888/front/recipe/get_recipe_detail.php?recipe_id=${id}`;
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        if (result.status === 'success') {
+            recipeData.value = result.data;
+            console.log('食譜資料已成功載入 (包含所有關聯資料):', recipeData.value);
+        } else {
+            console.error('後端回傳錯誤:', result.message);
+            recipeData.value = null;
+        }
+    } catch (error) {
+        console.error('獲取食譜資料失敗:', error);
+        recipeData.value = null;
+    }
+};
 
-  const formattedTags = computed(() => {
+// 整合資料獲取和狀態檢查的函式
+const fetchDataAndStatus = async (newId) => {
+    if (!newId) return;
+
+    // 先獲取食譜資料
+    await fetchRecipeData(newId);
+
+    // 檢查登入狀態，如果已登入才檢查收藏狀態
+    if (memberStore.isLoggedIn) {
+        recipeStore.checkRecipeStatus(newId);
+    } else {
+        // 如果未登入，確保收藏狀態為 false
+        recipeStore.favoriteRecipesStatus[newId] = false;
+    }
+};
+
+// 使用 watch 監聽路由參數 id 的變化
+watch(
+    recipeId,
+    (newId) => {
+        fetchDataAndStatus(newId);
+    },
+    { immediate: true }
+);
+
+// ----------------------------------------------------
+// 修正：簡化 toggleCollect，直接呼叫 store 的 action
+// ----------------------------------------------------
+async function toggleCollect() {
+    // 這裡還是需要檢查是否登入，這是唯一的判斷條件
+    if (!memberStore.isLoggedIn) {
+        alert('請先登入才能收藏!');
+        return;
+    }
+    // 呼叫 store action 時不再傳入 memberId，因為後端會從 Session 獲取
+    await recipeStore.toggleCollect(recipeId.value);
+}
+
+// ----------------------------------------------------
+// 以下為你原有的功能函數，我將它們保持不變
+// ----------------------------------------------------
+
+const formattedTags = computed(() => {
     if (!recipeData.value || !recipeData.value.tag) return [];
     return recipeData.value.tag
-      .split('#')
-      .filter(Boolean)
-      .map((tag) => `#${tag}`);
-  });
+        .split('#')
+        .filter(Boolean)
+        .map((tag) => `#${tag}`);
+});
 
-  // ⭐️ 核心修正 1: 在父層加入這個計算屬性來重組留言 ⭐️
-  const threadedComments = computed(() => {
+const threadedComments = computed(() => {
     if (!recipeData.value || !recipeData.value.comments) {
-      return [];
+        return [];
     }
+    return recipeData.value.comments;
+});
 
-    const allComments = recipeData.value.comments;
-    const commentMap = {};
-
-    // 為了避免修改原始資料，我們先做一次淺拷貝，並預先建立 replies 陣列
-    allComments.forEach((comment) => {
-      commentMap[comment.comment_id] = { ...comment, replies: [] };
-    });
-
-    const nestedComments = [];
-    Object.values(commentMap).forEach((comment) => {
-      if (comment.parent_id && commentMap[comment.parent_id]) {
-        // 如果這是一則回覆，找到它的父留言，並把自己塞進去
-        commentMap[comment.parent_id].replies.push(comment);
-      } else {
-        // 如果這是一則主留言，直接放進最外層
-        nestedComments.push(comment);
-      }
-    });
-
-    return nestedComments;
-  });
-
-  const isCollected = ref(false);
-
-  function toggleCollect() {
-    isCollected.value = !isCollected.value;
-  }
-
-  function shareRecipe() {
+function shareRecipe() {
     const recipeUrl = window.location.href;
     navigator.clipboard.writeText(recipeUrl);
-  }
+}
 
-  function numberToChinese(num) {
+function numberToChinese(num) {
     const parsedNum = typeof num === 'string' ? parseInt(num, 10) : num;
     if (isNaN(parsedNum) || parsedNum < 1) return '';
     const chineseNums = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
     if (parsedNum <= 10) return chineseNums[parsedNum];
     if (parsedNum > 10 && parsedNum < 20) return '十' + chineseNums[parsedNum % 10];
     if (parsedNum >= 20 && parsedNum < 100) {
-      const tens = Math.floor(parsedNum / 10);
-      const ones = parsedNum % 10;
-      if (ones === 0) return chineseNums[tens] + '十';
-      return chineseNums[tens] + '十' + chineseNums[ones];
+        const tens = Math.floor(parsedNum / 10);
+        const ones = parsedNum % 10;
+        if (ones === 0) return chineseNums[tens] + '十';
+        return chineseNums[tens] + '十' + chineseNums[ones];
     }
     return parsedNum.toString();
-  }
+}
 
-  function copyIngredients() {
+function copyIngredients() {
     if (
-      recipeData.value &&
-      recipeData.value.ingredients &&
-      recipeData.value.ingredients.length > 0
+        recipeData.value &&
+        recipeData.value.ingredients &&
+        recipeData.value.ingredients.length > 0
     ) {
-      const text = recipeData.value.ingredients
-        .map((item) => `${item.name} / ${item.amount}`)
-        .join('\n');
-      navigator.clipboard.writeText(text).then(() => {
-        alert('食材清單已複製！');
-      });
+        const text = recipeData.value.ingredients
+            .map((item) => `${item.name} / ${item.amount}`)
+            .join('\n');
+        navigator.clipboard.writeText(text).then(() => {
+            alert('食材清單已複製！');
+        });
     } else {
-      alert('目前沒有可複製的食材清單。');
+        alert('目前沒有可複製的食材清單。');
     }
-  }
+}
 
-  const currentUserAvatar = ref(avatarImage);
+const currentUserAvatar = ref(avatarImage);
+
 </script>
 
-<!-- ──────────────────────────────────────────────────────────────────────── -->
+
+
+
+
+
 <style lang="scss" scoped>
   /* =================================================================== */
   /*                                變數設定                             */

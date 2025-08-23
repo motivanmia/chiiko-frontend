@@ -1,29 +1,42 @@
 <script setup>
-  import { ref } from 'vue';
-  import Icon from '@/components/common/Icon.vue';
+import { ref, defineProps, defineEmits } from 'vue';
+import Icon from '@/components/common/Icon.vue';
 
-  const options = ['當季熱門', '最多收藏'];
-  const selected = ref(options[0]);
-  const isOpen = ref(false);
+// 定義組件接收的屬性（Props）
+const props = defineProps({
+  options: {
+    type: Array,
+    required: true,
+  },
+  modelValue: { // 用於雙向綁定，但這裡只使用它來顯示當前值
+    type: String,
+    required: false,
+  },
+});
 
-  function toggle() {
-    isOpen.value = !isOpen.value;
-  }
+// 定義組件發出的事件（Emits）
+const emit = defineEmits(['update:modelValue']);
 
-  function select(option) {
-    selected.value = option;
-    isOpen.value = false;
-  }
+const isOpen = ref(false);
+
+function toggle() {
+  isOpen.value = !isOpen.value;
+}
+
+function select(option) {
+  // 不再呼叫 store，而是發出事件
+  emit('update:modelValue', option);
+  isOpen.value = false;
+}
 </script>
 
 <template>
   <div class="dropdown">
-    <!-- 點擊區塊（永遠顯示） -->
     <div
       class="dropdown-selected"
       @click="toggle"
     >
-      {{ selected }}
+      {{ props.modelValue }}
       <span
         class="arrow"
         :class="{ open: isOpen }"
@@ -35,7 +48,6 @@
       </span>
     </div>
 
-    <!-- 外框＋選項，一起動畫 -->
     <transition name="dropdown-expand">
       <div
         v-if="isOpen"
@@ -43,7 +55,7 @@
       >
         <ul class="dropdown-options">
           <li
-            v-for="(option, index) in options"
+            v-for="(option, index) in props.options"
             :key="index"
             @click.stop="select(option)"
           >
@@ -54,6 +66,7 @@
     </transition>
   </div>
 </template>
+
 <style lang="scss" scoped>
   .dropdown-box {
     background: #fff;

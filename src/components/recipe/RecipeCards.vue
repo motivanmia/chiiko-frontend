@@ -1,7 +1,13 @@
 <script setup>
+  import { useRouter } from 'vue-router';
   import Icon from '../common/Icon.vue';
+  import axios from 'axios';
+
 
   // import { popularRecipe } from '@/constants/recipes';
+
+  // const router = useRouter();
+
 
   const props = defineProps({
     recipes: {
@@ -9,6 +15,7 @@
       default: () => [],
     },
   });
+
 </script>
 
 <template>
@@ -58,7 +65,7 @@
               icon-name="markL"
               class="markL-icon"
             />
-            {{ card.bookmarks || '0' }}
+            {{ card.favorite_count || '0' }}
           </p>
         </div>
       </div>

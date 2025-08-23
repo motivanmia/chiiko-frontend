@@ -1,44 +1,48 @@
 <script setup>
+  import { useRouter } from 'vue-router';
   import Icon from '../common/Icon.vue';
   import axios from 'axios';
-
-  import { soloMeal } from '@/constants/recipes';
-
-  // const soloRecipes = ref=([...soloMeal]);
 
   const props = defineProps({
     recipes: {
       type: Array,
-          required: true,
-
+      required: true,
     },
   });
 
-  const handleRecipeClick = async (recipe_id)=>{
-    try{
-      await axios.post('http://localhost:8888/front/recipe/update_recipe_views.php',{recipe_id: recipe_id
+  const router = useRouter();
+
+  const handleRecipeClick = async (recipe_id) => {
+    try {
+      await axios.post('http://localhost:8888/front/recipe/update_recipe_views.php', {
+        recipe_id: recipe_id,
       });
       console.log(`Recipe${recipe_id} view count updated.`);
-    }catch(error){
-      console.error('Failed to update recipe view count.',error);
+    } catch (error) {
+      console.error('Failed to update recipe view count.', error);
     }
-  }
-
-
+    router.push({
+      name: 'recipe-detail',
+      params: {
+        id: recipe_id,
+      },
+    });
+  };
 </script>
 <template>
   <div class="recipe-card">
     <div
       v-for="recipe in props.recipes"
-      :key="recipe.recipe_id" 
-      @click="handleRecipeClick(recipe.recipe_id)"
-      class="recipe-card__box"      
+      :key="recipe.recipe_id"
+      @click="handleRecipeClick(recipe.recipe_id)"  
+      class="recipe-card__box"
     >
       <div class="recipe-card__pic">
         <img
           class="recipe-card__img"
           :src="recipe.image"
-          :alt="recipe.name" />
+          :alt="recipe.name"
+        />
       </div>
 
       <div class="recipe-card__content">
@@ -47,7 +51,8 @@
           src="/src/assets/image/Recipes/graffiti.png"
           alt=""
         />
-        <h2>{{ recipe.name }}</h2> </div>
+        <h2>{{ recipe.name }}</h2>
+      </div>
 
       <div class="icon-board">
         <div class="icon-board__left">
@@ -56,7 +61,8 @@
               icon-name="time"
               class="time-icon"
             />
-            約{{ recipe.cooked_time }}分鐘 </p>
+            約{{ recipe.cooked_time }}分鐘
+          </p>
         </div>
         <div class="icon-board__right">
           <p>
@@ -64,22 +70,24 @@
               icon-name="comment"
               class="comment-icon"
             />
-            {{ recipe.comments || 0 }} </p>
+            {{ recipe.comments || 0 }}
+          </p>
           <p>
             <Icon
               icon-name="markL"
               class="markL-icon"
             />
-            {{ recipe.likes || 0 }} </p>
+            {{ recipe.favorite_count || 0 }}
+          </p>
         </div>
       </div>
 
       <div class="icon-board__tag">
         <p
-          v-for="tag in recipe.tag"
+          v-for="tag in recipe.tag && typeof recipe.tag === 'string' ? recipe.tag.split(',') : []"
           :key="tag"
         >
-          {{ tag }}
+          #{{ tag }}
         </p>
       </div>
     </div>

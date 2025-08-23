@@ -3,7 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
-// 引入你的元件
+
 import Banner from '@/components/recipe/Banner.vue';
 import Category from '@/components/recipe/Category.vue';
 import SectionTitle from '@/components/SectionTitle.vue';
@@ -20,7 +20,7 @@ const searchTerm = ref(route.query.q || '');
 const categoryName = computed(() => route.params.category);
 const pageTitle = computed(() => categoryName.value || '找不到此分類');
 
-// 麵包屑使用computed更新
+// 麵包屑
 const breadcrumbs = computed(() => {
   return [
     { text: '靈感食譜', to: { name: 'recipe-overview' } },
