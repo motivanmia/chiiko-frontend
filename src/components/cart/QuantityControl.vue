@@ -77,7 +77,7 @@
     }
 
     &__input {
-      width: px(20);
+      width: 100%;
       padding: 0;
       border: unset;
       text-align: center;

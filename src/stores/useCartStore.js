@@ -1,5 +1,7 @@
 import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
+import { patchCart, deleteCart, deleteCarts } from '@/api/fetch';
+import Swal from 'sweetalert2';
 
 // 表單預設值函式，避免重複
 function getDefaultPaymentForm() {
@@ -33,53 +35,13 @@ function getDefaultRecipientForm() {
 
 export const useCartStore = defineStore('cart', () => {
   // 購物車商品
-  const products = ref([
-    {
-      id: 1,
-      name: '不鏽鋼防夾刀',
-      price: 200,
-      quantity: 1,
-      image: new URL('@/assets/image/footer/01.png', import.meta.url).href,
-    },
-    {
-      id: 2,
-      name: '魚鱗刮刀',
-      price: 1350,
-      quantity: 1,
-      image: new URL('@/assets/image/footer/01.png', import.meta.url).href,
-    },
-    {
-      id: 3,
-      name: '日式長麵條板',
-      price: 1150,
-      quantity: 1,
-      image: new URL('@/assets/image/footer/01.png', import.meta.url).href,
-    },
-  ]);
+  const products = ref([]);
 
   // 付款表單
   const paymentForm = ref(getDefaultPaymentForm());
 
-  // 付款錯誤提示
-  const creditCartErrors = ref({
-    cardNumber: '',
-    expMonth: '',
-    cvv: '',
-    cardHolder: '',
-  });
-
   // 收貨人表單
   const recipientForm = ref(getDefaultRecipientForm());
-
-  // 新增收件人錯誤狀態
-  const recipientErrors = ref({
-    recipientName: '',
-    recipientPhone: '',
-    recipientCity: '',
-    recipientDistrict: '',
-    recipientPostal: '',
-    recipientAddress: '',
-  });
 
   // 收件人同購買人
   const sameAsRecipient = ref(false);
@@ -111,7 +73,7 @@ export const useCartStore = defineStore('cart', () => {
   // 小計
   const subtotal = computed(() => {
     return products.value.reduce((sum, product) => {
-      return sum + product.price * product.quantity;
+      return sum + product.unit_price * product.quantity;
     }, 0);
   });
 
@@ -154,26 +116,94 @@ export const useCartStore = defineStore('cart', () => {
   });
 
   // 增加商品數量
-  const increaseQuantity = (productId) => {
-    const product = products.value.find((p) => p.id === productId);
-    if (product) {
-      product.quantity++;
+  const increaseQuantity = async (productId) => {
+    try {
+      const product = products.value.find((p) => p.product_id === productId);
+      if (!product) return;
+
+      const newQuantity = product.quantity + 1;
+      const { data } = await patchCart({
+        product_id: productId,
+        quantity: newQuantity,
+      });
+
+      if (data.status === 'success') {
+        product.quantity = newQuantity;
+      } else {
+        // console.error('更新失敗', data.message);
+        Swal.fire({
+          icon: 'error',
+          title: '更新失敗',
+          text: data.message,
+        });
+      }
+    } catch (error) {
+      // console.error('增加商品數量錯誤:', error.message || error);
+      Swal.fire({
+        icon: 'error',
+        title: '系統錯誤',
+        text: error.response?.data?.message || error.message || '請稍後再試',
+      });
     }
   };
 
   // 減少商品數量
-  const decreaseQuantity = (productId) => {
-    const product = products.value.find((p) => p.id === productId);
-    if (product && product.quantity > 1) {
-      product.quantity--;
+  const decreaseQuantity = async (productId) => {
+    try {
+      const product = products.value.find((p) => p.product_id === productId);
+      if (!product || product.quantity <= 1) return;
+
+      const newQuantity = product.quantity - 1;
+      const { data } = await patchCart({
+        product_id: productId,
+        quantity: newQuantity,
+      });
+
+      if (data.status === 'success') {
+        product.quantity = newQuantity;
+      } else {
+        // console.error('更新失敗', data.message);
+        Swal.fire({
+          icon: 'error',
+          title: '更新失敗',
+          text: data.message,
+        });
+      }
+    } catch (error) {
+      // console.error('減少商品數量錯誤:', error.message || error);
+      Swal.fire({
+        icon: 'error',
+        title: '系統錯誤',
+        text: error.response?.data?.message || error.message || '請稍後再試',
+      });
     }
   };
 
   // 移除商品
-  const removeProduct = (productId) => {
-    products.value = products.value.filter((p) => {
-      return p.id !== productId;
-    });
+  const removeProduct = async (productId) => {
+    try {
+      const { data } = await deleteCart({
+        product_id: productId,
+      });
+
+      if (data.status === 'success') {
+        products.value = products.value.filter((p) => p.product_id !== productId);
+      } else {
+        // console.error('刪除失敗', data.message);
+        Swal.fire({
+          icon: 'error',
+          title: '刪除失敗',
+          text: data.message,
+        });
+      }
+    } catch (error) {
+      // console.error('刪除商品錯誤:', error.message || error);
+      Swal.fire({
+        icon: 'error',
+        title: '系統錯誤',
+        text: error.response?.data?.message || error.message || '請稍後再試',
+      });
+    }
   };
 
   // 新增商品
@@ -403,8 +433,28 @@ export const useCartStore = defineStore('cart', () => {
   };
 
   // 清空購物車
-  const clearCart = () => {
-    products.value = [];
+  const clearCart = async () => {
+    try {
+      const { data } = await deleteCarts();
+
+      if (data.status === 'success') {
+        products.value = [];
+      } else {
+        // console.error('清空失敗', data.message);
+        Swal.fire({
+          icon: 'error',
+          title: '清空失敗',
+          text: data.message,
+        });
+      }
+    } catch (error) {
+      // console.error('清空購物車錯誤:', error.message || error);
+      Swal.fire({
+        icon: 'error',
+        title: '系統錯誤',
+        text: error.response?.data?.message || error.message || '請稍後再試',
+      });
+    }
   };
 
   // 重置表單
@@ -422,8 +472,6 @@ export const useCartStore = defineStore('cart', () => {
     recipientForm,
     sameAsRecipient,
     currentStep,
-    creditCartErrors,
-    recipientErrors,
     errors,
 
     // 計算屬性

@@ -10,7 +10,6 @@
   import SearchBar from '@/components/common/SearchBar.vue';
   import HotSearch from '@/components/common/HotSearch.vue';
 
-  import { soloMeal, popularRecipe } from '@/constants/recipes';
 
   // 初始化路由
   const route = useRoute();
@@ -27,19 +26,19 @@
 
   const allRecipes = ref([]);
 
-  //用axios串接recipe_get.api
+  //用axios串接recipe_get.php
   const fetchRecipe = async () => {
     try {
       const response = await axios.get(apiUrl);
-      const apiResponse = response.data; // 現在 apiResponse 是 { success: true, data: { ... } }
+      const apiResponse = response.data;
 
       if (apiResponse.success) {
         // 檢查後端回傳是否成功
-        const apiData = apiResponse.data; // ✅ 正確地獲取 'data' 屬性
+        const apiData = apiResponse.data; 
         allRecipes.value = {
-          mostFavorite: apiData.mostBookmarked, // ✅ 現在可以正確讀取資料了
-          hot: apiData.seasonalHot, // ✅
-          newest: apiData.latest, // ✅
+          mostFavorite: apiData.mostBookmarked, 
+          hot: apiData.seasonalHot, 
+          newest: apiData.latest, 
         };
         console.log('成功取得後端食譜資料', allRecipes.value);
       } else {

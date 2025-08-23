@@ -1,11 +1,13 @@
 <script setup>
   import Icon from '@/components/common/Icon.vue';
   import { ref, Transition } from 'vue';
+  import { useUserStore } from '@/stores/user';
 
-  const profile = ref({
-    name: '花媽媽烹飪教室',
-    avatar: new URL('@/assets/image/ShareRecipeButton.png', import.meta.url).href,
-  });
+  const userStore = useUserStore();
+
+  // 儲存選中的檔案
+  const avatarFile = ref(null);
+  const fileInput = ref(null);
 
   const menuItem = ref([
     {
@@ -77,8 +79,40 @@
     }
   };
 
-  const changeAvatar = () => {
-    console.log('更換頭像');
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      avatarFile.value = file;
+      // 選好檔案後 呼叫上傳action
+      changeAvatar();
+    }
+  };
+
+  // 新增觸發檔案選擇的函式
+  const triggerFileUpload = () => {
+    // 檢查 ref 是否存在，然後手動觸發 input 的 click 事件
+    if (fileInput.value) {
+      fileInput.value.click();
+    }
+  };
+
+  const changeAvatar = async () => {
+    if (!avatarFile.value) {
+      console.log('請選擇檔案');
+      return;
+    }
+    console.log('開始上傳檔案');
+    // 呼叫pinia action處理上傳
+    const success = await userStore.uploadAvatar(avatarFile.value);
+
+    if (success) {
+      console.log('上傳成功');
+      // 清空檔案輸入欄位 方便下次上傳
+      fileInput.value.value = null;
+      avatarFile.value = null;
+    } else {
+      console.log('上傳失敗');
+    }
   };
 </script>
 
@@ -87,17 +121,24 @@
     <!-- 會員頭像 -->
     <div class="profile__pic">
       <img
-        :src="profile.avatar"
+        :src="userStore.userAvatarUrl"
         alt="會員頭像"
+      />
+      <input
+        type="file"
+        ref="fileInput"
+        @change="handleFileChange"
+        accept="image/*"
+        style="display: none"
       />
       <button
         class="upload__btn"
-        @click="changeAvatar"
+        @click="triggerFileUpload"
       >
         <Icon icon-name="upload" />
       </button>
     </div>
-    <p class="username">{{ profile.name }}</p>
+    <p class="username">{{ userStore.displayName }}</p>
 
     <!-- 導覽列 -->
     <nav class="sidebar__list">
@@ -216,6 +257,10 @@
     background: #fff;
     box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
     @include rwdmax(1200) {
+      padding: 30px 20px;
+      max-width: 250px;
+    }
+    @include rwdmax(1024) {
       max-width: 768px;
     }
     p {
@@ -231,6 +276,9 @@
   }
   .sidebar__list {
     @include rwdmax(1200) {
+      width: 100%;
+    }
+    @include rwdmax(1024) {
       padding-inline: 80px;
       width: 100%;
     }
@@ -323,7 +371,7 @@
       width: 160px;
       border-radius: 2rem;
       text-align: center;
-      @include rwdmax(1200) {
+      @include rwdmax(1024) {
         width: 300px;
       }
       @include rwdmax(768) {

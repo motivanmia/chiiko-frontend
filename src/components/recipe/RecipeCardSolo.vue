@@ -1,5 +1,6 @@
 <script setup>
   import Icon from '../common/Icon.vue';
+  import axios from 'axios';
 
   import { soloMeal } from '@/constants/recipes';
 
@@ -12,12 +13,26 @@
 
     },
   });
+
+  const handleRecipeClick = async (recipe_id)=>{
+    try{
+      await axios.post('http://localhost:8888/front/recipe/update_recipe_views.php',{recipe_id: recipe_id
+      });
+      console.log(`Recipe${recipe_id} view count updated.`);
+    }catch(error){
+      console.error('Failed to update recipe view count.',error);
+    }
+  }
+
+
 </script>
 <template>
   <div class="recipe-card">
     <div
       v-for="recipe in props.recipes"
-      :key="recipe.recipe_id" class="recipe-card__box"
+      :key="recipe.recipe_id" 
+      @click="handleRecipeClick(recipe.recipe_id)"
+      class="recipe-card__box"      
     >
       <div class="recipe-card__pic">
         <img

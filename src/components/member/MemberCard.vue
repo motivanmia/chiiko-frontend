@@ -32,6 +32,14 @@
       default: '已收藏',
     },
   });
+
+  const emit = defineEmits(['delete-click']);
+
+  const handleDelete = ()=>{
+    if(confirm('確定要刪除這筆收藏?')){
+      emit('delete-click');
+    }
+  };
 </script>
 
 <template>
@@ -52,6 +60,7 @@
             'member-card__icon',
             props.iconName === 'mark' ? 'mark-icon' : 'heart-icon', // 動態 class
           ]"
+          @click.stop="handleDelete"
         />
         <p>{{ props.iconDescription }}</p>
       </div>

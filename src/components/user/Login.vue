@@ -2,13 +2,12 @@
   import InputField from '@/components/user/InputField.vue';
   import Icon from '@/components/common/Icon.vue';
   import { ref } from 'vue';
-  import axios from 'axios';
   import { useAuthStore } from '@/stores/auth';
   import { useRouter } from 'vue-router';
+  import { login } from '@/api/fetch';
 
   const authStore = useAuthStore();
-  const apiBase = import.meta.env.VITE_API_BASE;
-  const emit = defineEmits(['close', 'login-success']);
+  const emit = defineEmits(['close', 'login-success', 'switch-to-signin', 'switch-to-forgetpsw']);
 
   // 假帳號密碼
   // const FAKE_ACCOUNT = ref('');
@@ -24,7 +23,7 @@
   // 控制 toast 顯示
   // const showSuccess = ref(false);
 
-  const login = async () => {
+  const handleLogin = async () => {
     formError.value = '';
 
     const userData = {
@@ -32,20 +31,17 @@
       password: password.value,
     };
 
-    // 你的後端 login API 網址
-    const API_URL = `${apiBase}/users/login.php`;
-
     try {
-      const response = await axios.post(API_URL, userData);
+      const response = await login(userData);
 
       // 成功回應 (後端狀態碼 200)
       if (response.data.user) {
         // alert(response.data.message); // 顯示成功訊息
         // emit('login-success');
         // emit('close'); // 關閉登入視窗
-
         // 更新 Pinia Store 的登入狀態
         authStore.loginSuccess(response.data.user);
+        await authStore.fetchUserInfo();
       } else {
         // 登入失敗 (後端回傳失敗訊息)
         formError.value = response.data.message || '登入失敗，請檢查帳號密碼';
@@ -76,7 +72,7 @@
         />
       </div>
       <h1>會員登入</h1>
-      <form @submit.prevent="login">
+      <form @submit.prevent="handleLogin">
         <InputField
           v-model="account"
           label="電子信箱"

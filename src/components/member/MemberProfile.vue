@@ -1,9 +1,15 @@
 <script setup>
   import Icon from '@/components/common/Icon.vue';
-  import { ref, reactive, nextTick } from 'vue';
+  import { ref, reactive, nextTick, onMounted, watch } from 'vue';
   import CancelButton from '@/components/button/CancelButton.vue';
   import ConfirmButton from '@/components/button/ConfirmButton.vue';
   import Swal from 'sweetalert2';
+  import twZipcodes from '@/assets/taiwan_districts.json';
+  import { useUserStore } from '@/stores/user';
+  import { patchProfile } from '@/api/fetch';
+
+  const userStore = useUserStore();
+  const isLoading = ref(true);
 
   // 是否在編輯模式
   const isEdit = ref(false);
@@ -13,16 +19,123 @@
 
   // 表單資料
   const userInfo = reactive({
-    name: '張小花',
-    nickname: '花媽媽烹飪教室',
-    phone: '0912-345-678',
-    birthdate: '1981-01-01',
-    email: 'flower@gmail.com',
-    address: '320 桃園市中壢區復興路46號9樓',
+    name: '',
+    nickname: '',
+    phone: '',
+    account: '',
+    address: '',
   });
+
+  // 電話自動加上-符號(0912-345-678)
+  const formatPhone = () => {
+    if (!userInfo.phone) {
+      return;
+    }
+    let value = userInfo.phone;
+
+    // 移除非數字字符
+    value = value.replace(/[^0-9]/g, '');
+    // 最多10個數字
+    value = value.substring(0, 10);
+
+    // 在第四跟第七個數字後加入-符號
+    let formatValue = '';
+    if (value.length > 4 && value.length <= 7) {
+      formatValue = `${value.substring(0, 4)}-${value.substring(4)}`;
+    } else if (value.length > 7) {
+      formatValue = `${value.substring(0, 4)}-${value.substring(4, 7)}-${value.substring(7)}`;
+    } else {
+      formatValue = value;
+    }
+
+    //更新到userInfo.phont
+    userInfo.phone = formatValue;
+  };
+
+  // 將 Pinia store 的資料同步到本地 reactive 物件
+  const syncDataFromStore = () => {
+    if (userStore.info) {
+      userInfo.name = userStore.info.name || '';
+      userInfo.nickname = userStore.info.nickname || '';
+      userInfo.phone = userStore.info.phone || '';
+      userInfo.account = userStore.info.account || '';
+      userInfo.address = userStore.info.address || '';
+      formatPhone(); // 同步後格式化電話
+    }
+  };
 
   // 儲存編輯前的原始資料
   let originalUserInfo = {};
+
+  // 獲取資料
+  onMounted(async () => {
+    isLoading.value = true;
+
+    // 呼叫 Pinia action 來獲取使用者資料
+    const success = await userStore.fetchUserInfo();
+
+    // 如果獲取成功，則將 store 的資料同步到本地 userInfo
+    if (success) {
+      syncDataFromStore();
+    } else {
+      // 處理獲取失敗的情況
+      Swal.fire({
+        icon: 'error',
+        title: '資料載入失敗',
+        text: '無法取得您的會員資料，請重新登入或稍後再試。',
+      });
+    }
+    isLoading.value = false;
+  });
+
+  // 輸入地址帶入郵遞區號
+  watch(
+    () => userInfo.address,
+    (newAddress) => {
+      // 在編輯模式下作用
+      if (!isEdit.value) return;
+
+      // 移除地址開頭的舊郵遞區號
+      const addressWithoutZip = newAddress.replace(/^\d{3}\s*/, '');
+
+      let foundZip = '';
+
+      // 將'台'字轉換為'臺'
+      const normalizedAddress = addressWithoutZip.replace(/台/g, '臺');
+
+      // 找所有縣市區域
+      for (const city of twZipcodes) {
+        if (!city.districts) continue;
+        for (const district of city.districts) {
+          // 組合縣市區域名稱
+          const fullDistrictName = city.name + district.name;
+
+          // 檢查去掉郵遞區號的地址是否以此縣市區域開頭 找到符合的就跳出內層迴圈
+          if (normalizedAddress.startsWith(fullDistrictName)) {
+            foundZip = district.zip;
+            break;
+          }
+        }
+        // 如果已經在內層迴圈找到就跳出外層迴圈
+        if (foundZip) {
+          break;
+        }
+      }
+
+      // 如果找到對應的郵遞區號就更新地址
+      if (foundZip) {
+        const newAddressZip = `${foundZip} ${addressWithoutZip}`;
+
+        // 只有真的改變地址時才更新 避免無限迴圈
+        if (userInfo.address !== newAddressZip) {
+          userInfo.address = newAddressZip;
+        }
+      }
+    },
+    {
+      deep: true,
+    },
+  );
 
   // 切換編輯模式
   const enterEditMode = async () => {
@@ -40,14 +153,75 @@
   };
 
   // 儲存變更
-  const saveChange = () => {
-    isEdit.value = false;
-    Swal.fire({
-      icon: 'success',
-      title: '修改成功',
-    });
-    // 清空備份資料
-    originalUserInfo = {};
+  const saveChange = async () => {
+    // 建立一個物件 只包含有變更的資料
+    const updatedFields = {};
+
+    // 檢查每個欄位是否有變動
+    for (const key in userInfo) {
+      if (userInfo[key] !== originalUserInfo[key]) {
+        updatedFields[key] = userInfo[key];
+      }
+    }
+
+    // 如果沒有任何資料變動
+    if (Object.keys(updatedFields).length === 0) {
+      Swal.fire({
+        icon: 'info',
+        title: '沒有任何變更',
+        text: '您沒有修改任何資料。',
+      });
+      // 取消編輯模式
+      isEdit.value = false;
+      originalUserInfo = {};
+      return;
+    }
+
+    // 檢查必填欄位
+    if ('name' in updatedFields && updatedFields.name.trim() === '') {
+      Swal.fire({
+        icon: 'error',
+        title: '儲存失敗',
+        text: '姓名欄位不能為空。',
+      });
+      return;
+    }
+
+    // 移除電話號碼的-字號 確保傳送給後端的是純數字
+    if ('phone' in updatedFields) {
+      updatedFields.phone = updatedFields.phone.replace(/[^0-9]/g, '');
+    }
+
+    try {
+      // 呼叫api並傳送更新後的資料
+      const response = await patchProfile(updatedFields);
+
+      if (response.data.status === 'success') {
+        Swal.fire({
+          icon: 'success',
+          title: '修改成功',
+          text: response.data.message,
+        });
+        // 呼叫 Pinia store 獲得最新資料並同步到本地狀態
+        await userStore.fetchUserInfo();
+        syncDataFromStore();
+        isEdit.value = false;
+        originalUserInfo = {};
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '修改失敗',
+          text: response.data.message,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '儲存失敗',
+        text: '網路或伺服器錯誤，請稍後再試。',
+      });
+      console.error('API 呼叫失敗:', error);
+    }
   };
 
   // 取消編輯
@@ -93,41 +267,31 @@
           />
         </div>
         <div class="form__group">
-          <label for="nickname">暱稱</label>
-          <input
-            type="text"
-            id="nickname"
-            v-model="userInfo.nickname"
-            :readonly="!isEdit"
-          />
-        </div>
-      </div>
-      <div class="form__wrap">
-        <div class="form__group">
           <label for="phone">手機</label>
           <input
             type="tel"
             id="phone"
             v-model="userInfo.phone"
+            @input="formatPhone"
             :readonly="!isEdit"
-          />
-        </div>
-        <div class="form__group">
-          <label for="birthdate">生日</label>
-          <input
-            type="text"
-            id="birthdate"
-            v-model="userInfo.birthdate"
-            :readonly="isEdit"
           />
         </div>
       </div>
       <div class="form__group">
-        <label for="email">電子信箱</label>
+        <label for="nickname">暱稱</label>
+        <input
+          type="text"
+          id="nickname"
+          v-model="userInfo.nickname"
+          :readonly="!isEdit"
+        />
+      </div>
+      <div class="form__group">
+        <label for="account">電子信箱</label>
         <input
           type="email"
-          id="email"
-          v-model="userInfo.email"
+          id="account"
+          v-model="userInfo.account"
           :readonly="isEdit"
         />
       </div>

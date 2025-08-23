@@ -36,10 +36,19 @@ async function checkAndSetAuthState() {
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(to, from, savedPosition) {
-    return {
-      top: 0,
-      behavior: 'smooth',
-    };
+    if (savedPosition) {
+      return savedPosition;
+    }
+
+    // query 有變不滾動
+    const samePath = to.path === from.path;
+    const queryChanged = samePath && JSON.stringify(to.query) !== JSON.stringify(from.query);
+
+    if (queryChanged) {
+      return false;
+    }
+
+    return { left: 0, top: 0, behavior: 'smooth' };
   },
   routes: [
     {
