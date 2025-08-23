@@ -6,6 +6,12 @@
   import ForgetPswModal from '@/components/user/ForgetPsw.vue';
   import { useAuthStore } from '@/stores/auth';
   import { useRouter, useRoute } from 'vue-router';
+  import { useNotificationStore } from '@/stores/notification';
+
+  const notifyStore = useNotificationStore();
+  onMounted(() => {
+    notifyStore.loadNotifications();
+  });
 
   const authStore = useAuthStore();
   const router = useRouter();
@@ -296,6 +302,12 @@
           class="actions__member"
           @mouseleave="handleMouseLeave()"
         >
+          <div
+            v-if="notifyStore.unreadCount > 0"
+            class="actions__member--unread"
+          >
+            {{ notifyStore.unreadCount }}
+          </div>
           <span class="actions__item">
             <Icon
               icon-name="member"
@@ -869,6 +881,20 @@
     .actions__member {
       position: relative;
       padding: 50px 20px;
+      &--unread {
+        color: color(text, light);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        border-radius: 50%;
+        right: 0;
+        top: 1;
+        margin-left: auto;
+        width: 20px;
+        height: 20px;
+        background-color: color(button, main);
+      }
     }
     .actions__item {
       display: block;

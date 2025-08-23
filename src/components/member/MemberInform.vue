@@ -1,59 +1,44 @@
 <script setup>
-  import Icon from '@/components/common/Icon.vue';
-  import { ref, reactive, nextTick } from 'vue';
-  import CancelButton from '@/components/button/CancelButton.vue';
-  import ConfirmButton from '@/components/button/ConfirmButton.vue';
-  import Swal from 'sweetalert2';
+  import { onMounted } from 'vue';
+  import { useNotificationStore } from '@/stores/notification';
+  import { useRouter } from 'vue-router';
 
-  const Inform = [
-    {
-      id: 1,
-      content: '您有一則新留言',
-      source: '王大餅：這個食譜太棒了！我照著做出來的味道超好！',
-      isRead: false,
-    },
-    {
-      id: 2,
-      content: '你的食譜已審核通過囉',
-      source: '麻婆豆腐',
-      isRead: false,
-    },
-    {
-      id: 3,
-      content: '您訂購的商品已出貨',
-      source: '訂單編號 #12345',
-      isRead: false,
-    },
-    {
-      id: 4,
-      content: '您有一則新留言',
-      source: '王大餅：這個食譜太棒了！我照著做出來的味道超好！',
-      isRead: true,
-    },
-    {
-      id: 5,
-      content: '你的食譜已審核通過囉',
-      source: '麻婆豆腐',
-      isRead: true,
-    },
-    {
-      id: 6,
-      content: '您訂購的商品已出貨',
-      source: '訂單編號 #12345',
-      isRead: true,
-    },
-  ];
+  const notifyStore = useNotificationStore();
+  const router = useRouter();
+
+  onMounted(() => {
+    notifyStore.loadNotifications();
+  });
+
+  function handleClick(item) {
+    if (item.type === 20 || item.type === 21 || item.type === 22) {
+      // 訂單相關通知
+      router.push({ name: 'order-detail', params: { id: item.order_id } });
+    } else if (item.type === 30 && item.recipe_id) {
+      //  食譜留言通知
+      router.push({ name: 'recipe-detail', params: { id: item.recipe_id } });
+    } else if ((item.type === 10 || item.type === 11) && item.recipe_id) {
+      //  食譜上架/審核通知
+      router.push({ name: 'recipe-detail', params: { id: item.recipe_id } });
+    } else {
+      console.log('暫無對應頁面，通知內容：', item);
+    }
+
+    notifyStore.markRead(item.notification_id);
+  }
 </script>
 
 <template>
   <div class="Inform">
     <div
       class="Inform__card"
-      v-for="item in Inform"
-      :class="{ 'Inform__card--unread': !item.isRead }"
+      v-for="item in notifyStore.list"
+      :key="item.notification_id"
+      :class="{ 'Inform__card--unread': item.status === '0' }"
+      @click="handleClick(item)"
     >
-      <h1 class="Inform__content">{{ item.content }}</h1>
-      <p class="Inform__source">{{ item.source }}</p>
+      <h1 class="Inform__content">{{ item.content_title }}</h1>
+      <p class="Inform__source">{{ item.content_text }}</p>
     </div>
   </div>
 </template>
@@ -66,6 +51,7 @@
     box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
     padding: 20px 45px;
     position: relative;
+    cursor: pointer;
     @include fontSet(
       $font: $basic-font,
       $fw: normal,

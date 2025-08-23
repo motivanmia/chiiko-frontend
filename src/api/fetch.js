@@ -56,6 +56,13 @@ export function patchPassword(data) {
   });
 }
 
+export function getNotification() {
+  return request({
+    url: `${url.member}/get_notification.php`,
+    method: 'get',
+  });
+}
+
 export function getCarts() {
   return request({
     url: `${url.cart}/get_carts.php`,
