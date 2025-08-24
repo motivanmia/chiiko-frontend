@@ -70,7 +70,7 @@
     </div>
 
     <!-- 手機版選單 -->
-    <div class="filter__select">
+    <!-- <div class="filter__select">
       <select v-model="filter">
         <option
           v-for="option in filterOptions"
@@ -80,7 +80,7 @@
           {{ option }}
         </option>
       </select>
-    </div>
+    </div> -->
 
     <div class="orders">
       <router-link
@@ -105,7 +105,7 @@
             物流單號
             <p>{{ order.tracking_number }}</p>
             <button
-              @click="copyTrackingNumber(order.tracking_number)"
+              @click.prevent.stop="copyTrackingNumber(order.tracking_number)"
               class="copy__btn"
             >
               <Icon
