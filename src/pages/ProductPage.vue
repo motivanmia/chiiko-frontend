@@ -1,7 +1,12 @@
 <script setup>
-  // import Icon from '@/components/common/Icon.vue';
+  import { ref, onMounted, watch, computed } from 'vue';
+  import { useRoute } from 'vue-router';
   import Banner from '@/components/recipe/Banner.vue';
   import SearchBar from '@/components/common/SearchBar.vue';
+  import SectionTitle from '@/components/SectionTitle.vue';
+  import ProductCards from '@/components/product/ProductCards.vue';
+  import Category from '@/components/product/Category.vue';
+  import { getProduct } from '@/api/fetch';
 
   const props = defineProps({
     title: {
@@ -9,8 +14,104 @@
       default: '/好物推薦\\',
     },
   });
-  import { ref } from 'vue';
+  const route = useRoute();
+
   const searchQuery = ref('');
+
+  // 不同區塊的商品資料
+  const under100Products = ref([]);
+  const allProducts = ref([]);
+  const categoryProducts = ref([]);
+
+  const getCategoryTitle = (categoryId) => {
+    const titles = {
+      1: '鍋具/鍋鏟',
+      2: '烤箱/氣炸鍋',
+      3: '刀具/砧板',
+      4: '廚房小物',
+    };
+    return titles[categoryId];
+  };
+
+  // 動態顯示標題
+  const dynamicTitle = computed(() => {
+    if (route.query.product_category_id) {
+      return `${getCategoryTitle(route.query.product_category_id)}`;
+    }
+    // 這裡可以選擇顯示預設標題
+    // return '/ 嚴選廚具好評推薦 \\';
+  });
+
+  // 百元商品推薦
+  const fetchUnder100Products = async () => {
+    try {
+      const response = await getProduct({ type: 'under100' });
+      // 檢查api是否成功以及資料是否存在
+      if (response.data.data && Array.isArray(response.data.data)) {
+        under100Products.value = response.data.data;
+      }
+    } catch (error) {
+      console.error('獲取百元以下商品失敗', error);
+    }
+  };
+
+  // 全部推薦商品
+  const fetchAllProducts = async () => {
+    try {
+      const response = await getProduct({ type: 'all_random' });
+      // 檢查api是否成功以及資料是否存在
+      if (response.data.data && Array.isArray(response.data.data)) {
+        allProducts.value = response.data.data;
+      }
+    } catch (error) {
+      console.error('獲取全部推薦商品失敗:', error);
+    }
+  };
+
+  // 分類商品
+  const fetchCategoryProducts = async (categoryId) => {
+    try {
+      const params = categoryId ? { product_category_id: categoryId } : {};
+
+      const response = await getProduct(params);
+      // 檢查api是否成功以及資料是否存在
+      if (response.data.data && Array.isArray(response.data.data)) {
+        categoryProducts.value = response.data.data;
+      }
+    } catch (error) {
+      console.error('獲取分類商品失敗:', error);
+    }
+  };
+
+  // 組件載入時 先獲取推薦商品
+  onMounted(() => {
+    // 檢查是否有分類參數，如果沒有，才載入推薦商品
+    if (!route.query.product_category_id) {
+      fetchUnder100Products();
+      fetchAllProducts();
+    }
+  });
+
+  // 監聽路由變化 當分類id改變時 更新分類商品列表
+  watch(
+    () => route.query.product_category_id,
+    (newCategoryId) => {
+      if (newCategoryId) {
+        // 路由有id時才呼叫api
+        fetchCategoryProducts(newCategoryId);
+        // 清除推薦商品列表 讓頁面只顯示分類商品
+        under100Products.value = [];
+        allProducts.value = [];
+      } else {
+        // 沒有參數 呼叫推薦商品api
+        fetchUnder100Products();
+        fetchAllProducts();
+        // 同時，清除分類商品的列表
+        categoryProducts.value = [];
+      }
+    },
+    { immediate: true },
+  );
 </script>
 
 <template>
@@ -18,416 +119,87 @@
     title="好物精選"
     img="/src/assets/image/Product/banner.png"
   />
-  <!-- <icon
-    icon-name="product"
-    class="search-icon"
-  /> -->
-
-  <div class="card">
-    <div class="card">
-      <div class="card__title">
-        <img
-          class="normal"
-          src="/src/assets/image/Product/pot.png"
-        />
-        <img
-          class="hover"
-          src="/src/assets/image/Product/pot1.png"
-        />
-        <div class="card__title-txt">鍋具/鍋鏟</div>
-      </div>
-
-      <div class="card__title">
-        <img
-          class="normal"
-          src="/src/assets/image/Product/oven.png"
-        />
-        <img
-          class="hover"
-          src="/src/assets/image/Product/oven1.png"
-        />
-        <div class="card__title-txt">烤箱/氣炸鍋</div>
-      </div>
-
-      <div class="card__title">
-        <img
-          class="normal"
-          src="/src/assets/image/Product/knife.png"
-        />
-        <img
-          class="hover"
-          src="/src/assets/image/Product/knife1.png"
-        />
-        <div class="card__title-txt">刀具/砧板</div>
-      </div>
-
-      <div class="card__title">
-        <img
-          class="normal"
-          src="/src/assets/image/Product/life.png"
-        />
-        <img
-          class="hover"
-          src="/src/assets/image/Product/life1.png"
-        />
-        <div class="card__title-txt">廚房小物</div>
-      </div>
+  <Category />
+  <div class="search-container">
+    <SearchBar placeholder="搜尋好物 例：抹布" />
+  </div>
+  <template v-if="!route.query.product_category_id">
+    <SectionTitle
+      :title="`/ 高回購率百元好物 \\`"
+      class="section"
+    />
+    <div class="product-card">
+      <ProductCards
+        v-for="product in under100Products"
+        :key="product.product_id"
+        :product="product"
+      />
     </div>
-  </div>
-  <div class="SearchBar"><SearchBar placeholder="搜尋好物 例：抹布"></SearchBar></div>
 
-  <div class="section-title">
-    <samp>/高回購率百元好物\</samp>
-  </div>
-  <div class="product-list">
-    <RouterLink
-      to="/product-detail"
-      class="product-item"
-    >
-      <img src="/src/assets/image/Product/product-knife.png" />
-      <div class="product-name">不鏽鋼奶油刀</div>
-      <div class="product-desc">適用於抹醬、攪拌、刮取</div>
-      <div class="product-price">$29</div>
-    </RouterLink>
-
-    <RouterLink
-      to="/product-detail"
-      class="product-item"
-    >
-      <img src="/src/assets/image/Product/product-fish.png" />
-      <div class="product-name">魚鱗刮刀</div>
-      <div class="product-desc">用於刮除魚鱗</div>
-      <div class="product-price">$29</div>
-    </RouterLink>
-
-    <RouterLink
-      to="/product-detail"
-      class="product-item"
-    >
-      <img src="/src/assets/image/Product/product-chopsticks.png" />
-      <div class="product-name">日式和風筷架</div>
-      <div class="product-desc">好筷架 不用嗎</div>
-      <div class="product-price">$29</div>
-    </RouterLink>
-
-    <RouterLink
-      to="/product-detail"
-      class="product-item"
-    >
-      <img src="/src/assets/image/Product/product-pot.png" />
-      <div class="product-name">韓式雪平鍋 18cm</div>
-      <div class="product-desc">可用電磁爐、熱牛奶、煮醬汁、煮粥</div>
-      <div class="product-price">$29</div>
-    </RouterLink>
-
-    <RouterLink
-      to="/product-detail"
-      class="product-item"
-    >
-      <img src="/src/assets/image/Product/product-grind.png" />
-      <div class="product-name">刨絲器 / 磨泥器</div>
-      <div class="product-desc">用於刨削食材成絲或碎屑</div>
-      <div class="product-price">$29</div>
-    </RouterLink>
-
-    <RouterLink
-      to="/product-detail"
-      class="product-item"
-    >
-      <img src="/src/assets/image/Product/product-spoon.png" />
-      <div class="product-name">量匙</div>
-      <div class="product-desc">用於精準測量少量食材容量</div>
-      <div class="product-price">$29</div>
-    </RouterLink>
-  </div>
-
-  <div class="section-title">
-    <samp>/嚴選廚具好評推薦\</samp>
-  </div>
-
-  <div class="product-list">
-    <RouterLink
-      to="/product-detail"
-      class="product-item"
-    >
-      <img src="/src/assets/image/Product/product-spatula.png" />
-      <div class="product-name">不鏽鋼鍋鏟</div>
-      <div class="product-desc">用於翻炒食物、盛裝菜餚</div>
-      <div class="product-price">$29</div>
-    </RouterLink>
-
-    <RouterLink
-      to="/product-detail"
-      class="product-item"
-    >
-      <img src="/src/assets/image/Product/products-beater.png" />
-      <div class="product-name">不鏽鋼打蛋器</div>
-      <div class="product-desc">用於攪拌雞蛋、麵糊、醬汁或打發奶油</div>
-      <div class="product-price">$29</div>
-    </RouterLink>
-
-    <RouterLink
-      to="/product-detail"
-      class="product-item"
-    >
-      <img src="/src/assets/image/Product/product-spoon2.png" />
-      <div class="product-name">湯勺</div>
-      <div class="product-desc">用於盛裝湯品、粥類、醬汁或其他液體食物</div>
-      <div class="product-price">$29</div>
-    </RouterLink>
-
-    <RouterLink
-      to="/product-detail"
-      class="product-item"
-    >
-      <img src="/src/assets/image/Product/products-stick.png" />
-      <div class="product-name">擀麵棍</div>
-      <div class="product-desc">用於將麵團、派皮等擀平</div>
-      <div class="product-price">$29</div>
-    </RouterLink>
-
-    <RouterLink
-      to="/product-detail"
-      class="product-item"
-    >
-      <img src="/src/assets/image/Product/product-clip.png" />
-      <div class="product-name">不鏽鋼夾子</div>
-      <div class="product-desc">用於夾取、翻動或移動食物</div>
-      <div class="product-price">$29</div>
-    </RouterLink>
-
-    <RouterLink
-      to="/product-detail"
-      class="product-item"
-    >
-      <img src="/src/assets/image/Product/product-peel.png" />
-      <div class="product-name">削皮器</div>
-      <div class="product-desc">用於去除水果和蔬菜的表皮</div>
-      <div class="product-price">$29</div>
-    </RouterLink>
-  </div>
+    <SectionTitle
+      :title="`/ 嚴選廚具好評推薦 \\`"
+      class="section"
+    />
+    <div class="product-card">
+      <ProductCards
+        v-for="product in allProducts"
+        :key="product.product_id"
+        :product="product"
+      />
+    </div>
+  </template>
+  <template v-else>
+    <SectionTitle
+      :title="dynamicTitle"
+      class="section"
+    />
+    <div class="product-card">
+      <ProductCards
+        v-for="product in categoryProducts"
+        :key="product.product_id"
+        :product="product"
+      />
+    </div>
+  </template>
 </template>
 
 <style lang="scss" scoped>
-  .product-item img {
-    transition: transform 0.3s ease;
-  }
-  .product-item img:hover {
-    transform: translateY(-10px);
-  }
-  .SearchBar {
+  .search-container {
+    width: 100%;
     margin-top: 80px;
-    margin-bottom: 80px;
+    @include rwdmax(768) {
+      margin-top: 30px;
+    }
   }
-  .card {
-    width: 1200px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin: 0 auto;
-    cursor: pointer;
-  }
-  .card__title .hover {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    transition: opacity 0.4s ease; // 加上過渡
-  }
-  .card__title {
-    top: 30px;
-    position: relative;
-    width: 100%;
-    border-radius: 15px;
-    overflow: hidden;
-    text-align: center;
-    letter-spacing: 0.2em;
+  .search-container > * {
+    width: 100%; // 讓子元素的寬度都佔父容器的 60%
+    max-width: 800px; // 避免在寬螢幕下過長
+    box-sizing: border-box;
   }
 
-  .card__title {
-    position: relative;
-    overflow: hidden;
-    border-radius: 15px;
-    text-align: center;
-
-    img {
-      width: 100%;
-      display: block;
-      transition: opacity 1s ease;
-    }
-
-    .hover {
-      position: absolute;
-      top: 0;
-      left: 0;
-      opacity: 0;
-    }
-
-    &:hover .hover {
-      opacity: 1;
-    }
-
-    &:hover .normal {
-      opacity: 0;
-    }
-
-    .card__title-txt {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: white;
-      font-weight: bold;
-      font-size: 24px;
-      text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
-      z-index: 1;
-      pointer-events: none;
+  .section {
+    margin: px(150) auto px(100);
+    @include rwdmax(768) {
+      margin: px(80) auto px(50);
     }
   }
 
-  .card__title-txt {
-    position: relative;
-    width: 100%;
-    top: -35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-weight: bold;
-    font-size: 24px;
-    text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
-    z-index: 1;
-    cursor: pointer;
-  }
-
-  .card__title img {
-    position: relative;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    border-radius: 10px;
-    z-index: 0;
-    transition: opacity 0.4s ease;
-  }
-
-  .section-title {
+  .product-card {
     display: flex;
-    top: 100%;
+    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-    font-size: 40px;
-    font-weight: bold;
-    color: color(text, dark);
-    letter-spacing: 0.3em;
-    text-shadow: 0 4px 5px rgba(59, 55, 57, 0.4);
-    margin-bottom: 80px;
-  }
-
-  .product-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 70px 24px;
-    width: 1200px;
-    margin: 80px auto 80px;
-    justify-content: center;
-  }
-
-  .product-item {
-    text-align: left;
-    font-family: Arial, sans-serif;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .product-item img {
+    margin: 0 auto;
+    gap: 70px;
+    max-width: 1200px;
     width: 100%;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .product-name {
-    margin-top: 28px;
-    font-size: 30px;
-    color: color(text, dark);
-    font-weight: bold;
-    letter-spacing: 0.2em;
-  }
-
-  .product-desc {
-    font-size: 16px;
-    color: color(text, base);
-    margin-top: 4px;
-    letter-spacing: 0.2em;
-    margin-top: 10px;
-  }
-
-  .product-price {
-    letter-spacing: 0.2em;
-    margin-top: 10px;
-    font-size: 30px;
-    font-weight: bold;
-    color: color(text, dark);
-    margin-top: 8px;
-  }
-
-  @media (max-width: 880px) {
-    .section-title {
-      font-size: 24px;
+    @include rwdmax(1200) {
+      gap: 50px 30px;
     }
-    .product-name {
-      font-size: 18px;
+    @include rwdmax(1024) {
+      gap: 40px 20px;
     }
-    .product-desc {
-      font-size: 14px;
-    }
-    .product-price {
-      font-size: 18px;
-    }
-
-    .card {
-      grid-template-columns: repeat(2, 1fr);
-      padding: 0 8px;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .card__title {
-      border-radius: 12px;
-    }
-
-    .card__title-txt {
-      font-size: 150%;
-      top: -40%;
-      letter-spacing: 0.5em;
-    }
-
-    .card__title img {
-      border-radius: 12px;
-    }
-
-    .product-list {
-      grid-template-columns: repeat(2, 1fr);
-      padding: 0 12px 24px;
-      gap: 18px;
-    }
-
-    .product-item img {
-      border-radius: 8px;
-    }
-
-    .product-name {
-      font-size: 20px;
-      margin-top: 6px;
-    }
-
-    .product-desc {
-      font-size: 20px;
-      margin-top: 2px;
-    }
-
-    .product-price {
-      font-size: 20px;
-      margin-top: 4px;
+    @include rwdmax(768) {
+      gap: 30px 10px;
     }
   }
 </style>
