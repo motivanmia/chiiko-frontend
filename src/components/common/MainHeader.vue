@@ -6,6 +6,12 @@
   import ForgetPswModal from '@/components/user/ForgetPsw.vue';
   import { useAuthStore } from '@/stores/auth';
   import { useRouter, useRoute } from 'vue-router';
+  import { useNotificationStore } from '@/stores/notification';
+
+  const notifyStore = useNotificationStore();
+  onMounted(() => {
+    notifyStore.loadNotifications();
+  });
 
   const authStore = useAuthStore();
   const router = useRouter();
@@ -13,20 +19,20 @@
 
   // nav選單項目
   const navLinks = ref([
-    { key: 'recipes', title: '靈感×食譜', path: '/recipe-overview', isOpen: true },
+    { key: 'recipes', title: '靈感×食譜', path: '/recipes', isOpen: true },
     { key: 'school', title: '食材學堂', path: '/school', isOpen: true },
-    { key: 'prodouts', title: '好物精選', isOpen: false, path: '/product' },
+    { key: 'prodouts', title: '好物精選', isOpen: false, path: '/products' },
   ]);
 
   const navItemRecipes = [
-    { title: '一人料理', path: '#' },
-    { title: '家庭聚餐', path: '#' },
-    { title: '浪漫晚餐', path: '#' },
-    { title: '戶外料理', path: '#' },
-    { title: '懶人快煮', path: '#' },
-    { title: '健身/減糖餐', path: '#' },
-    { title: '低預算料理', path: '#' },
-    { title: '慶生/節慶料理', path: '#' },
+    { title: '一人料理', path: '/recipes/一人料理' },
+    { title: '家庭聚餐', path: '/recipes/家庭聚餐' },
+    { title: '浪漫晚餐', path: '/recipes/浪漫晚餐' },
+    { title: '戶外料理', path: '/recipes/戶外料理' },
+    { title: '懶人快煮', path: '/recipes/懶人快煮' },
+    { title: '健身/減糖餐', path: '/recipes/健身%2F減糖餐' },
+    { title: '低預算料理', path: '/recipes/低預算料理' },
+    { title: '慶生/節慶料理', path: '/recipes/慶生%2F節慶料理' },
   ];
 
   const navItemSchool = [
@@ -253,7 +259,7 @@
               :class="{ 'is-active': activeSubMenu === 'recipes' }"
             >
               <div class="submenu__title">
-                <RouterLink to="/recipe-overview">靈感×食譜</RouterLink>
+                <RouterLink to="/recipes">靈感×食譜</RouterLink>
               </div>
               <div class="submenu__content recipes__grid">
                 <RouterLink
@@ -296,6 +302,12 @@
           class="actions__member"
           @mouseleave="handleMouseLeave()"
         >
+          <div
+            v-if="notifyStore.unreadCount > 0"
+            class="actions__member--unread"
+          >
+            {{ notifyStore.unreadCount }}
+          </div>
           <span class="actions__item">
             <Icon
               icon-name="member"
@@ -869,6 +881,20 @@
     .actions__member {
       position: relative;
       padding: 50px 20px;
+      &--unread {
+        color: color(text, light);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        border-radius: 50%;
+        right: 0;
+        top: 1;
+        margin-left: auto;
+        width: 20px;
+        height: 20px;
+        background-color: color(button, main);
+      }
     }
     .actions__item {
       display: block;

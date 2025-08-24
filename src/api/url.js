@@ -7,6 +7,7 @@ const url = {
   order: `${VITE_API_BASE}/order`,
   recipe: `${VITE_API_BASE}/recipe`,
   school: `${VITE_API_BASE}/school`,
+  product: `${VITE_API_BASE}/product`,
 };
 
 export default url;

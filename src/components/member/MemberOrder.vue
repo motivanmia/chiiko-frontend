@@ -9,6 +9,7 @@
   const { loadOrders, changeOrder } = cart;
 
   const filter = ref('所有訂單');
+  const filterOptions = ref(['所有訂單', '待確認', '已出貨', '已完成', '取消/退貨']);
 
   const filteredOrder = computed(() => {
     if (filter.value === '所有訂單') {
@@ -38,7 +39,7 @@
         showToast.value = false;
       }, 3000);
     } catch (error) {
-      console.error('無法複製文字: ', err);
+      console.error('無法複製文字: ', error);
     }
   };
   const showToast = ref(false); // 顯示複製成功提示
@@ -59,35 +60,26 @@
   <div class="order__container">
     <div class="filter__btn">
       <button
-        @click="filter = '所有訂單'"
-        :class="{ active: filter === '所有訂單' }"
+        v-for="option in filterOptions"
+        :key="option"
+        @click="filter = option"
+        :class="{ active: filter === option }"
       >
-        所有訂單
+        {{ option }}
       </button>
-      <button
-        @click="filter = '待確認'"
-        :class="{ active: filter === '待確認' }"
-      >
-        待確認
-      </button>
-      <button
-        @click="filter = '已出貨'"
-        :class="{ active: filter === '已出貨' }"
-      >
-        已出貨
-      </button>
-      <button
-        @click="filter = '已完成'"
-        :class="{ active: filter === '已完成' }"
-      >
-        已完成
-      </button>
-      <button
-        @click="filter = '取消/退貨'"
-        :class="{ active: filter === '取消/退貨' }"
-      >
-        取消/退貨
-      </button>
+    </div>
+
+    <!-- 手機版選單 -->
+    <div class="filter__select">
+      <select v-model="filter">
+        <option
+          v-for="option in filterOptions"
+          :key="option"
+          :value="option"
+        >
+          {{ option }}
+        </option>
+      </select>
     </div>
 
     <div class="orders">
@@ -187,13 +179,6 @@
     box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
     padding: 30px 25px;
     position: relative;
-    @include fontSet(
-      $font: $basic-font,
-      $fw: normal,
-      $size: px(24),
-      $color: color(text, dark),
-      $ls: 1.8px
-    );
     @include rwdmax(768) {
       padding: 20px 10px;
     }
@@ -221,7 +206,11 @@
     display: flex;
     flex-direction: column;
     gap: 30px;
-    padding-top: 60px;
+    padding-top: 50px;
+    @include rwdmax(1200) {
+      padding-top: 30px;
+      gap: 20px;
+    }
     .order__card {
       background: #fff;
       border-radius: 15px;

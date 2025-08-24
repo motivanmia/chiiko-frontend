@@ -70,7 +70,7 @@ const products = computed(() => {
     </Swiper>
     <SeeMoreButton
       id="SeeMoreButton"
-      path="/product"
+      path="/products"
     />
   </section>
 </template>

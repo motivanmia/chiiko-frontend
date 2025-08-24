@@ -56,6 +56,35 @@ export function patchPassword(data) {
   });
 }
 
+export function getNotification() {
+  return request({
+    url: `${url.member}/get_notification.php`,
+    method: 'get',
+  });
+}
+
+export function getRecipeCategory() {
+  return request({
+    url: `${url.recipe}/get_recipe_category.php`,
+    method: 'get',
+  });
+}
+
+export function getProductCategory() {
+  return request({
+    url: `${url.product}/get_product_category.php`,
+    method: 'get',
+  });
+}
+
+export function getProduct(params) {
+  return request({
+    url: `${url.product}/get_product.php`,
+    method: 'get',
+    params: params,
+  });
+}
+
 export function getCarts() {
   return request({
     url: `${url.cart}/get_carts.php`,

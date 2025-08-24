@@ -124,13 +124,18 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/recipe-overview',
-      name: 'recipe-overview',
+      path: '/recipes',
+      name: 'recipes',
       component: () => import('@/pages/RecipeOverview.vue'),
     },
     {
-      path: '/product',
-      name: 'product',
+      path: '/recipes/:category?',
+      name: 'recipes',
+      component: () => import('@/pages/RecipeCategoryPage.vue'),
+    },
+    {
+      path: '/products',
+      name: 'products',
       component: () => import('@/pages/ProductPage.vue'),
     },
     {
@@ -149,16 +154,6 @@ const router = createRouter({
       name: 'order-success',
       component: () => import('@/pages/OrderSuccessPage.vue'),
       meta: { requiresAuth: true },
-    },
-    // {
-    //   path: '/solo',
-    //   name: 'solo',
-    //   component: () => import('@/pages/RecipeSolo.vue'),
-    // },
-    {
-      path: '/recipes/:category?',
-      name: 'recipes',
-      component: () => import('@/pages/RecipeCategoryPage.vue'),
     },
     {
       path: '/search',

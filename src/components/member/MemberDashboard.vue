@@ -49,7 +49,7 @@
     width: 100%;
     padding: 20px 30px;
     @include fontSet($font: $basic-font, $fw: normal, $color: color(text, dark), $ls: 1.8px);
-    @include rwdmax(1200) {
+    @include rwdmax(1024) {
       max-width: 768px;
     }
     @include rwdmax(768) {

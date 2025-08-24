@@ -60,7 +60,7 @@
   }
 
   function goToMoreProducts() {
-    router.push('/product'); // ✅ 點「看更多好物」→ 總覽（瀏覽頁）
+    router.push('/products'); // ✅ 點「看更多好物」→ 總覽（瀏覽頁）
   }
 </script>
 
