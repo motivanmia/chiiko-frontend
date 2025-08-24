@@ -36,7 +36,7 @@
   // 動態顯示標題
   const dynamicTitle = computed(() => {
     if (route.query.product_category_id) {
-      return `${getCategoryTitle(route.query.product_category_id)}`;
+      return `/ ${getCategoryTitle(route.query.product_category_id)} \\`;
     }
     // 這裡可以選擇顯示預設標題
     // return '/ 嚴選廚具好評推薦 \\';
