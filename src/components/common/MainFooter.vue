@@ -12,7 +12,7 @@
       <div class="main-footer__wrapper">
         <div class="main-footer__recipe">
           <RouterLink
-            to="/recipe-overview"
+            to="/recipes"
             class="main-footer__recipe-title"
           >
             靈感×食譜
@@ -20,7 +20,7 @@
           <ul class="main-footer__recipe-list">
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="#"
+                to="/recipes/一人料理"
                 class="main-footer__recipe-link"
               >
                 一人料理
@@ -28,7 +28,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="#"
+                to="/recipes/家庭聚餐"
                 class="main-footer__recipe-link"
               >
                 家庭聚餐
@@ -36,7 +36,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="#"
+                to="/recipes/浪漫晚餐"
                 class="main-footer__recipe-link"
               >
                 浪漫晚餐
@@ -44,7 +44,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="#"
+                to="/recipes/戶外料理"
                 class="main-footer__recipe-link"
               >
                 戶外料理
@@ -52,7 +52,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="#"
+                to="/recipes/健身%2F減糖餐"
                 class="main-footer__recipe-link"
               >
                 健身/減糖餐
@@ -60,7 +60,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="#"
+                to="/recipes/懶人快煮"
                 class="main-footer__recipe-link"
               >
                 懶人快煮
@@ -68,7 +68,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="#"
+                to="/recipes/慶生%2F節慶料理"
                 class="main-footer__recipe-link"
               >
                 慶生/節慶料理
@@ -76,7 +76,7 @@
             </li>
             <li class="main-footer__recipe-item">
               <RouterLink
-                to="#"
+                to="/recipes/低預算料理"
                 class="main-footer__recipe-link"
               >
                 低預算料理
@@ -114,7 +114,7 @@
 
         <div class="main-footer__product">
           <RouterLink
-            to="/product"
+            to="/products"
             class="main-footer__product-title"
           >
             好物精選
@@ -122,7 +122,7 @@
           <ul class="main-footer__product-list">
             <li class="main-footer__product-item">
               <RouterLink
-                to="/product"
+                to="/products?product_category_id=1"
                 class="main-footer__product-link"
               >
                 鍋具/鍋鏟
@@ -130,7 +130,7 @@
             </li>
             <li class="main-footer__product-item">
               <RouterLink
-                to="/product"
+                to="/products?product_category_id=2"
                 class="main-footer__product-link"
               >
                 烤箱/氣炸鍋
@@ -138,7 +138,7 @@
             </li>
             <li class="main-footer__product-item">
               <RouterLink
-                to="/product"
+                to="/products?product_category_id=3"
                 class="main-footer__product-link"
               >
                 刀具/砧板
@@ -146,7 +146,7 @@
             </li>
             <li class="main-footer__product-item">
               <RouterLink
-                to="/product"
+                to="/products?product_category_id=4"
                 class="main-footer__product-link"
               >
                 廚房小物
