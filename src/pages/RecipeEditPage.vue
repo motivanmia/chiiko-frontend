@@ -82,8 +82,6 @@
   const router = useRouter();
   const goBack = () => router.back();
 
-  // ⭐️ 核心修正 1: 將 categories 陣列的定義「提升」到函式外部
-  // 這樣 <template> 和 publishRecipe 函式就都能訪問到它了
   const categories = [
     { value: 'single', label: '一人料理', id: 1 },
     { value: 'family', label: '家庭聚餐', id: 2 },
@@ -109,56 +107,41 @@
   const file = ref(null);
 
   const titleWarning = computed(() => (form.title.length > 15 ? '標題不能超過 15 字喔！' : ''));
-
   const descriptionWarning = computed(() =>
     form.description.length > 40 ? '內文太長囉，麻煩請幫我濃縮在40字以內！' : '',
   );
 
-  const saveDraft = () => alert('草稿已儲存');
-
-  const publishRecipe = async () => {
-    // --- 前端基本驗證 ---
-    const errors = [];
-    if (!form.title.trim()) errors.push('請輸入食譜名稱。');
-    if (!form.description.trim()) errors.push('請輸入簡介。');
-    if (!file.value) errors.push('請上傳一張食譜圖片。');
-    // ... 其他驗證 ...
-
-    if (errors.length > 0) {
-      alert('請修正以下問題：\n\n- ' + errors.join('\n- '));
-      return;
-    }
-
+  // ✅ 核心修改 1：建立一個共用的提交函式
+  // 這個函式負責處理所有 API 請求，並接收一個 `statusCode` 作為參數
+  const submitRecipe = async (statusCode) => {
     try {
-      // ⭐️ 核心修正 2: categories 的定義已經移到外面，所以這裡不需要再定義
-
-      // 根據使用者選擇的 form.category，去陣列中找到完整的物件
-      const selectedCategory = categories.find((cat) => cat.value === form.category);
-
       const apiBase = import.meta.env.VITE_API_BASE;
       let imagePath = '';
 
-      // --- 階段一：上傳【圖片】---
-      const formData = new FormData();
-      formData.append('image', file.value);
-      const imageResponse = await axios.post(`${apiBase}/recipe/upload_image.php`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      imagePath = imageResponse.data.imagePath;
-      if (!imagePath) throw new Error('後端未成功回傳圖片路徑');
+      // --- 階段一：上傳【圖片】(只有在有選擇新檔案時才上傳) ---
+      if (file.value) {
+        const formData = new FormData();
+        formData.append('image', file.value);
+        const imageResponse = await axios.post(`${apiBase}/recipe/upload_image.php`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        imagePath = imageResponse.data.imagePath;
+        if (!imagePath) throw new Error('後端未成功回傳圖片路徑');
+      }
 
       // --- 階段二：發佈【主食譜】資訊 ---
+      const selectedCategory = categories.find((cat) => cat.value === form.category);
       const recipePayload = {
-        user_id: 1,
-        manage_id: null,
-        // 從找到的物件中，安全地取出 id 作為要傳送的值
-        recipe_categary_id: selectedCategory ? selectedCategory.id : null,
+        user_id: 1, // TODO: 應替換為實際登入的使用者 ID
+        manager_id: null, // 前台使用者新增，所以 manager_id 為 null
+        // ✅ 核心修改 4：修正拼寫錯誤 `recipe_category_id`
+        recipe_category_id: selectedCategory ? selectedCategory.id : null,
         name: form.title,
         content: form.description,
         serving: form.servings,
         image: imagePath,
         cooked_time: form.time,
-        status: 0,
+        status: statusCode, // ✅ 使用傳入的狀態碼
         tag: form.tags.map((tag) => `#${tag}`).join(''),
       };
 
@@ -167,27 +150,69 @@
       if (!newRecipeId) throw new Error('後端未回傳 recipe_id');
 
       // --- 階段三 & 四：發佈【食材】與【步驟】 ---
-      const ingredientsPayload = {
-        recipe_id: newRecipeId,
-        ingredients: form.ingredients.filter((item) => item.name && item.amount),
-      };
-      await axios.post(`${apiBase}/recipe/post_ingredients.php`, ingredientsPayload);
+      // 只有在有內容時才發送請求
+      const validIngredients = form.ingredients.filter((item) => item.name && item.amount);
+      if (validIngredients.length > 0) {
+        await axios.post(`${apiBase}/recipe/post_ingredients.php`, {
+          recipe_id: newRecipeId,
+          ingredients: validIngredients,
+        });
+      }
 
-      const stepsPayload = {
-        recipe_id: newRecipeId,
-        steps: form.steps.filter((step) => step),
-      };
-      await axios.post(`${apiBase}/recipe/post_steps.php`, stepsPayload);
+      const validSteps = form.steps.filter((step) => step && step.trim());
+      if (validSteps.length > 0) {
+        await axios.post(`${apiBase}/recipe/post_steps.php`, {
+          recipe_id: newRecipeId,
+          steps: validSteps,
+        });
+      }
 
-      // --- 如果全部成功 ---
-      alert('🎉 您的美味食譜已成功發布！');
+      // --- 根據狀態顯示不同成功訊息 ---
+      if (statusCode === 3) {
+        alert('✅ 草稿已儲存！');
+      } else {
+        alert('🎉 您的美味食譜已成功發布，待管理員審核！');
+      }
       router.push('/');
     } catch (error) {
-      // --- 統一的錯誤處理 ---
       console.error('發布食譜時發生錯誤:', error);
-      const errorMessage = error.response?.data?.error || '發布失敗，請檢查網路連線或稍後再試。';
-      alert(`發布失敗：\n${errorMessage}`);
+      const errorMessage = error.response?.data?.message || '操作失敗，請檢查網路連線或稍後再試。';
+      alert(`操作失敗：\n${errorMessage}`);
     }
+  };
+
+  // ✅ 核心修改 2：實作 `saveDraft` 功能
+  const saveDraft = () => {
+    // 存草稿前，至少要求有標題，避免存入完全空白的資料
+    if (!form.title.trim()) {
+      alert('請至少輸入食譜名稱，才能儲存草稿喔！');
+      return;
+    }
+    // 呼叫共用函式，並傳入狀態碼 3
+    submitRecipe(3);
+  };
+
+  // ✅ 核心修改 3：強化 `publishRecipe` 的驗證
+  const publishRecipe = () => {
+    const errors = [];
+    if (!form.title.trim()) errors.push('請輸入食譜名稱。');
+    if (!form.description.trim()) errors.push('請輸入簡介。');
+    if (!file.value) errors.push('請上傳一張食譜圖片。');
+    if (form.tags.length === 0) errors.push('請至少新增一個食譜標籤。');
+    if (form.ingredients.some((item) => !item.name.trim() || !item.amount.trim())) {
+      errors.push('所有「所需食材」和「份量」的欄位都必須填寫。');
+    }
+    if (form.steps.some((step) => !step.trim())) {
+      errors.push('所有「料理步驟」都必須填寫內容。');
+    }
+
+    if (errors.length > 0) {
+      alert('發布前請修正以下問題：\n\n- ' + errors.join('\n- '));
+      return;
+    }
+
+    // 驗證通過後，呼叫共用函式，並傳入狀態碼 0
+    submitRecipe(0);
   };
 </script>
 

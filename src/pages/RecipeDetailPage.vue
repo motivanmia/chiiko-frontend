@@ -1,10 +1,10 @@
 <template>
-  <!-- 步驟 5: 加入 v-if，只有在 recipeData 有值的時候才顯示內容 -->
+  <!-- 狀態一：當食譜資料存在 (recipeData 不為 null) 且 status 為 1 時，顯示完整的食譜內容 -->
   <div
     v-if="recipeData"
     class="wrappertatle"
   >
-    <!-- ... (上半部分 template 維持不變) ... -->
+    <!-- 食譜主視覺與資訊卡 -->
     <div class="outer-wrapper">
       <div class="recipe-wrapper">
         <img
@@ -94,7 +94,7 @@
       </div>
     </div>
 
-    <!-- 步驟區塊 -->
+    <!-- 步驟與食材區塊 -->
     <div class="step-ingredient-wrapper">
       <!-- 左邊：料理步驟 -->
       <div
@@ -137,10 +137,9 @@
       </div>
     </div>
 
-    <!-- 留言區 -->
+    <!-- 留言與相關商品區塊 -->
     <div>
       <div class="comment-section-container">
-        <!-- ⭐️ 核心修正 2: 將資料來源從扁平的陣列改為巢狀的陣列 ⭐️ -->
         <CommentSection
           :initial-comments="threadedComments"
           :current-user-avatar="currentUserAvatar"
@@ -150,164 +149,210 @@
     </div>
   </div>
 
-  <!-- 載入中提示 -->
+  <!-- 狀態二：當 isLoading 為 true 時，顯示「載入中」的提示 -->
   <div
-    v-else
+    v-else-if="isLoading"
     class="loading-state"
   >
     <p>正在為您準備美味的食譜...</p>
   </div>
+
+  <!-- 狀態三：當載入結束但 recipeData 仍為 null 時，顯示找不到的訊息 -->
+  <div
+    v-else
+    class="loading-state"
+  >
+    <p>很抱歉，找不到該食譜，或該食譜尚未發佈。</p>
+  </div>
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
-import { useRecipeStore } from '@/stores/recipeCollectStore';
-import Icon from '@/components/common/Icon.vue';
-import CommentSection from '@/components/CommentSection.vue';
-import ProductCard from '@/components/ProductCard.vue';
-import avatarImage from '@/assets/image/NewRecipes/Mask_group.png';
+  import { ref, watch, computed } from 'vue';
+  import { useRoute } from 'vue-router';
+  import { useAuthStore } from '@/stores/auth';
+  import { useRecipeStore } from '@/stores/recipeCollectStore';
+  import Icon from '@/components/common/Icon.vue';
+  import CommentSection from '@/components/CommentSection.vue';
+  import ProductCard from '@/components/ProductCard.vue';
+  import avatarImage from '@/assets/image/NewRecipes/Mask_group.png';
 
-// ----------------------------------------------------
-// 修正：將 store 和 computed 變數定義在最上方
-// 確保它們可以被後續的程式碼正確存取
-// ----------------------------------------------------
-const route = useRoute();
-const memberStore = useAuthStore();
-const recipeStore = useRecipeStore();
-const recipeData = ref(null);
-const recipeId = computed(() => route.params.id);
-const isCollected = computed(() => recipeStore.favoriteRecipesStatus[recipeId.value] || false);
+  // ----------------------------------------------------
+  // 響應式狀態與 Store 初始化
+  // ----------------------------------------------------
+  const route = useRoute();
+  const memberStore = useAuthStore();
+  const recipeStore = useRecipeStore();
 
+  const recipeData = ref(null);
+  // 新增一個 isLoading 狀態，預設為 true，用於控制載入中提示的顯示
+  const isLoading = ref(true);
 
-const fetchRecipeData = async (id) => {
+  const recipeId = computed(() => route.params.id);
+  const isCollected = computed(() => recipeStore.favoriteRecipesStatus[recipeId.value] || false);
+
+  // ----------------------------------------------------
+  // 主要資料獲取邏輯
+  // ----------------------------------------------------
+
+  /**
+   * 根據 ID 獲取食譜詳細資料，並檢查其發佈狀態
+   * @param {string | number} id - 食譜的 ID
+   */
+  const fetchRecipeData = async (id) => {
     if (!id) {
-        recipeData.value = null;
-        return;
+      recipeData.value = null;
+      isLoading.value = false; // 確保沒有 ID 時也停止載入狀態
+      return;
     }
-    try {
-        const apiUrl = `http://localhost:8888/front/recipe/get_recipe_detail.php?recipe_id=${id}`;
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const result = await response.json();
-        if (result.status === 'success') {
-            recipeData.value = result.data;
-            console.log('食譜資料已成功載入 (包含所有關聯資料):', recipeData.value);
-        } else {
-            console.error('後端回傳錯誤:', result.message);
-            recipeData.value = null;
-        }
-    } catch (error) {
-        console.error('獲取食譜資料失敗:', error);
-        recipeData.value = null;
-    }
-};
 
-// 整合資料獲取和狀態檢查的函式
-const fetchDataAndStatus = async (newId) => {
+    // 開始獲取資料，設定 isLoading 為 true 並清空舊資料
+    isLoading.value = true;
+    recipeData.value = null;
+
+    try {
+      const apiUrl = `http://localhost:8888/front/recipe/get_recipe_detail.php?recipe_id=${id}`;
+      const response = await fetch(apiUrl);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.status === 'success' && result.data) {
+        // ✅ 【核心修正】
+        // 將嚴格相等 (===) 改為寬鬆相等 (==)，以正確處理從後端來的字串 "1"
+        if (result.data.status == 1) {
+          recipeData.value = result.data;
+          console.log('食譜已發佈，成功載入:', recipeData.value);
+        } else {
+          // 如果 status 不是 1，我們就在 console 中記錄原因，
+          // 但不賦值給 recipeData，這樣頁面就會顯示「找不到食譜」。
+          console.warn(
+            `食譜 (ID: ${id}) 存在但未發佈，狀態為: ${result.data.status}，不會在前台顯示。`,
+          );
+          recipeData.value = null;
+        }
+      } else {
+        console.error('後端回傳錯誤或無資料:', result.message);
+        recipeData.value = null;
+      }
+    } catch (error) {
+      console.error('獲取食譜資料失敗:', error);
+      recipeData.value = null;
+    } finally {
+      // 無論成功或失敗，最後都要將 isLoading 設為 false，以隱藏載入提示
+      isLoading.value = false;
+    }
+  };
+
+  /**
+   * 整合資料獲取和收藏狀態檢查的函式
+   * @param {string | number} newId - 新的食譜 ID
+   */
+  const fetchDataAndStatus = async (newId) => {
     if (!newId) return;
 
-    // 先獲取食譜資料
+    // 先獲取食譜資料 (內部已包含 status 檢查)
     await fetchRecipeData(newId);
 
     // 檢查登入狀態，如果已登入才檢查收藏狀態
     if (memberStore.isLoggedIn) {
-        recipeStore.checkRecipeStatus(newId);
+      recipeStore.checkRecipeStatus(newId);
     } else {
-        // 如果未登入，確保收藏狀態為 false
-        recipeStore.favoriteRecipesStatus[newId] = false;
+      // 如果未登入，確保收藏狀態為 false
+      recipeStore.favoriteRecipesStatus[newId] = false;
     }
-};
+  };
 
-// 使用 watch 監聽路由參數 id 的變化
-watch(
+  // 使用 watch 監聽路由參數 id 的變化，並在變化時重新獲取資料
+  watch(
     recipeId,
     (newId) => {
-        fetchDataAndStatus(newId);
+      fetchDataAndStatus(newId);
     },
-    { immediate: true }
-);
+    { immediate: true }, // 立即執行一次以載入初始頁面
+  );
 
-// ----------------------------------------------------
-// 修正：簡化 toggleCollect，直接呼叫 store 的 action
-// ----------------------------------------------------
-async function toggleCollect() {
-    // 這裡還是需要檢查是否登入，這是唯一的判斷條件
+  // ----------------------------------------------------
+  // 使用者互動函式 (收藏、分享、複製)
+  // ----------------------------------------------------
+
+  async function toggleCollect() {
     if (!memberStore.isLoggedIn) {
-        alert('請先登入才能收藏!');
-        return;
+      alert('請先登入才能收藏!');
+      return;
     }
-    // 呼叫 store action 時不再傳入 memberId，因為後端會從 Session 獲取
     await recipeStore.toggleCollect(recipeId.value);
-}
+  }
 
-// ----------------------------------------------------
-// 以下為你原有的功能函數，我將它們保持不變
-// ----------------------------------------------------
+  function shareRecipe() {
+    const recipeUrl = window.location.href;
+    navigator.clipboard
+      .writeText(recipeUrl)
+      .then(() => {
+        alert('食譜連結已複製！');
+      })
+      .catch((err) => {
+        console.error('複製失敗:', err);
+        alert('複製失敗，請手動複製網址。');
+      });
+  }
 
-const formattedTags = computed(() => {
+  function copyIngredients() {
+    if (
+      recipeData.value &&
+      recipeData.value.ingredients &&
+      recipeData.value.ingredients.length > 0
+    ) {
+      const text = recipeData.value.ingredients
+        .map((item) => `${item.name} / ${item.amount}`)
+        .join('\n');
+      navigator.clipboard.writeText(text).then(() => {
+        alert('食材清單已複製！');
+      });
+    } else {
+      alert('目前沒有可複製的食材清單。');
+    }
+  }
+
+  // ----------------------------------------------------
+  // Computed 屬性與輔助函式
+  // ----------------------------------------------------
+
+  const formattedTags = computed(() => {
     if (!recipeData.value || !recipeData.value.tag) return [];
     return recipeData.value.tag
-        .split('#')
-        .filter(Boolean)
-        .map((tag) => `#${tag}`);
-});
+      .split('#')
+      .filter(Boolean)
+      .map((tag) => `#${tag}`);
+  });
 
-const threadedComments = computed(() => {
+  const threadedComments = computed(() => {
     if (!recipeData.value || !recipeData.value.comments) {
-        return [];
+      return [];
     }
+    // 假設後端已處理好巢狀結構，直接回傳
     return recipeData.value.comments;
-});
+  });
 
-function shareRecipe() {
-    const recipeUrl = window.location.href;
-    navigator.clipboard.writeText(recipeUrl);
-}
-
-function numberToChinese(num) {
+  function numberToChinese(num) {
     const parsedNum = typeof num === 'string' ? parseInt(num, 10) : num;
     if (isNaN(parsedNum) || parsedNum < 1) return '';
     const chineseNums = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
     if (parsedNum <= 10) return chineseNums[parsedNum];
     if (parsedNum > 10 && parsedNum < 20) return '十' + chineseNums[parsedNum % 10];
     if (parsedNum >= 20 && parsedNum < 100) {
-        const tens = Math.floor(parsedNum / 10);
-        const ones = parsedNum % 10;
-        if (ones === 0) return chineseNums[tens] + '十';
-        return chineseNums[tens] + '十' + chineseNums[ones];
+      const tens = Math.floor(parsedNum / 10);
+      const ones = parsedNum % 10;
+      if (ones === 0) return chineseNums[tens] + '十';
+      return chineseNums[tens] + '十' + chineseNums[ones];
     }
     return parsedNum.toString();
-}
+  }
 
-function copyIngredients() {
-    if (
-        recipeData.value &&
-        recipeData.value.ingredients &&
-        recipeData.value.ingredients.length > 0
-    ) {
-        const text = recipeData.value.ingredients
-            .map((item) => `${item.name} / ${item.amount}`)
-            .join('\n');
-        navigator.clipboard.writeText(text).then(() => {
-            alert('食材清單已複製！');
-        });
-    } else {
-        alert('目前沒有可複製的食材清單。');
-    }
-}
-
-const currentUserAvatar = ref(avatarImage);
-
+  const currentUserAvatar = ref(avatarImage);
 </script>
-
-
-
-
-
 
 <style lang="scss" scoped>
   /* =================================================================== */
