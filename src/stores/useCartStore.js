@@ -456,19 +456,30 @@ export const useCartStore = defineStore('cart', () => {
     let postal = '';
     let detail = '';
 
-    const city = twZipcodes.find((c) => address.startsWith(c.name));
+    if (!address) return { city: '', district: '', postal: '', detail: '' };
+
+    let rawAddress = address.trim();
+
+    // 如果前面有郵遞區號 (3 碼)
+    const postalMatch = rawAddress.match(/^(\d{3})\s?/);
+    if (postalMatch) {
+      postal = postalMatch[1];
+      rawAddress = rawAddress.replace(postalMatch[0], ''); // 把郵遞區號移除
+    }
+
+    const city = twZipcodes.find((c) => rawAddress.startsWith(c.name));
     if (city) {
       cityName = city.name;
-      const district = city.districts.find((d) => address.includes(d.name));
+      const district = city.districts.find((d) => rawAddress.includes(d.name));
       if (district) {
         districtName = district.name;
         postal = district.zip;
-        detail = address.replace(cityName, '').replace(districtName, '');
+        detail = rawAddress.replace(cityName, '').replace(districtName, '');
       } else {
-        detail = address.replace(cityName, '');
+        detail = rawAddress.replace(cityName, '');
       }
     } else {
-      detail = address;
+      detail = rawAddress;
     }
 
     return { city: cityName, district: districtName, postal, detail };
@@ -561,7 +572,7 @@ export const useCartStore = defineStore('cart', () => {
     return {
       recipient: recipientData.value.name,
       recipient_phone: recipientData.value.phone,
-      shopping_address: `${recipientData.value.city}${recipientData.value.district}${recipientData.value.address}`,
+      shopping_address: `${recipientData.value.postal} ${recipientData.value.city}${recipientData.value.district}${recipientData.value.address}`,
       payment_type: paymentForm.value.paymentMethod,
       payment_location: paymentForm.value.location,
     };
@@ -666,14 +677,6 @@ export const useCartStore = defineStore('cart', () => {
       });
     }
   };
-
-  watch(
-    orderDetail,
-    (val) => {
-      console.log('orderDetail', val);
-    },
-    { deep: true, immediate: true },
-  );
 
   // 重置表單
   const resetForms = () => {
