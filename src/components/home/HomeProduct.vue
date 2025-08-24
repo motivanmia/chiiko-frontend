@@ -1,33 +1,35 @@
 <script setup>
-  import { Swiper, SwiperSlide } from 'swiper/vue';
-  import { Autoplay } from 'swiper/modules';
-  import 'swiper/css';
-  import 'swiper/css/pagination';
+import { onMounted, computed } from 'vue';
+import { useProductStore } from '@/stores/productStore'; // 匯入你的新 store
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import { Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
 
-  import title_el from '@/components/SectionTitle.vue';
-  import Product1 from '@/assets/image/Product/Product-home/Product-home1.jpg';
-  import Product2 from '@/assets/image/Product/Product-home/Product-home2.jpg';
-  import Product3 from '@/assets/image/Product/Product-home/Product-home3.jpg';
-  import Product4 from '@/assets/image/Product/Product-home/Product-home4.jpg';
-  import Product5 from '@/assets/image/Product/Product-home/Product-home5.jpg';
-  import SeeMoreButton from '../button/SeeMoreButton.vue';
+import title_el from '@/components/SectionTitle.vue';
+import SeeMoreButton from '../button/SeeMoreButton.vue';
 
-  const originalProducts = [
-    { name: '手沖壺', image: Product1, path: '/product-detail' },
-    { name: '輕量玻璃湯鍋', image: Product2, path: '/product-detail' },
-    { name: '不鏽鋼打蛋盆', image: Product3, path: '/product-detail' },
-    { name: '折疊式蒸籠架', image: Product4, path: '/product-detail' },
-    { name: '輕巧蔬果小刀', image: Product5, path: '/product-detail' },
-  ];
 
-  // 複製商品陣列，保持原始順序的交錯效果
-  const products = originalProducts.concat(originalProducts);
+const productStore = useProductStore();
+
+// 在元件掛載時，呼叫 Pinia action 載入資料
+onMounted(() => {
+  productStore.fetchProducts();
+});
+
+// 使用 computed 屬性來處理產品資料，包括複製陣列以實現無限輪播
+const products = computed(() => {
+  if (productStore.products.length === 0) {
+    return [];
+  }
+  // 為了達到無限輪播效果，我們複製原始陣列
+  return productStore.products.concat(productStore.products);
+});
 </script>
 
 <template>
   <section class="high-repeat-section">
     <div class="section-title">
-      <!-- <p class="title-main">/好物推薦\</p> -->
       <title_el title="/好物推薦\" />
       <p class="title-sub">用順手的器具，料理起來更輕鬆。</p>
     </div>
@@ -51,11 +53,11 @@
     >
       <SwiperSlide
         v-for="(product, index) in products"
-        :key="`${product.name}-${index}`"
+        :key="`${product.product_id}-${index}`"
         :class="{ 'slide-up': index % 2 === 0, 'slide-down': index % 2 === 1 }"
       >
         <RouterLink
-          :to="product.path"
+          :to="`/product-detail/${product.product_id}`"
           class="product-card"
         >
           <img
@@ -72,6 +74,7 @@
     />
   </section>
 </template>
+
 
 <style lang="scss" scoped>
   .high-repeat-section {
