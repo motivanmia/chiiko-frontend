@@ -1,9 +1,20 @@
 <script setup>
   import { useIngredientStore } from '@/stores/ingredient';
+  import { useRouter } from 'vue-router';
+
   const ingredient = useIngredientStore();
+  const router = useRouter();
 
   import Icon from '@/components/common/Icon.vue';
   import SeeMore from '@/components/button/SeeMoreButton.vue';
+
+  function onSeeMoreButtonclick() {
+    if (ingredient.active?.name) {
+      const name = ingredient.active.name;
+      ingredient.updateActive(null);
+      router.push(`/search?q=${encodeURIComponent(name)}`);
+    }
+  }
 </script>
 
 <template>
@@ -93,7 +104,7 @@
     <SeeMore
       text="查看相關食譜"
       class="lightbox__seemore"
-      @click="ingredient.updateActive(null)"
+      @seeMoreButtonclick="onSeeMoreButtonclick"
     />
   </div>
   <!-- <div
