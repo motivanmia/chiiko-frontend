@@ -4,9 +4,8 @@
   import axios from 'axios';
 
 
-  // import { popularRecipe } from '@/constants/recipes';
 
-  // const router = useRouter();
+  const router = useRouter();
 
 
   const props = defineProps({
@@ -17,12 +16,12 @@
   });
 
 </script>
-
 <template>
   <div class="recipe-card">
-    <div
+    <router-link
       v-for="card in props.recipes"
       :key="card.recipe_id"
+      :to="{ name: 'recipe-detail', params: { id: card.recipe_id } }"
       class="recipe-card__box"
     >
       <div class="recipe-card__pic">
@@ -45,45 +44,29 @@
       <div class="icon-board">
         <div class="icon-board__left">
           <p>
-            <Icon
-              icon-name="time"
-              class="time-icon"
-            />
+            <Icon icon-name="time" class="time-icon" />
             約{{ card.cooked_time }}分鐘
           </p>
         </div>
         <div class="icon-board__right">
           <p>
-            <Icon
-              icon-name="comment"
-              class="comment-icon"
-            />
+            <Icon icon-name="comment" class="comment-icon" />
             {{ card.comments || '0' }}
           </p>
           <p>
-            <Icon
-              icon-name="markL"
-              class="markL-icon"
-            />
+            <Icon icon-name="markL" class="markL-icon" />
             {{ card.favorite_count || '0' }}
           </p>
         </div>
       </div>
 
       <div class="icon-board__tag">
-        <p
-          v-for="tag in (card.tag && typeof card.tag === 'string' ? card.tag.split(',') : [])"
-          :key="tag"
-        >
+        <p v-for="tag in (card.tag && typeof card.tag === 'string' ? card.tag.split(',') : [])" :key="tag">
           #{{ tag }}
         </p>
       </div>
-    </div>
+    </router-link>
   </div>
-  
-  <!-- <div v-if="props.recipes.length === 0" class="no-recipes">
-    目前沒有任何食譜可顯示。
-  </div> -->
 </template>
 
 
@@ -102,6 +85,8 @@
       position: relative;
       flex: 0 1 calc(33.333% - 27px); // 三欄布局，扣除 gap
       min-width: 330px; // 最小寬度
+      text-decoration: none;
+      color: color(text,dark);
 
       @media (max-width: 1024px) {
         flex: 0 1 calc(50% - 20px); // 平板：兩欄
