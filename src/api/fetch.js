@@ -156,4 +156,10 @@ export function patchOrder(data) {
 
 //食譜
 
-export function 
+export function getRecipe(data){
+  return request({
+    url: `${url.recipe}/get_recipe.php`,
+    method:'get',
+    data,
+  });
+}

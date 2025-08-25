@@ -10,7 +10,6 @@ export const useRecipeStore = defineStore('recipe', {
     favoriteRecipesStatus: {},
     hotRecipes: [],
     mostFavoritedRecipes: [],
-    // 移除 activeRecipes，改由元件管理
     latestRecipes: [],
   }),
   actions: {
