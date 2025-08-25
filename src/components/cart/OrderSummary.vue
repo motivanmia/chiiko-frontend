@@ -11,9 +11,10 @@
 
   const handleSubmitOrder = async () => {
     if (!validateCheckoutForm()) return;
-    const success = await createOrder();
-    if (success) {
-      router.push({ path: '/order-success' });
+
+    const orderId = await createOrder();
+    if (orderId) {
+      router.push({ path: '/order-success', query: { id: orderId } });
     }
   };
 </script>

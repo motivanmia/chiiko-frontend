@@ -559,13 +559,8 @@ export const useCartStore = defineStore('cart', () => {
 
   /* 訂單 */
   // 訂單提交
-  const lastOrderId = ref(null);
   const orderDetail = ref({ order: null, items: [] });
   const orders = ref(null);
-
-  const setLastOrderId = (id) => {
-    lastOrderId.value = id;
-  };
 
   // API 需要的 payload
   const orderPayload = computed(() => {
@@ -583,16 +578,42 @@ export const useCartStore = defineStore('cart', () => {
     try {
       const { data } = await postOrder(orderPayload.value);
       if (data.status === 'success') {
-        setLastOrderId(data.data.order_id);
+        const orderId = data.data.order_id;
+
         Swal.fire({
           icon: 'success',
           title: '訂單建立成功',
         });
-        return true;
+        return orderId;
       } else {
         Swal.fire({
           icon: 'error',
           title: '建立訂單失敗',
+          text: data.message,
+        });
+        return null;
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '系統錯誤',
+        text: error.response?.data?.message || error.message,
+      });
+      return null;
+    }
+  };
+
+  const loadOrderItem = async (orderId) => {
+    if (!orderId) return false;
+    try {
+      const { data } = await getOrderItem({ order_id: orderId });
+      if (data.status === 'success') {
+        orderDetail.value = data.data;
+        return true;
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '取得訂單失敗',
           text: data.message,
         });
         return false;
@@ -604,28 +625,6 @@ export const useCartStore = defineStore('cart', () => {
         text: error.response?.data?.message || error.message,
       });
       return false;
-    }
-  };
-
-  const loadOrderItem = async () => {
-    if (!lastOrderId.value) return;
-    try {
-      const { data } = await getOrderItem({ order_id: lastOrderId.value });
-      if (data.status === 'success') {
-        orderDetail.value = data.data;
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: '取得訂單失敗',
-          text: data.message,
-        });
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: '系統錯誤',
-        text: error.response?.data?.message || error.message,
-      });
     }
   };
 
@@ -724,10 +723,8 @@ export const useCartStore = defineStore('cart', () => {
     prevStep,
 
     // 訂單
-    lastOrderId,
     orderDetail,
     orders,
-    setLastOrderId,
     loadOrderItem,
     loadOrders,
     createOrder,

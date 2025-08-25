@@ -2,15 +2,16 @@
   import Icon from '@/components/common/Icon.vue';
   import OrderItem from '../cart/OrderItem.vue';
   import { ref, computed, onMounted } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { useCartStore } from '@/stores/useCartStore';
   import { storeToRefs } from 'pinia';
 
   const route = useRoute();
+  const router = useRouter();
 
   const cart = useCartStore();
   const { orderDetail } = storeToRefs(cart);
-  const { loadOrderItem, setLastOrderId } = cart;
+  const { loadOrderItem } = cart;
 
   // const filter = ref('所有訂單');
 
@@ -86,9 +87,16 @@
   };
   const showToast = ref(false); // 顯示複製成功提示
 
-  onMounted(() => {
-    setLastOrderId(route.params.id);
-    loadOrderItem();
+  onMounted(async () => {
+    const orderId = route.params.id;
+    if (!orderId) {
+      return router.replace('/account/orders'); // 沒有 id 就回到訂單列表
+    }
+
+    const result = await loadOrderItem(orderId);
+    if (!result) {
+      return router.replace('/account/orders');
+    }
   });
 </script>
 

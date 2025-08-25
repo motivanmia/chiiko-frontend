@@ -1,26 +1,28 @@
 <script setup>
   import { onMounted } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { storeToRefs } from 'pinia';
+  import { useRoute, useRouter } from 'vue-router';
   import { useCartStore } from '@/stores/useCartStore';
   import CartStep from '@/components/cart/CartStep.vue';
   import OrderList from '@/components/cart/OrderList.vue';
   import OrderInfo from '@/components/cart/OrderInfo.vue';
 
+  const route = useRoute();
   const router = useRouter();
 
   const cart = useCartStore();
-  const { lastOrderId } = storeToRefs(cart);
   const { setCurrentStep, loadOrderItem } = cart;
 
-  onMounted(() => {
-    if (!lastOrderId.value) {
-      return router.replace({
-        path: '/cart',
-      });
+  onMounted(async () => {
+    const orderId = route.query.id;
+    if (!orderId) {
+      return router.replace('/cart');
+    }
+
+    const result = await loadOrderItem(orderId);
+    if (!result) {
+      return router.replace('/cart');
     }
     setCurrentStep(3);
-    loadOrderItem();
   });
 </script>
 
