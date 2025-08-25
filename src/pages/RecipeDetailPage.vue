@@ -112,10 +112,7 @@
       </div>
 
       <!-- 右邊：所需食材 -->
-      <div
-        v-if="recipeData.ingredients && recipeData.ingredients.length > 0"
-        class="ingredient-box"
-      >
+      <div class="ingredient-box">
         <div class="section-ingredient-header">
           <h3 class="section-ingredient-title">所需食材</h3>
           <Icon
@@ -124,13 +121,41 @@
             @click="copyIngredients"
           />
         </div>
-        <ul class="section-ingredient-list">
+
+        <div
+          v-if="ingLoading"
+          class="section-ingredient-list"
+        >
+          食材載入中...
+        </div>
+        <div
+          v-else-if="ingError"
+          class="section-ingredient-list"
+        >
+          讀取失敗：{{ ingError }}
+        </div>
+
+        <ul
+          v-else
+          class="section-ingredient-list"
+        >
           <li
             class="section-ingredient-item"
-            v-for="ingredient in recipeData.ingredients"
+            v-for="ingredient in ingredients"
             :key="ingredient.ingredient_item_id"
           >
-            <span>{{ ingredient.name }}</span>
+            <span
+              @click="
+                ingredient.ingredient_id ? ingredientStore.openLightboxFromItem(ingredient) : null
+              "
+              :class="{
+                'underline-dashed': ingredient.ingredient_id,
+                'clickable': ingredient.ingredient_id,
+              }"
+            >
+              {{ ingredient.name }}
+            </span>
+            <span>/</span>
             <span>{{ ingredient.amount }}</span>
           </li>
         </ul>
@@ -164,6 +189,16 @@
   >
     <p>很抱歉，找不到該食譜，或該食譜尚未發佈。</p>
   </div>
+
+  <Transition name="fade">
+    <IngredientLightBox v-if="ingredientStore.active" />
+  </Transition>
+  <!-- <Transition name="fade"> -->
+  <div
+    v-if="ingredientStore.active"
+    class="overlay"
+    @click="ingredientStore.updateActive(null)"
+  ></div>
 </template>
 
 <script setup>
@@ -175,6 +210,10 @@
   import CommentSection from '@/components/CommentSection.vue';
   import ProductCard from '@/components/ProductCard.vue';
   import avatarImage from '@/assets/image/NewRecipes/Mask_group.png';
+  import { useIngredientStore } from '@/stores/ingredient';
+  import IngredientLightBox from '@/components/school/IngredientLightBox.vue';
+
+  const ingredientStore = useIngredientStore();
 
   // ----------------------------------------------------
   // 響應式狀態與 Store 初始化
@@ -274,6 +313,36 @@
     { immediate: true }, // 立即執行一次以載入初始頁面
   );
 
+  // ✅ 食材資料
+  const ingredients = ref([]);
+
+  // 可選：loading 狀態（沿用 store 的 rLoading）
+  const ingLoading = computed(() => ingredientStore.rLoading);
+  const ingError = computed(() => ingredientStore.rError);
+
+  watch(
+    recipeId,
+    async (newId) => {
+      if (!newId) {
+        ingredients.value = [];
+        return;
+      }
+      const arr = await ingredientStore.fetchRecipeIngredients(newId);
+      ingredients.value = arr;
+    },
+    { immediate: true },
+  );
+
+  function copyIngredients() {
+    if (ingredients.value && ingredients.value.length > 0) {
+      const text = ingredients.value.map((it) => `${it.name} / ${it.amount || ''}`).join('\n');
+      navigator.clipboard.writeText(text).then(() => {
+        alert('食材清單已複製！');
+      });
+    } else {
+      alert('目前沒有可複製的食材清單。');
+    }
+  }
   // ----------------------------------------------------
   // 使用者互動函式 (收藏、分享、複製)
   // ----------------------------------------------------
@@ -297,23 +366,6 @@
         console.error('複製失敗:', err);
         alert('複製失敗，請手動複製網址。');
       });
-  }
-
-  function copyIngredients() {
-    if (
-      recipeData.value &&
-      recipeData.value.ingredients &&
-      recipeData.value.ingredients.length > 0
-    ) {
-      const text = recipeData.value.ingredients
-        .map((item) => `${item.name} / ${item.amount}`)
-        .join('\n');
-      navigator.clipboard.writeText(text).then(() => {
-        alert('食材清單已複製！');
-      });
-    } else {
-      alert('目前沒有可複製的食材清單。');
-    }
   }
 
   // ----------------------------------------------------
@@ -709,5 +761,42 @@
     @media (max-width: 1024px) {
       width: 100%;
     }
+  }
+
+  .overlay {
+    position: fixed;
+    z-index: 998;
+    height: 150vh;
+    width: 150%;
+    opacity: 0.6;
+    background-color: black;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .fade-enter-active,
+  .fade-leave-active {
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+
+  .fade-enter-to,
+  .fade-leave-from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .clickable {
+    cursor: pointer;
+  }
+
+  .underline-dashed {
+    text-decoration: underline dashed;
   }
 </style>
