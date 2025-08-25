@@ -456,19 +456,30 @@ export const useCartStore = defineStore('cart', () => {
     let postal = '';
     let detail = '';
 
-    const city = twZipcodes.find((c) => address.startsWith(c.name));
+    if (!address) return { city: '', district: '', postal: '', detail: '' };
+
+    let rawAddress = address.trim();
+
+    // 如果前面有郵遞區號 (3 碼)
+    const postalMatch = rawAddress.match(/^(\d{3})\s?/);
+    if (postalMatch) {
+      postal = postalMatch[1];
+      rawAddress = rawAddress.replace(postalMatch[0], ''); // 把郵遞區號移除
+    }
+
+    const city = twZipcodes.find((c) => rawAddress.startsWith(c.name));
     if (city) {
       cityName = city.name;
-      const district = city.districts.find((d) => address.includes(d.name));
+      const district = city.districts.find((d) => rawAddress.includes(d.name));
       if (district) {
         districtName = district.name;
         postal = district.zip;
-        detail = address.replace(cityName, '').replace(districtName, '');
+        detail = rawAddress.replace(cityName, '').replace(districtName, '');
       } else {
-        detail = address.replace(cityName, '');
+        detail = rawAddress.replace(cityName, '');
       }
     } else {
-      detail = address;
+      detail = rawAddress;
     }
 
     return { city: cityName, district: districtName, postal, detail };
@@ -548,20 +559,15 @@ export const useCartStore = defineStore('cart', () => {
 
   /* 訂單 */
   // 訂單提交
-  const lastOrderId = ref(null);
   const orderDetail = ref({ order: null, items: [] });
   const orders = ref(null);
-
-  const setLastOrderId = (id) => {
-    lastOrderId.value = id;
-  };
 
   // API 需要的 payload
   const orderPayload = computed(() => {
     return {
       recipient: recipientData.value.name,
       recipient_phone: recipientData.value.phone,
-      shopping_address: `${recipientData.value.city}${recipientData.value.district}${recipientData.value.address}`,
+      shopping_address: `${recipientData.value.postal} ${recipientData.value.city}${recipientData.value.district}${recipientData.value.address}`,
       payment_type: paymentForm.value.paymentMethod,
       payment_location: paymentForm.value.location,
     };
@@ -572,16 +578,42 @@ export const useCartStore = defineStore('cart', () => {
     try {
       const { data } = await postOrder(orderPayload.value);
       if (data.status === 'success') {
-        setLastOrderId(data.data.order_id);
+        const orderId = data.data.order_id;
+
         Swal.fire({
           icon: 'success',
           title: '訂單建立成功',
         });
-        return true;
+        return orderId;
       } else {
         Swal.fire({
           icon: 'error',
           title: '建立訂單失敗',
+          text: data.message,
+        });
+        return null;
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '系統錯誤',
+        text: error.response?.data?.message || error.message,
+      });
+      return null;
+    }
+  };
+
+  const loadOrderItem = async (orderId) => {
+    if (!orderId) return false;
+    try {
+      const { data } = await getOrderItem({ order_id: orderId });
+      if (data.status === 'success') {
+        orderDetail.value = data.data;
+        return true;
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '取得訂單失敗',
           text: data.message,
         });
         return false;
@@ -593,28 +625,6 @@ export const useCartStore = defineStore('cart', () => {
         text: error.response?.data?.message || error.message,
       });
       return false;
-    }
-  };
-
-  const loadOrderItem = async () => {
-    if (!lastOrderId.value) return;
-    try {
-      const { data } = await getOrderItem({ order_id: lastOrderId.value });
-      if (data.status === 'success') {
-        orderDetail.value = data.data;
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: '取得訂單失敗',
-          text: data.message,
-        });
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: '系統錯誤',
-        text: error.response?.data?.message || error.message,
-      });
     }
   };
 
@@ -667,14 +677,6 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
-  watch(
-    orderDetail,
-    (val) => {
-      console.log('orderDetail', val);
-    },
-    { deep: true, immediate: true },
-  );
-
   // 重置表單
   const resetForms = () => {
     paymentForm.value = getDefaultPaymentForm();
@@ -721,10 +723,8 @@ export const useCartStore = defineStore('cart', () => {
     prevStep,
 
     // 訂單
-    lastOrderId,
     orderDetail,
     orders,
-    setLastOrderId,
     loadOrderItem,
     loadOrders,
     createOrder,

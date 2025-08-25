@@ -6,11 +6,18 @@
   import ForgetPswModal from '@/components/user/ForgetPsw.vue';
   import { useAuthStore } from '@/stores/auth';
   import { useRouter, useRoute } from 'vue-router';
+  import { storeToRefs } from 'pinia';
   import { useNotificationStore } from '@/stores/notification';
+  import { useCartStore } from '@/stores/useCartStore';
+
+  const cart = useCartStore();
+  const { productCount } = storeToRefs(cart);
+  const { loadCart } = cart;
 
   const notifyStore = useNotificationStore();
   onMounted(() => {
     notifyStore.loadNotifications();
+    loadCart();
   });
 
   const authStore = useAuthStore();
@@ -357,6 +364,12 @@
           to="/cart"
           class="actions__item"
         >
+          <div
+            v-if="productCount > 0"
+            class="actions__item-count"
+          >
+            {{ productCount }}
+          </div>
           <Icon
             icon-name="cart"
             class="actions__icon"
@@ -525,7 +538,12 @@
           @click="toggleHamMenu"
         >
           購物車
-          <span class="cart__count">3</span>
+          <span
+            v-if="productCount > 0"
+            class="cart__count"
+          >
+            {{ productCount }}
+          </span>
         </RouterLink>
       </div>
     </nav>
@@ -904,6 +922,20 @@
       cursor: pointer;
       color: color(text, dark);
       transition: all 0.2s ease;
+
+      &-count {
+        color: color(text, light);
+        @include flex;
+        @include font-size(14);
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: px(20);
+        height: px(20);
+        background-color: color(button, main);
+        transform: translate(50%, -50%);
+        border-radius: 50%;
+      }
     }
     .actions__item:hover {
       color: color(button, main);
