@@ -39,6 +39,7 @@
     >
       <h1 class="Inform__content">{{ item.content_title }}</h1>
       <p class="Inform__source">{{ item.content_text }}</p>
+      {{ item.created_date }}
     </div>
   </div>
 </template>
