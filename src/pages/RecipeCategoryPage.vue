@@ -30,7 +30,7 @@
     ];
   });
 
-  // 獲取食譜資料
+  // 修正後的 fetchRecipesByCategory 函式
   const fetchRecipesByCategory = async (categoryKey) => {
     if (!categoryKey) {
       recipes.value = [];
@@ -44,14 +44,14 @@
         recipes.value = response.data.data;
       } else {
         recipes.value = [];
-        console.error(response.data.message);
+        console.error('後端回傳錯誤:', response.data.message);
       }
     } catch (error) {
-      console.error('取得食譜資料失敗', error);
+      // 這裡會顯示 axios 請求失敗的錯誤
+      console.error('取得食譜資料失敗:', error);
       recipes.value = [];
     }
   };
-
   watch(
     () => route.params.category,
     (newCategory) => {

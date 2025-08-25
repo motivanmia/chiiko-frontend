@@ -18,10 +18,6 @@
   // 搜尋邏輯的狀態管理
   const currentSearchQuery = ref(route.query.q || '');
 
-  // 合併模擬資料
-  // const allRecipes = ref([...soloMeal, ...popularRecipe]);
-
-  //指定本地端api位置
   const apiUrl = 'http://localhost:8888/front/recipe/get_recipe.php';
 
   const allRecipes = ref([]);

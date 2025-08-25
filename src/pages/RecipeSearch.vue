@@ -2,8 +2,6 @@
 import { ref, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-
-// 引入你需要的元件
 import Banner from '@/components/recipe/Banner.vue';
 import Category from '@/components/recipe/Category.vue';
 import SectionTitle from '@/components/SectionTitle.vue';
@@ -16,7 +14,7 @@ const route = useRoute();
 const router = useRouter();
 
 const currentSearchQuery = ref('');
-const searchResults = ref([]); // 儲存後端結果
+const searchResults = ref([]); 
 
 const apiUrl = 'http://localhost:8888/front/recipe/search_recipe.php';
 
@@ -43,7 +41,6 @@ const performSearch = async (query) => {
     console.error('搜尋失敗', error);
     searchResults.value = [];
   }
-  // console.log("hhbhbi",searchResults.value);
   
 };
 
@@ -75,16 +72,10 @@ const pageTitle = computed(() => {
   return '/所有食譜\\';
 });
 
-// ✅ 移除不必要的 computed 屬性
-// const filteredRecipes = computed(() => { ... });
-
-// ✅ 移除多餘的 watch 區塊
-// watch(() => route.query.q, (newQuery) => { ... });
-
-// 麵包屑導航項目 (無變動)
+// 麵包屑導航項目 
 const breadcrumbItems = computed(() => {
   return [
-    { text: '靈感食譜', to: '/recipes' }, // 假設 '靈感食譜' 頁面的路徑是 /recipes
+    { text: '靈感食譜', to: '/recipe-overview' }, 
     { text: `搜尋結果: ${currentSearchQuery.value}`, to: `/recipes/search?q=${currentSearchQuery.value}` },
   ];
 });

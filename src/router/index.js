@@ -124,8 +124,8 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/recipes',
-      name: 'recipes',
+      path: '/recipe-overview',
+      name: '/recipe-overview',
       component: () => import('@/pages/RecipeOverview.vue'),
     },
     {

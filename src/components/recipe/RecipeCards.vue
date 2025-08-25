@@ -81,9 +81,9 @@
     </div>
   </div>
   
-  <div v-if="props.recipes.length === 0" class="no-recipes">
+  <!-- <div v-if="props.recipes.length === 0" class="no-recipes">
     目前沒有任何食譜可顯示。
-  </div>
+  </div> -->
 </template>
 
 
@@ -101,29 +101,40 @@
       justify-content: center;
       position: relative;
       flex: 0 1 calc(33.333% - 27px); // 三欄布局，扣除 gap
-      min-width: 300px; // 最小寬度
+      min-width: 330px; // 最小寬度
 
       @media (max-width: 1024px) {
         flex: 0 1 calc(50% - 20px); // 平板：兩欄
       }
 
       @media (max-width: 640px) {
-        padding-inline: 10px;
+        padding-inline: 5px;
         flex: 0 1 100%; // 手機：單欄
       }
     }
 
     &__pic {
       width: 100%;
-      height: auto;
+      height: 250px; // 設定固定高度
       cursor: pointer;
       overflow: hidden;
       border-radius: 20px;
+      
+      // 響應式高度調整
+      @media (max-width: 1024px) {
+        height: 220px;
+      }
+      
+      @media (max-width: 640px) {
+        height: 200px;
+      }
     }
 
     &__img {
       width: 100%;
-      height: auto;
+      height: 100%; // 填滿父容器
+      object-fit: cover; // 保持比例並裁剪多餘部分
+      object-position: center; // 居中顯示
       transition: 0.3s ease;
 
       &:hover {
@@ -141,6 +152,8 @@
       flex-direction: column;
       align-items: center;
 
+
+
       & > h2 {
         font-size: 28px;
         white-space: nowrap;
@@ -149,7 +162,6 @@
         position: absolute;
         left: 50%;
         transform: translateY(50%) translateX(-50%);
-
         width: 100%;
         text-align: center;
         overflow: hidden;
@@ -161,6 +173,8 @@
 
         @media (max-width: 480px) {
           font-size: 20px;
+          transform: translateY(70%) translateX(-50%);
+          
         }
       }
     }
@@ -223,4 +237,7 @@
     color: #666;
     font-size: 18px;
   }
+
+  
+  
 </style>

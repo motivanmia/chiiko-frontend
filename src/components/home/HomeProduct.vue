@@ -61,7 +61,7 @@ const products = computed(() => {
           class="product-card"
         >
           <img
-            :src="product.image"
+            :src="product.preview_image"
             :alt="product.name"
           />
           <p class="product-name">{{ product.name }}</p>
