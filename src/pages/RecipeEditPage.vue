@@ -12,10 +12,14 @@
 
     <div class="recipe-editor">
       <div class="form-content-wrapper">
-        <h1 class="recipe-editor__title">編輯食譜</h1>
+        <!-- A. 標題動態化 -->
+        <h1 class="recipe-editor__title">{{ pageTitle }}</h1>
 
-        <!-- ⭐️ 關鍵修改 1: 監聽子層的 @update:file 事件，並將檔案存到 file ref 中 -->
-        <ImageUploader @update:file="file = $event" />
+        <!-- B. 傳入現有圖片 URL 給圖片上傳器 -->
+        <ImageUploader
+          @update:file="file = $event"
+          :initial-image-url="existingImageUrl"
+        />
 
         <InputSingleline
           label="輸入食譜名稱"
@@ -66,8 +70,9 @@
 </template>
 
 <script setup>
-  import { ref, reactive, computed } from 'vue';
-  import { useRouter } from 'vue-router';
+  // C. 引入 onMounted 和 useRoute
+  import { ref, reactive, computed, onMounted } from 'vue';
+  import { useRouter, useRoute } from 'vue-router';
   import axios from 'axios';
   import Icon from '@/components/common/Icon.vue';
   import BaseButton from '@/components/common/BaseButton.vue';
@@ -78,9 +83,17 @@
   import StepsManager from '@/components/recipe-editor/StepsManager.vue';
   import InputSingleline from '@/components/recipe-editor/InputSingleline.vue';
   import TextareaAutosize from '@/components/recipe-editor/TextareaAutosize.vue';
+  import { useUserStore } from '@/stores/user';
 
+  const userStore = useUserStore();
   const router = useRouter();
+  const route = useRoute(); // C. 獲取當前路由資訊
   const goBack = () => router.back();
+
+  // D. 偵測是否為編輯模式
+  const recipeId = computed(() => route.params.id || null);
+  const isEditMode = computed(() => !!recipeId.value);
+  const pageTitle = computed(() => (isEditMode.value ? '編輯食譜' : '新增食譜'));
 
   const categories = [
     { value: 'single', label: '一人料理', id: 1 },
@@ -105,20 +118,57 @@
   });
 
   const file = ref(null);
+  // E. 新增 ref 來儲存現有圖片的路徑
+  const existingImageUrl = ref('');
 
   const titleWarning = computed(() => (form.title.length > 15 ? '標題不能超過 15 字喔！' : ''));
   const descriptionWarning = computed(() =>
     form.description.length > 40 ? '內文太長囉，麻煩請幫我濃縮在40字以內！' : '',
   );
 
-  // ✅ 核心修改 1：建立一個共用的提交函式
-  // 這個函式負責處理所有 API 請求，並接收一個 `statusCode` 作為參數
+  // F. 抓取現有食譜資料的函式
+  const fetchRecipeData = async () => {
+    if (!isEditMode.value) return; // 如果不是編輯模式，就直接返回
+
+    try {
+      const apiBase = import.meta.env.VITE_API_BASE;
+      // 假設後端有一個 get_recipe.php 可以用 ID 獲取完整食譜資料
+      const response = await axios.get(`${apiBase}/recipe/get_recipe.php?id=${recipeId.value}`);
+      const data = response.data;
+
+      // 將獲取的資料填入 form 中
+      form.title = data.recipe.name;
+      form.description = data.recipe.content;
+      form.tags = data.recipe.tag ? data.recipe.tag.split('#').filter(Boolean) : [];
+      const currentCategory = categories.find((cat) => cat.id === data.recipe.recipe_category_id);
+      form.category = currentCategory ? currentCategory.value : 'single';
+      form.time = data.recipe.cooked_time;
+      form.servings = data.recipe.serving;
+      // 如果後端回傳的食材或步驟是空的，提供一個預設值
+      form.ingredients =
+        data.ingredients.length > 0 ? data.ingredients : [{ name: '', amount: '' }];
+      form.steps = data.steps.length > 0 ? data.steps.map((s) => s.content) : [''];
+
+      existingImageUrl.value = data.recipe.image; // 儲存現有圖片路徑
+    } catch (error) {
+      console.error('抓取食譜資料失敗:', error);
+      alert('無法載入食譜資料，將返回首頁。');
+      router.push('/');
+    }
+  };
+
+  // G. 在組件掛載時執行資料抓取
+  onMounted(() => {
+    fetchRecipeData();
+  });
+
+  // H. 修改後的共用提交函式
   const submitRecipe = async (statusCode) => {
     try {
       const apiBase = import.meta.env.VITE_API_BASE;
-      let imagePath = '';
+      let imagePath = existingImageUrl.value; // 預設使用舊圖片
 
-      // --- 階段一：上傳【圖片】(只有在有選擇新檔案時才上傳) ---
+      // --- 階段一：上傳【新圖片】(只有在有選擇新檔案時才上傳) ---
       if (file.value) {
         const formData = new FormData();
         formData.append('image', file.value);
@@ -129,32 +179,41 @@
         if (!imagePath) throw new Error('後端未成功回傳圖片路徑');
       }
 
-      // --- 階段二：發佈【主食譜】資訊 ---
+      // --- 階段二：準備與發佈【主食譜】資訊 ---
       const selectedCategory = categories.find((cat) => cat.value === form.category);
       const recipePayload = {
-        user_id: 1, // TODO: 應替換為實際登入的使用者 ID
-        manager_id: null, // 前台使用者新增，所以 manager_id 為 null
-        // ✅ 核心修改 4：修正拼寫錯誤 `recipe_category_id`
+        // 如果是編輯模式，要帶上 recipe_id
+        ...(isEditMode.value && { recipe_id: recipeId.value }),
+        user_id: userStore.userId,
+        manager_id: null,
         recipe_category_id: selectedCategory ? selectedCategory.id : null,
         name: form.title,
         content: form.description,
         serving: form.servings,
         image: imagePath,
         cooked_time: form.time,
-        status: statusCode, // ✅ 使用傳入的狀態碼
+        status: statusCode,
         tag: form.tags.map((tag) => `#${tag}`).join(''),
+        views: 0,
       };
 
-      const recipeResponse = await axios.post(`${apiBase}/recipe/post_recipe.php`, recipePayload);
-      const newRecipeId = recipeResponse.data.recipe_id;
-      if (!newRecipeId) throw new Error('後端未回傳 recipe_id');
+      // 根據模式選擇不同的 API 端點
+      const recipeApiEndpoint = isEditMode.value
+        ? `${apiBase}/recipe/update_recipe.php`
+        : `${apiBase}/recipe/post_recipe.php`;
+
+      const recipeResponse = await axios.post(recipeApiEndpoint, recipePayload);
+
+      // 在新增模式下，才需要從後端獲取新的 ID
+      const targetRecipeId = isEditMode.value ? recipeId.value : recipeResponse.data.recipe_id;
+      if (!targetRecipeId) throw new Error('後端未回傳 recipe_id');
 
       // --- 階段三 & 四：發佈【食材】與【步驟】 ---
-      // 只有在有內容時才發送請求
+      // 後端處理這兩個 API 時，需要設計成「先刪除舊的，再插入新的」，這樣更新和新增才能共用
       const validIngredients = form.ingredients.filter((item) => item.name && item.amount);
       if (validIngredients.length > 0) {
         await axios.post(`${apiBase}/recipe/post_ingredients.php`, {
-          recipe_id: newRecipeId,
+          recipe_id: targetRecipeId,
           ingredients: validIngredients,
         });
       }
@@ -162,42 +221,45 @@
       const validSteps = form.steps.filter((step) => step && step.trim());
       if (validSteps.length > 0) {
         await axios.post(`${apiBase}/recipe/post_steps.php`, {
-          recipe_id: newRecipeId,
+          recipe_id: targetRecipeId,
           steps: validSteps,
         });
       }
 
       // --- 根據狀態顯示不同成功訊息 ---
+      // I. 優化成功提示訊息
       if (statusCode === 3) {
         alert('✅ 草稿已儲存！');
       } else {
-        alert('🎉 您的美味食譜已成功發布，待管理員審核！');
+        const successMessage = isEditMode.value
+          ? '🎉 您的食譜已成功更新，待管理員審核！'
+          : '🎉 您的美味食譜已成功發布，待管理員審核！';
+        alert(successMessage);
       }
       router.push('/');
     } catch (error) {
-      console.error('發布食譜時發生錯誤:', error);
+      console.error('操作食譜時發生錯誤:', error);
       const errorMessage = error.response?.data?.message || '操作失敗，請檢查網路連線或稍後再試。';
       alert(`操作失敗：\n${errorMessage}`);
     }
   };
 
-  // ✅ 核心修改 2：實作 `saveDraft` 功能
   const saveDraft = () => {
-    // 存草稿前，至少要求有標題，避免存入完全空白的資料
     if (!form.title.trim()) {
       alert('請至少輸入食譜名稱，才能儲存草稿喔！');
       return;
     }
-    // 呼叫共用函式，並傳入狀態碼 3
     submitRecipe(3);
   };
 
-  // ✅ 核心修改 3：強化 `publishRecipe` 的驗證
   const publishRecipe = () => {
     const errors = [];
     if (!form.title.trim()) errors.push('請輸入食譜名稱。');
     if (!form.description.trim()) errors.push('請輸入簡介。');
-    if (!file.value) errors.push('請上傳一張食譜圖片。');
+    // J. 編輯模式下，如果已有圖片，則不必強制上傳新圖片
+    if (!isEditMode.value && !file.value) {
+      errors.push('請上傳一張食譜圖片。');
+    }
     if (form.tags.length === 0) errors.push('請至少新增一個食譜標籤。');
     if (form.ingredients.some((item) => !item.name.trim() || !item.amount.trim())) {
       errors.push('所有「所需食材」和「份量」的欄位都必須填寫。');
@@ -211,7 +273,6 @@
       return;
     }
 
-    // 驗證通過後，呼叫共用函式，並傳入狀態碼 0
     submitRecipe(0);
   };
 </script>
