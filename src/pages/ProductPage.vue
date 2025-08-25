@@ -49,6 +49,7 @@
       // 檢查api是否成功以及資料是否存在
       if (response.data.data && Array.isArray(response.data.data)) {
         under100Products.value = response.data.data;
+        console.log('API 回傳的商品資料:', under100Products.value);
       }
     } catch (error) {
       console.error('獲取百元以下商品失敗', error);

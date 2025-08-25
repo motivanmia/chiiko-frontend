@@ -1,5 +1,6 @@
 <script setup>
   import { defineProps } from 'vue';
+  import { RouterLink } from 'vue-router';
 
   const props = defineProps({
     product: {
@@ -12,11 +13,13 @@
 <template>
   <div class="product-card__box">
     <div class="product-card__pic">
-      <img
-        :src="props.product.preview_image"
-        :alt="props.product.name"
-        class="product-card__img"
-      />
+      <RouterLink :to="`/products/${product.product_id}`">
+        <img
+          :src="props.product.preview_image"
+          :alt="props.product.name"
+          class="product-card__img"
+        />
+      </RouterLink>
     </div>
     <div class="product-card__content">
       <p class="product-card__name">{{ props.product.name }}</p>
