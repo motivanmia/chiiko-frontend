@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, computed } from 'vue';
-import { useProductStore } from '@/stores/productStore'; // 匯入你的新 store
+import { useProductStore } from '@/stores/productStore'; 
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';

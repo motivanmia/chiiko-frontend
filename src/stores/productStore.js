@@ -1,8 +1,7 @@
-// stores/productStore.js
-import { defineStore } from '/node_modules/.vite/deps/pinia.js?v=629e644c';
-import axios from '/node_modules/.vite/deps/axios.js?v=629e644c';
+import { defineStore } from 'pinia';
+import { getProduct } from '@/api/fetch';
 
-const API_BASE_URL = 'http://localhost:8888/front/product';
+// const API_BASE_URL = 'http://localhost:8888/front/product';
 export const useProductStore = defineStore('product', {
   state: () => ({
     products: [],
@@ -13,7 +12,7 @@ export const useProductStore = defineStore('product', {
     async fetchProducts() {
       this.loading = true;
       try {
-        const response = await axios.get(`${API_BASE_URL}/get_product.php`);
+        const response = await getProduct();
         if (response.data.status === 'success') {
           this.products = response.data.data;
         } else {

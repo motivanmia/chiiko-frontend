@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe API 測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .success {
+            border-left-color: #28a745;
+            background-color: #d4edda;
+        }
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .category-btn {
+            padding: 8px 15px;
+            background-color: #e9ecef;
+            border: 1px solid #adb5bd;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .category-btn:hover {
+            background-color: #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Recipe API 測試工具</h1>
+        
+        <!-- API 網址設定 -->
+        <div class="test-section">
+            <h3>🔧 API 設定</h3>
+            <label>API 網址:</label>
+            <input type="text" id="apiUrl" placeholder="http://localhost:8888/front/recipe/get_recipe_scenario.php?category=%E4%B8%80%E4%BA%BA%E6%96%99%E7%90%86" style="width: 70%;">
+            <button onclick="saveApiUrl()">儲存</button>
+        </div>
+
+        <!-- 測試 1: 獲取所有分類 -->
+        <div class="test-section">
+            <h3>🔍 測試 1: 查看所有可用分類</h3>
+            <button onclick="getAllCategories()">獲取所有分類</button>
+            <div id="categoriesResult" class="result" style="display:none;"></div>
+            <div id="availableCategories" class="categories"></div>
+        </div>
+
+        <!-- 測試 2: 測試特定分類 -->
+        <div class="test-section">
+            <h3>🍳 測試 2: 查詢特定分類的食譜</h3>
+            <input type="text" id="categoryName" placeholder="輸入分類名稱 (例: 一人料理)">
+            <button onclick="testCategory()">測試分類</button>
+            <div id="categoryResult" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- 測試 3: 測試常見分類 -->
+        <div class="test-section">
+            <h3>📝 測試 3: 快速測試常見分類</h3>
+            <div class="categories">
+                <button class="category-btn" onclick="quickTest('一人料理')">一人料理</button>
+                <button class="category-btn" onclick="quickTest('家庭聚餐')">家庭聚餐</button>
+                <button class="category-btn" onclick="quickTest('浪漫晚餐')">浪漫晚餐</button>
+                <button class="category-btn" onclick="quickTest('戶外料理')">戶外料理</button>
+                <button class="category-btn" onclick="quickTest('懶人快客')">懶人快客</button>
+                <button class="category-btn" onclick="quickTest('健身/減醣餐')">健身/減醣餐</button>
+                <button class="category-btn" onclick="quickTest('低預算料理')">低預算料理</button>
+                <button class="category-btn" onclick="quickTest('慶生/節慶料理')">慶生/節慶料理</button>
+            </div>
+            <div id="quickTestResult" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // 載入已儲存的 API 網址
+        window.onload = function() {
+            const savedUrl = localStorage.getItem('apiUrl');
+            if (savedUrl) {
+                document.getElementById('apiUrl').value = savedUrl;
+            }
+        }
+
+        function saveApiUrl() {
+            const url = document.getElementById('apiUrl').value;
+            localStorage.setItem('apiUrl', url);
+            alert('API 網址已儲存');
+        }
+
+        function getApiUrl() {
+            const url = document.getElementById('apiUrl').value;
+            if (!url) {
+                alert('請先設定 API 網址');
+                return null;
+            }
+            return url;
+        }
+
+        async function getAllCategories() {
+            const apiUrl = getApiUrl();
+            if (!apiUrl) return;
+
+            const resultDiv = document.getElementById('categoriesResult');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '測試中...';
+            resultDiv.className = 'result';
+
+            try {
+                // 故意使用不存在的分類來獲取所有分類列表
+                const response = await fetch(`${apiUrl}?category=__GET_ALL_CATEGORIES__`);
+                const data = await response.json();
+                
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                
+                if (data.available_categories) {
+                    resultDiv.className = 'result success';
+                    displayAvailableCategories(data.available_categories);
+                } else {
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = '錯誤: ' + error.message;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        function displayAvailableCategories(categories) {
+            const container = document.getElementById('availableCategories');
+            container.innerHTML = '<strong>可用分類:</strong><br>';
+            
+            categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'category-btn';
+                btn.textContent = category;
+                btn.onclick = () => quickTest(category);
+                container.appendChild(btn);
+            });
+        }
+
+        async function testCategory() {
+            const category = document.getElementById('categoryName').value;
+            if (!category) {
+                alert('請輸入分類名稱');
+                return;
+            }
+            await performTest(category, 'categoryResult');
+        }
+
+        async function quickTest(category) {
+            await performTest(category, 'quickTestResult');
+        }
+
+        async function performTest(category, resultElementId) {
+            const apiUrl = getApiUrl();
+            if (!apiUrl) return;
+
+            const resultDiv = document.getElementById(resultElementId);
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = `測試分類: ${category}\n載入中...`;
+            resultDiv.className = 'result';
+
+            try {
+                const encodedCategory = encodeURIComponent(category);
+                const response = await fetch(`${apiUrl}?category=${encodedCategory}`);
+                const data = await response.json();
+                
+                let displayText = `測試分類: ${category}\n`;
+                displayText += `回應狀態: ${response.status}\n`;
+                displayText += `回應內容:\n${JSON.stringify(data, null, 2)}`;
+                
+                resultDiv.textContent = displayText;
+                resultDiv.className = data.success ? 'result success' : 'result error';
+                
+            } catch (error) {
+                resultDiv.textContent = `測試分類: ${category}\n錯誤: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+    </script>
+</body>
+</html>
