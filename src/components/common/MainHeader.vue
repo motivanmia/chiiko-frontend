@@ -17,7 +17,9 @@
   const notifyStore = useNotificationStore();
   onMounted(() => {
     notifyStore.loadNotifications();
-    loadCart();
+    if (authStore.isLoggedIn) {
+      loadCart();
+    }
   });
 
   const authStore = useAuthStore();
