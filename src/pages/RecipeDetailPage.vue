@@ -166,8 +166,8 @@
     <div>
       <div class="comment-section-container">
         <CommentSection
-          :initial-comments="threadedComments"
-          :current-user-avatar="currentUserAvatar"
+          v-if="recipeData"
+          :recipe-id="recipeData.recipe_id"
         />
         <ProductCard />
       </div>
@@ -209,7 +209,6 @@
   import Icon from '@/components/common/Icon.vue';
   import CommentSection from '@/components/CommentSection.vue';
   import ProductCard from '@/components/ProductCard.vue';
-  import avatarImage from '@/assets/image/NewRecipes/Mask_group.png';
   import { useIngredientStore } from '@/stores/ingredient';
   import IngredientLightBox from '@/components/school/IngredientLightBox.vue';
 
@@ -346,15 +345,15 @@
   // 使用者互動函式 (收藏、分享、複製)
   // ----------------------------------------------------
 
-async function toggleCollect() {
-  if (!memberStore.isLoggedIn) {
-    alert('請先登入才能收藏!');
-    return;
+  async function toggleCollect() {
+    if (!memberStore.isLoggedIn) {
+      alert('請先登入才能收藏!');
+      return;
+    }
+
+    // ✅ 傳入 recipeData 這個變數
+    await recipeStore.toggleCollect(recipeId.value, recipeData.value);
   }
-  
-  // ✅ 傳入 recipeData 這個變數
-  await recipeStore.toggleCollect(recipeId.value, recipeData.value);
-}
 
   function shareRecipe() {
     const recipeUrl = window.location.href;
@@ -381,14 +380,6 @@ async function toggleCollect() {
       .map((tag) => `#${tag}`);
   });
 
-  const threadedComments = computed(() => {
-    if (!recipeData.value || !recipeData.value.comments) {
-      return [];
-    }
-    // 假設後端已處理好巢狀結構，直接回傳
-    return recipeData.value.comments;
-  });
-
   function numberToChinese(num) {
     const parsedNum = typeof num === 'string' ? parseInt(num, 10) : num;
     if (isNaN(parsedNum) || parsedNum < 1) return '';
@@ -403,9 +394,6 @@ async function toggleCollect() {
     }
     return parsedNum.toString();
   }
-
-  const currentUserAvatar = ref(avatarImage);
-  
 </script>
 
 <style lang="scss" scoped>

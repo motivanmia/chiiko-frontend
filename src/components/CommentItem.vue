@@ -1,8 +1,13 @@
 <template>
   <div class="comment-item">
     <div class="comment-main">
+      <!-- 
+        【修正】
+        後端回傳的是 member_avatar，所以優先使用它。
+        如果沒有，再嘗試使用 currentUserAvatar (主要用於輸入框)。
+      -->
       <img
-        :src="comment.avatar || currentUserAvatar"
+        :src="comment.member_avatar || currentUserAvatar"
         alt="使用者頭像"
         class="comment-avatar"
       />
@@ -50,7 +55,7 @@
 
     <!-- 渲染回覆的區塊 -->
     <div
-      vif="comment.replies && comment.replies.length > 0"
+      v-if="comment.replies && comment.replies.length > 0"
       class="replies-wrapper"
     >
       <CommentItem
@@ -96,8 +101,9 @@
   import CommentInputForm from './CommentInputForm.vue';
   import CommentItem from './CommentItem.vue'; // 為了讓遞迴更穩定
 
-  // defineProps, defineEmits, and functions all go inside this single block
-  defineProps({
+  // 【✅ 唯一的核心修正 ✅】
+  // 將 defineProps 的回傳值賦予給一個名為 props 的常數。
+  const props = defineProps({
     comment: {
       type: Object,
       required: true,
@@ -111,8 +117,9 @@
   const emit = defineEmits(['toggleOptions', 'toggleReplyBox', 'reportComment', 'sendReply']);
 
   function handleReplySubmit(payload) {
+    // 現在 'props' 是一個已定義的變數，可以安全地存取 props.comment
     emit('sendReply', {
-      targetId: props.comment.comment_id, // Note: props is implicitly available
+      targetId: props.comment.comment_id,
       content: payload,
     });
   }

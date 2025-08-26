@@ -1,27 +1,72 @@
 <template>
   <div class="comment-wrapper">
-    <!-- 
-      ⭐️ 核心修正 1: v-for 遍歷的是本地的、可修改的 `comments` ref 
-      同時，將所有事件處理函式都綁定好
-    -->
-    <CommentItem
-      v-for="comment in comments"
-      :key="comment.comment_id"
-      :comment="comment"
-      :currentUserAvatar="currentUserAvatar"
-      @toggleOptions="handleToggleOptions"
-      @toggleReplyBox="handleToggleReplyBox"
-      @reportComment="handleReportComment"
-      @sendReply="handleSendReply"
-    />
+    <!-- 狀態一：正在載入資料時顯示 -->
+    <div
+      v-if="isLoading"
+      class="loading-state"
+    >
+      正在載入留言...
+    </div>
 
-    <!-- 主留言輸入框 (保持不變) -->
-    <CommentInputForm
-      :userAvatar="currentUserAvatar"
-      placeholder="請輸入留言..."
-      submitText="發布留言"
-      @submit="postComment"
-    />
+    <!-- 狀態二：載入完成後顯示 -->
+    <template v-else>
+      <!-- 
+        【版面核心修正】
+        1. 我們把「留言列表」的區塊移到最上面。
+        2. 我們把「留言輸入框」的區塊移到最下面。
+      -->
+
+      <!-- 留言列表 -->
+      <div class="comments-list">
+        <p
+          v-if="comments.length === 0"
+          class="no-comments"
+        >
+          還沒有任何留言，快來搶頭香！
+        </p>
+        <CommentItem
+          v-else
+          v-for="comment in comments"
+          :key="comment.comment_id"
+          :comment="comment"
+          :current-user-avatar="currentUser ? currentUser.avatar : ''"
+          @sendReply="handleSendReply"
+          @toggleReplyBox="handleToggleReplyBox"
+          @reportComment="handleReportComment"
+          @toggleOptions="handleToggleOptions"
+        />
+      </div>
+
+      <!-- 分隔線 (可選，根據您的 UI 設計) -->
+      <hr
+        v-if="currentUser"
+        class="section-divider"
+      />
+
+      <!-- 主留言輸入框 -->
+      <div
+        v-if="currentUser"
+        class="new-comment-input"
+      >
+        <CommentInputForm
+          :user-avatar="currentUser.avatar"
+          placeholder="請輸入留言..."
+          submit-text="發布留言"
+          @submit="handlePostNewComment"
+        />
+      </div>
+      <!-- 如果未登入，顯示提示 -->
+      <div
+        v-else
+        class="login-prompt"
+      >
+        <p>
+          請先
+          <a href="/login">登入</a>
+          才能發表留言。
+        </p>
+      </div>
+    </template>
 
     <!-- 檢舉燈箱 (保持不變) -->
     <ReportModal
@@ -33,40 +78,129 @@
 </template>
 
 <script setup>
-  import { ref, watch } from 'vue';
+  import { ref, onMounted } from 'vue';
+  import axios from 'axios';
   import CommentItem from './CommentItem.vue';
   import CommentInputForm from './CommentInputForm.vue';
   import ReportModal from './ReportModal.vue';
 
-  // --- Props and Local State ---
+  // --- 1. Props (保持不變) ---
   const props = defineProps({
-    initialComments: { type: Array, required: true },
-    currentUserAvatar: { type: String, required: true },
-  });
-  const comments = ref([]);
-
-  // --- Watcher to sync props and add UI state ---
-  watch(
-    () => props.initialComments,
-    (newVal) => {
-      const addStateToComments = (commentList) => {
-        return commentList.map((comment) => ({
-          ...comment,
-          showOptions: false,
-          showReplyBox: false,
-          replies: comment.replies ? addStateToComments(comment.replies) : [],
-        }));
-      };
-      comments.value = addStateToComments(newVal || []);
+    recipeId: {
+      type: [Number, String],
+      required: true,
     },
-    { immediate: true, deep: true },
-  );
+  });
 
-  // ⭐️ 核心修正 1: 恢復控制燈箱狀態的 ref ⭐️
+  // --- 2. 內部狀態管理 (保持不變) ---
+  const comments = ref([]);
+  const currentUser = ref(null);
+  const isLoading = ref(true);
   const isReportModalVisible = ref(false);
   const commentToReport = ref(null);
 
-  // --- Event Handlers ---
+  // --- 3. 自動獲取資料 (保持不變) ---
+  onMounted(async () => {
+    isLoading.value = true;
+    try {
+      const [userRes, commentsRes] = await Promise.all([
+        axios.get('http://localhost:8888/front/member/get_current_user.php'),
+        axios.get(
+          `http://localhost:8888/front/recipe/get_recipe_comments.php?recipe_id=${props.recipeId}`,
+        ),
+      ]);
+
+      if (userRes.data && userRes.data.isLoggedIn) {
+        currentUser.value = userRes.data.data;
+      }
+
+      if (commentsRes.data && commentsRes.data.status === 'success') {
+        const processedComments = addStateToComments(commentsRes.data.data || []);
+        comments.value = processedComments;
+      }
+    } catch (error) {
+      console.error('載入留言區失敗:', error);
+    } finally {
+      isLoading.value = false;
+    }
+  });
+
+  // --- 輔助函式 (保持不變) ---
+  const addStateToComments = (commentList) => {
+    return commentList.map((comment) => ({
+      ...comment,
+      showOptions: false,
+      showReplyBox: false,
+      replies: comment.replies ? addStateToComments(comment.replies) : [],
+    }));
+  };
+
+  // --- 4. API 事件處理 (保持不變) ---
+  async function handlePostNewComment(payload) {
+    if (!currentUser.value) return alert('請先登入');
+    const { text, image } = payload;
+    if (!text || text.trim() === '') return alert('留言內容不能為空');
+
+    const formData = new FormData();
+    formData.append('recipe_id', props.recipeId);
+    formData.append('content', text);
+    if (image) formData.append('image', image);
+
+    try {
+      const response = await axios.post(
+        'http://localhost:8888/front/recipe/post_recipe_comment.php',
+        formData,
+      );
+      if (response.data.status === 'success' && response.data.data) {
+        comments.value.unshift(addStateToComments([response.data.data])[0]);
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (error) {
+      console.error('發布留言失敗:', error);
+      alert('發布留言失敗');
+    }
+  }
+
+  async function handleSendReply(payload) {
+    if (!currentUser.value) return alert('請先登入');
+    const { targetId, content } = payload;
+    const { text, image } = content;
+    if (!text || text.trim() === '') return alert('回覆內容不能為空');
+
+    const formData = new FormData();
+    formData.append('recipe_id', props.recipeId);
+    formData.append('parent_id', targetId);
+    formData.append('content', text);
+    if (image) formData.append('image', image);
+
+    try {
+      const response = await axios.post(
+        'http://localhost:8888/front/recipe/post_recipe_comment.php',
+        formData,
+      );
+      if (response.data.status === 'success' && response.data.data) {
+        const parentComment = findCommentById(targetId);
+        if (parentComment) {
+          if (!parentComment.replies) parentComment.replies = [];
+          parentComment.replies.push(addStateToComments([response.data.data])[0]);
+          parentComment.showReplyBox = false;
+        }
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (error) {
+      console.error('回覆失敗:', error);
+      alert('回覆失敗');
+    }
+  }
+
+  // ==========================================================
+  //  【✅ 核心修正 ✅】
+  //  恢復完整的 UI 互動函式
+  // ==========================================================
+
+  // 輔助函式：遞迴地在留言陣列中尋找特定 ID 的留言
   function findCommentById(targetId, list = comments.value) {
     for (const comment of list) {
       if (comment.comment_id === targetId) return comment;
@@ -78,79 +212,56 @@
     return null;
   }
 
+  // 處理「...」選項按鈕的點擊
   function handleToggleOptions(commentId) {
     const comment = findCommentById(commentId);
-    if (comment) comment.showOptions = !comment.showOptions;
+    if (comment) {
+      comment.showOptions = !comment.showOptions;
+    }
   }
 
+  // 處理「回覆留言」按鈕的點擊
   function handleToggleReplyBox(commentId) {
     const targetComment = findCommentById(commentId);
     if (!targetComment) return;
+
+    // 為了確保一次只打開一個回覆框，我們先記錄下目標回覆框原本是否是打開的
     const isCurrentlyOpen = targetComment.showReplyBox;
+
+    // 遞迴函式：關閉所有留言的選項和回覆框
     const closeAll = (list) => {
       list.forEach((c) => {
         c.showReplyBox = false;
-        c.showOptions = false;
+        c.showOptions = false; // 順便關掉選項泡泡
         if (c.replies) closeAll(c.replies);
       });
     };
+
+    // 執行關閉所有
     closeAll(comments.value);
-    targetComment.showReplyBox = !isCurrentlyOpen;
+
+    // 如果目標回覆框原本是關閉的，就把它打開
+    if (!isCurrentlyOpen) {
+      targetComment.showReplyBox = true;
+    }
   }
 
-  /**
-   * ⭐️ 核心修正 2: 修改檢舉事件的處理函式 ⭐️
-   * @param {string} authorName - 被檢舉的留言者姓名
-   */
+  // 處理「檢舉留言」按鈕的點擊
   function handleReportComment(authorName) {
-    // 不再是 alert，而是設定狀態來打開燈箱
     commentToReport.value = authorName;
     isReportModalVisible.value = true;
-
-    // 關閉所有已打開的選項泡泡，提升使用者體驗
-    const closeAllOptions = (list) => {
-      list.forEach((c) => {
-        c.showOptions = false;
-        if (c.replies) closeAllOptions(c.replies);
-      });
-    };
-    closeAllOptions(comments.value);
   }
 
-  function handleSendReply(payload) {
-    console.log('收到回覆:', payload);
-    alert(`【測試】成功回覆留言 (ID: ${payload.targetId})，內容: ${payload.content.text}`);
-    handleToggleReplyBox(payload.targetId);
-  }
-
-  function postComment(payload) {
-    console.log('收到新留言:', payload);
-    alert(`【測試】成功發布新留言，內容: ${payload.text}`);
-  }
-
-  /**
-   * ⭐️ 核心修正 3: 恢復處理燈箱回傳事件的函式 ⭐️
-   */
+  // 關閉檢舉燈箱
   function closeReportModal() {
     isReportModalVisible.value = false;
     commentToReport.value = null;
   }
 
+  // 提交檢舉
   function submitReport(reasonId) {
-    const reasonText =
-      {
-        hate_speech: '仇恨言論',
-        harassment: '謾罵和騷擾',
-        violence: '暴力言論',
-        privacy: '侵犯隱私',
-        spam: '垃圾內容',
-      }[reasonId] || '其他';
-
-    // 在這裡，您未來可以執行實際的檢舉 API 呼叫
-    console.log(`向後端發送檢舉：使用者 "${commentToReport.value}"，理由: "${reasonText}"`);
-    alert(`已收到您對「${commentToReport.value}」的檢舉！\n理由: ${reasonText}`);
-
-    // 處理完畢後，關閉燈箱
+    console.log(`向後端發送檢舉：使用者 "${commentToReport.value}"，理由 ID: "${reasonId}"`);
+    alert(`已收到您對「${commentToReport.value}」的檢舉！`);
     closeReportModal();
   }
 </script>
