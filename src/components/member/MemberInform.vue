@@ -52,7 +52,7 @@
     box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
     padding: 20px 45px;
     position: relative;
-    cursor: pointer;
+
     @include fontSet(
       $font: $basic-font,
       $fw: normal,
@@ -71,6 +71,7 @@
       background-color: white;
       box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
       padding: 5px 30px;
+      cursor: pointer;
       @include rwdmax(768) {
         margin: 15px auto;
       }
