@@ -11,7 +11,7 @@
   });
 
   function handleClick(item) {
-    if (item.type === 20 || item.type === 21 || item.type === 22) {
+    if (item.type === 19 || item.type === 20 || item.type === 21 || item.type === 22) {
       // 訂單相關通知
       router.push({ name: 'order-detail', params: { id: item.order_id } });
     } else if (item.type === 30 && item.recipe_id) {
