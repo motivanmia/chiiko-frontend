@@ -1,30 +1,29 @@
 <script setup>
-import { onMounted, computed } from 'vue';
-import { useProductStore } from '@/stores/productStore'; 
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import { Autoplay } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/pagination';
+  import { onMounted, computed } from 'vue';
+  import { useProductStore } from '@/stores/productStore';
+  import { Swiper, SwiperSlide } from 'swiper/vue';
+  import { Autoplay } from 'swiper/modules';
+  import 'swiper/css';
+  import 'swiper/css/pagination';
 
-import title_el from '@/components/SectionTitle.vue';
-import SeeMoreButton from '../button/SeeMoreButton.vue';
+  import title_el from '@/components/SectionTitle.vue';
+  import SeeMoreButton from '../button/SeeMoreButton.vue';
 
+  const productStore = useProductStore();
 
-const productStore = useProductStore();
+  // 在元件掛載時，呼叫 Pinia action 載入資料
+  onMounted(() => {
+    productStore.fetchProducts();
+  });
 
-// 在元件掛載時，呼叫 Pinia action 載入資料
-onMounted(() => {
-  productStore.fetchProducts();
-});
-
-// 使用 computed 屬性來處理產品資料，包括複製陣列以實現無限輪播
-const products = computed(() => {
-  if (productStore.products.length === 0) {
-    return [];
-  }
-  // 為了達到無限輪播效果，我們複製原始陣列
-  return productStore.products.concat(productStore.products);
-});
+  // 使用 computed 屬性來處理產品資料，包括複製陣列以實現無限輪播
+  const products = computed(() => {
+    if (productStore.products.length === 0) {
+      return [];
+    }
+    // 為了達到無限輪播效果，我們複製原始陣列
+    return productStore.products.concat(productStore.products);
+  });
 </script>
 
 <template>
@@ -57,7 +56,7 @@ const products = computed(() => {
         :class="{ 'slide-up': index % 2 === 0, 'slide-down': index % 2 === 1 }"
       >
         <RouterLink
-          :to="`/product-detail/${product.product_id}`"
+          :to="`/products/${product.product_id}`"
           class="product-card"
         >
           <img
@@ -74,7 +73,6 @@ const products = computed(() => {
     />
   </section>
 </template>
-
 
 <style lang="scss" scoped>
   .high-repeat-section {
