@@ -1,7 +1,7 @@
 <script setup>
   import { ref, onMounted, watch, computed } from 'vue';
   import { useRoute } from 'vue-router';
-  import Banner from '@/components/product/Banner.vue';
+  import Banner from '@/components/recipe/Banner.vue';
   import SearchBar from '@/components/common/SearchBar.vue';
   import SectionTitle from '@/components/SectionTitle.vue';
   import ProductCards from '@/components/product/ProductCards.vue';
@@ -19,8 +19,9 @@
   const searchQuery = ref('');
 
   // 不同區塊的商品資料
+  const allProductsData = ref([]);
   const under100Products = ref([]);
-  const allProducts = ref([]);
+  const hotProducts = ref([]);
   const categoryProducts = ref([]);
 
   const getCategoryTitle = (categoryId) => {
@@ -57,12 +58,12 @@
   };
 
   // 全部推薦商品
-  const fetchAllProducts = async () => {
+  const fetchHotProducts = async () => {
     try {
       const response = await getProduct({ type: 'all_random' });
       // 檢查api是否成功以及資料是否存在
       if (response.data.data && Array.isArray(response.data.data)) {
-        allProducts.value = response.data.data;
+        hotProducts.value = response.data.data;
       }
     } catch (error) {
       console.error('獲取全部推薦商品失敗:', error);
@@ -84,12 +85,37 @@
     }
   };
 
-  // 組件載入時 先獲取推薦商品
+  // 所有商品
+  const fetchAllProducts = async () => {
+    try {
+      const response = await getProduct({ all: true });
+      if (response.data.data && Array.isArray(response.data.data)) {
+        allProductsData.value = response.data.data;
+      }
+    } catch (error) {
+      console.error('獲取所有商品失敗:', error);
+    }
+  };
+
+  // 根據關鍵字篩選商品列表
+  const filterProducts = computed(() => {
+    // 如果沒有搜尋關鍵字，就回傳空陣列
+    if (!searchQuery.value) {
+      return [];
+    }
+    const keyword = searchQuery.value.toLowerCase();
+    return allProductsData.value.filter((product) => {
+      return product.name.toLowerCase().includes(keyword);
+    });
+  });
+
+  // 當組件載入時，先獲取所有商品資料以供搜尋使用
   onMounted(() => {
+    fetchAllProducts();
     // 檢查是否有分類參數，如果沒有，才載入推薦商品
     if (!route.query.product_category_id) {
       fetchUnder100Products();
-      fetchAllProducts();
+      fetchHotProducts();
     }
   });
 
@@ -102,26 +128,50 @@
         fetchCategoryProducts(newCategoryId);
         // 清除推薦商品列表 讓頁面只顯示分類商品
         under100Products.value = [];
-        allProducts.value = [];
+        hotProducts.value = [];
       } else {
         // 沒有參數 呼叫推薦商品api
         fetchUnder100Products();
-        fetchAllProducts();
+        fetchHotProducts();
         // 同時，清除分類商品的列表
         categoryProducts.value = [];
       }
     },
     { immediate: true },
   );
+
+  const handleSearch = (query) => {
+    searchQuery.value = query;
+  };
 </script>
 
 <template>
-  <Banner />
+  <Banner
+    title="好物精選"
+    img="/src/assets/image/Product/banner.png"
+  />
   <Category />
   <div class="search-container">
-    <SearchBar placeholder="搜尋好物 例：抹布" />
+    <SearchBar
+      placeholder="搜尋好物 例：抹布"
+      @search="handleSearch"
+    />
   </div>
-  <template v-if="!route.query.product_category_id">
+  <template v-if="searchQuery">
+    <SectionTitle
+      :title="`/ 搜尋結果 \\`"
+      class="section"
+    />
+    <div class="product-card">
+      <ProductCards
+        v-for="product in filterProducts"
+        :key="product.product_id"
+        :product="product"
+      />
+      <p v-if="filterProducts.length === 0">找不到相關商品，請換個關鍵字試試。</p>
+    </div>
+  </template>
+  <template v-else-if="!route.query.product_category_id">
     <SectionTitle
       :title="`/ 高回購率百元好物 \\`"
       class="section"
@@ -140,7 +190,7 @@
     />
     <div class="product-card">
       <ProductCards
-        v-for="product in allProducts"
+        v-for="product in hotProducts"
         :key="product.product_id"
         :product="product"
       />
