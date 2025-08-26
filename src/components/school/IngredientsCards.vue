@@ -195,7 +195,8 @@
 
       & > h3 {
         display: block;
-        width: 150px;
+        min-width: 150px;
+        padding: 0 10px;
         height: 50px;
         position: absolute;
         background-color: color(button, main);
@@ -213,7 +214,7 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
         transition: background-color 0.3s ease;
         @include rwdmax(768) {
-          width: 130px;
+          min-width: 130px;
           height: 30px;
           font-size: 16px;
           line-height: 30px;

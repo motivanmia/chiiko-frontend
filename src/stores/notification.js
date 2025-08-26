@@ -46,6 +46,8 @@ export const useNotificationStore = defineStore('notification', {
         if (body.status === 'success' && Array.isArray(body.data)) {
           this.list = body.data.map((n) => {
             const parsed = toContentObj(n.content);
+            const createdRaw = n.created_at ?? '';
+            const createdDate = String(createdRaw).slice(0, 10);
             return {
               ...n,
               notification_id: Number(n.notification_id),
@@ -55,7 +57,8 @@ export const useNotificationStore = defineStore('notification', {
               order_id: n.order_id === null ? null : Number(n.order_id),
               type: Number(n.type),
               status: String(n.status),
-              created_at: n.created_at,
+              created_at: createdRaw,
+              created_date: createdDate,
               content_raw: n.content,
               content_obj: parsed,
               content_title: parsed.title,

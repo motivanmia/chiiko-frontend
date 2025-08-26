@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, useRouter } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
 // 全局前置守衛
@@ -139,7 +139,7 @@ const router = createRouter({
       component: () => import('@/pages/ProductPage.vue'),
     },
     {
-      path: '/product-detail',
+      path: '/products/:id',
       name: 'product-detail',
       component: () => import('@/pages/ProductContent.vue'),
     },
