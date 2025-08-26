@@ -7,14 +7,13 @@
     >
       正在載入留言...
     </div>
-
     <!-- 狀態二：載入完成後顯示 -->
     <template v-else>
       <!-- 
-        【版面核心修正】
-        1. 我們把「留言列表」的區塊移到最上面。
-        2. 我們把「留言輸入框」的區塊移到最下面。
-      -->
+    【版面核心修正】
+    1. 我們把「留言列表」的區塊移到最上面。
+    2. 我們把「留言輸入框」的區塊移到最下面。
+  -->
 
       <!-- 留言列表 -->
       <div class="comments-list">
@@ -76,7 +75,6 @@
     />
   </div>
 </template>
-
 <script setup>
   import { ref, onMounted } from 'vue';
   import axios from 'axios';
@@ -247,25 +245,79 @@
   }
 
   // 處理「檢舉留言」按鈕的點擊
-  function handleReportComment(authorName) {
-    commentToReport.value = authorName;
-    isReportModalVisible.value = true;
+  function handleReportComment(payload) {
+    // payload 應該是 { id, name }
+    // 增加一層保護，確保收到的 payload 是我們期望的物件格式
+    if (typeof payload === 'object' && payload !== null && payload.id && payload.name) {
+      // 將收到的物件存起來，這樣燈箱和提交函式才能使用
+      commentToReport.value = { id: payload.id, name: payload.name };
+      isReportModalVisible.value = true;
+
+      // 順便關閉所有已打開的選項泡泡，提升使用者體驗
+      const closeAllOptions = (list) => {
+        list.forEach((c) => {
+          c.showOptions = false;
+          if (c.replies) closeAllOptions(c.replies);
+        });
+      };
+      closeAllOptions(comments.value);
+    } else {
+      // 如果收到的資料格式不對，給出錯誤提示
+      console.error('handleReportComment 收到了無效的 payload:', payload);
+      alert('無法檢舉：缺少必要的留言資訊。');
+    }
   }
 
   // 關閉檢舉燈箱
   function closeReportModal() {
     isReportModalVisible.value = false;
-    commentToReport.value = null;
+    commentToReport.value = { id: null, name: '' };
   }
 
   // 提交檢舉
-  function submitReport(reasonId) {
-    console.log(`向後端發送檢舉：使用者 "${commentToReport.value}"，理由 ID: "${reasonId}"`);
-    alert(`已收到您對「${commentToReport.value}」的檢舉！`);
-    closeReportModal();
+  async function submitReport(reasonId) {
+    // 為了確保萬無一失，我們在函式開頭就從 ref 中取出需要的值
+    const reportTarget = commentToReport.value;
+
+    if (!currentUser.value) {
+      alert('請先登入才能檢舉');
+      return;
+    }
+
+    // 使用本地變數進行檢查，更穩定
+    if (!reportTarget || !reportTarget.id || !reasonId) {
+      alert('發生錯誤，缺少檢舉目標或理由，請重新操作。');
+      closeReportModal();
+      return;
+    }
+
+    const reportType = parseInt(reasonId, 10);
+
+    try {
+      const response = await axios.post(
+        'http://localhost:8888/front/recipe/post_comment_report.php',
+        {
+          comment_id: reportTarget.id, // 使用本地變數
+          type: reportType,
+        },
+        { withCredentials: true },
+      );
+
+      if (response.data.status === 'success') {
+        // 【✅ 核心修正 ✅】
+        // 在 alert 中，也使用我們在函式開頭就儲存好的本地變數
+        alert(`已收到您對「${reportTarget.name}」的檢舉！`);
+      } else {
+        throw new Error(response.data.message || '檢舉失敗');
+      }
+    } catch (error) {
+      console.error('提交檢舉失敗:', error);
+      alert(error.response?.data?.message || '提交檢舉時發生錯誤。');
+    } finally {
+      closeReportModal();
+    }
   }
 </script>
-
 <style scoped>
   /* ✅ 樣式修正：只保留最外層容器和回覆區塊的定位樣式 */
   .comment-wrapper {

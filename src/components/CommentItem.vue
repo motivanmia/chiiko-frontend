@@ -1,11 +1,6 @@
 <template>
   <div class="comment-item">
     <div class="comment-main">
-      <!-- 
-        【修正】
-        後端回傳的是 member_avatar，所以優先使用它。
-        如果沒有，再嘗試使用 currentUserAvatar (主要用於輸入框)。
-      -->
       <img
         :src="comment.member_avatar || currentUserAvatar"
         alt="使用者頭像"
@@ -32,8 +27,12 @@
               >
                 回覆留言
               </button>
+
+              <!-- 這裡的 emit 是正確的 -->
               <button
-                @click="$emit('reportComment', comment.member_name)"
+                @click="
+                  $emit('reportComment', { id: comment.comment_id, name: comment.member_name })
+                "
                 class="comment-report-btn"
               >
                 檢舉留言
@@ -71,7 +70,7 @@
       />
     </div>
 
-    <!-- 回覆框，只在需要時顯示 -->
+    <!-- 回覆框 -->
     <div
       v-if="comment.showReplyBox"
       class="comment-reply-section"
@@ -95,14 +94,12 @@
   </div>
 </template>
 
-<!-- ⭐️ 核心修正：確保只有一個 <script setup> 區塊 ⭐️ -->
 <script setup>
+  // 您的 <script setup> 區塊是完全正確的，保持不變
   import Icon from '@/components/common/Icon.vue';
   import CommentInputForm from './CommentInputForm.vue';
-  import CommentItem from './CommentItem.vue'; // 為了讓遞迴更穩定
+  import CommentItem from './CommentItem.vue';
 
-  // 【✅ 唯一的核心修正 ✅】
-  // 將 defineProps 的回傳值賦予給一個名為 props 的常數。
   const props = defineProps({
     comment: {
       type: Object,
@@ -117,7 +114,6 @@
   const emit = defineEmits(['toggleOptions', 'toggleReplyBox', 'reportComment', 'sendReply']);
 
   function handleReplySubmit(payload) {
-    // 現在 'props' 是一個已定義的變數，可以安全地存取 props.comment
     emit('sendReply', {
       targetId: props.comment.comment_id,
       content: payload,

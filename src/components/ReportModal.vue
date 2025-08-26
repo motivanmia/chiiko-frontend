@@ -96,45 +96,49 @@
   // 定義會觸發的事件
   const emit = defineEmits(['close', 'submitReport']);
 
-  // 檢舉選項的資料
+  // 【✅ 核心修正 ✅】
+  // 將檢舉選項的 id 從英文字串改為對應的數字 (1-5)
   const reportOptions = ref([
     {
-      id: 'hate_speech',
+      id: 1, // 'hate_speech' -> 1
       title: '仇恨言論',
       description:
         '誹謗言詞、種族主義或性別歧視的刻板印象、去人性化、煽動恐懼或歧視、仇恨提及、仇恨符號和標誌。',
     },
     {
-      id: 'harassment',
+      id: 2, // 'harassment' -> 2
       title: '謾罵和騷擾',
       description:
         '侮辱言詞、令人不悅的色情內容和圖像化、不必要的「工作場所不宜」和寫實內容、否認暴力事件、有針對性的騷擾以及煽動騷擾。',
     },
     {
-      id: 'violence',
+      id: 3, // 'violence' -> 3
       title: '暴力言論',
       description: '暴力威脅、期望傷害的發生、宣揚暴力行為、煽動暴力行為、以密碼煽動暴力行為。',
     },
     {
-      id: 'privacy',
+      id: 4, // 'privacy' -> 4
       title: '侵犯隱私',
       description:
         '分享私人資訊、威脅要分享/公開私人資訊、分享非自願的私密圖片、分享我不想在平台上公開的個人圖片。',
     },
     {
-      id: 'spam',
+      id: 5, // 'spam' -> 5
       title: '垃圾內容',
       description: '詐騙、虛假帳戶、惡意連結、無意義/重複或廣告性質的留言。',
     },
   ]);
 
-  // 用來儲存使用者選擇的選項
+  // 用來儲存使用者選擇的選項 (保持不變)
   const selectedReason = ref(null);
 
+  // 提交函式 (保持不變，因為它只負責 emit selectedReason)
   function handleSubmit() {
     if (selectedReason.value) {
+      // 現在 selectedReason.value 將會是 1, 2, 3, 4, 或 5
       emit('submitReport', selectedReason.value);
-      // 提交後可以選擇性地關閉燈箱
+
+      // 提交後自動關閉燈箱，提升使用者體驗
       emit('close');
     }
   }
