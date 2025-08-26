@@ -1,7 +1,7 @@
 <script setup>
   import { ref, onMounted, watch, computed } from 'vue';
   import { useRoute } from 'vue-router';
-  import Banner from '@/components/recipe/Banner.vue';
+  import Banner from '@/components/product/Banner.vue';
   import SearchBar from '@/components/common/SearchBar.vue';
   import SectionTitle from '@/components/SectionTitle.vue';
   import ProductCards from '@/components/product/ProductCards.vue';
@@ -116,10 +116,7 @@
 </script>
 
 <template>
-  <Banner
-    title="好物精選"
-    img="/src/assets/image/Product/banner.png"
-  />
+  <Banner />
   <Category />
   <div class="search-container">
     <SearchBar placeholder="搜尋好物 例：抹布" />

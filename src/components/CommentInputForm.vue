@@ -15,7 +15,7 @@
         class="comment-input"
       ></textarea>
 
-      <!-- ✨ 新增：圖片預覽區塊 -->
+      <!-- ✨ 核心修改 1：圖片預覽區塊 -->
       <div
         v-if="imagePreviewUrl"
         class="image-preview-wrapper"
@@ -30,10 +30,11 @@
           class="remove-image-btn"
         >
           &times;
+          <!-- 這是一個叉叉符號 -->
         </button>
       </div>
 
-      <!-- 隱藏的檔案選擇輸入框 -->
+      <!-- ✨ 核心修改 2：隱藏的檔案選擇輸入框 -->
       <input
         type="file"
         ref="fileInput"
@@ -43,7 +44,7 @@
       />
 
       <div class="comment-actions-wrapper">
-        <!-- 「上傳圖片」按鈕現在觸發檔案選擇 -->
+        <!-- ✨ 核心修改 3：「上傳圖片」按鈕現在觸發檔案選擇 -->
         <button
           @click="triggerFileUpload"
           class="comment-upload-btn"
@@ -85,7 +86,7 @@
   const content = ref('');
   const imageFile = ref(null); // ✨ 追蹤實際的圖片檔案
   const imagePreviewUrl = ref(null); // ✨ 追蹤預覽用的 URL
-  const fileInput = ref(null); // ✨ 追蹤 input 元素
+  const fileInput = ref(null); // ✨ 追蹤 <input> 元素
 
   // ✨ 觸發隱藏的 input 點擊事件
   function triggerFileUpload() {
@@ -98,7 +99,7 @@
     if (file && file.type.startsWith('image/')) {
       imageFile.value = file; // 儲存檔案物件
 
-      // 使用 FileReader 產生預覽
+      // 使用 FileReader 產生預覽 URL
       const reader = new FileReader();
       reader.onload = (e) => {
         imagePreviewUrl.value = e.target.result;
@@ -115,21 +116,32 @@
   function removeImage() {
     imageFile.value = null;
     imagePreviewUrl.value = null;
-    fileInput.value.value = ''; // 重設 input 的值，才能再次選擇同一個檔案
+    if (fileInput.value) {
+      fileInput.value.value = ''; // 重設 input 的值，才能再次選擇同一個檔案
+    }
   }
 
   // ✨ 修改後的提交函式
   function submit() {
-    // 必須要有文字或圖片才能提交
-    if (content.value.trim() || imageFile.value) {
-      emit('submit', {
-        text: content.value.trim(),
-        image: imageFile.value, // 將檔案物件本身發送出去
-      });
-      // 提交後清空所有內容
-      content.value = '';
-      removeImage();
+    // 必須要有文字或圖片才能提交 (根據您的業務邏輯，這裡可以調整)
+    if (!content.value.trim() && !imageFile.value) {
+      alert('請輸入留言或上傳圖片');
+      return;
     }
+    // 後端要求 content 必填，所以我們也加上這個判斷
+    if (!content.value.trim()) {
+      alert('留言內容不能為空');
+      return;
+    }
+
+    emit('submit', {
+      text: content.value.trim(),
+      image: imageFile.value, // 將檔案物件本身發送出去
+    });
+
+    // 提交後清空所有內容
+    content.value = '';
+    removeImage();
   }
 </script>
 

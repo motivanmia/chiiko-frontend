@@ -13,7 +13,7 @@
   const { setCurrentStep, loadOrderItem } = cart;
 
   onMounted(async () => {
-    const orderId = route.query.id;
+    const orderId = route.query.order_id;
     if (!orderId) {
       return router.replace('/cart');
     }

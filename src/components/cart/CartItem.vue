@@ -4,7 +4,7 @@
   import QuantityControl from './QuantityControl.vue';
 
   const cart = useCartStore();
-  const { removeProduct } = cart;
+  const { removeCart } = cart;
 
   defineProps({
     product: {
@@ -20,11 +20,11 @@
       <img
         class="cart-item__image"
         :src="product?.preview_image"
-        :alt="product?.name"
+        :alt="product?.product_name"
       />
     </div>
     <div class="cart-item__info">
-      <h3 class="cart-item__name">{{ product?.name }}</h3>
+      <h3 class="cart-item__name">{{ product?.product_name }}</h3>
       <span class="cart-item__unit-price">
         NT$
         <span class="cart-item__unit-price-number">{{ product?.unit_price }}</span>
@@ -41,7 +41,7 @@
     </div>
     <button
       class="cart-item__remove"
-      @click="removeProduct(product?.product_id)"
+      @click="removeCart(product?.product_id)"
     >
       <Icon icon-name="remove" />
     </button>

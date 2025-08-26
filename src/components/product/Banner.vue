@@ -1,0 +1,62 @@
+<script setup>
+  const props = defineProps({
+    img: {
+      type: String,
+      default: new URL('@/assets/image/Product/banner.png', import.meta.url).href,
+    },
+    title: {
+      type: String,
+      default: '好物精選',
+    },
+  });
+</script>
+
+<template>
+  <div class="banner-box">
+    <img
+      :src="img"
+      alt="banner"
+    />
+    <h2>{{ title }}</h2>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+  .banner-box {
+    margin: 0 auto 50px;
+    border-radius: 20px;
+    position: relative;
+    width: 100%;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    padding: 0 10px;
+    @include rwdmax(768) {
+      height: 180px;
+      margin-bottom: 30px;
+    }
+
+    & > img {
+      border-radius: 20px;
+      max-width: 1200px;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+    & > h2 {
+      font-size: 40px;
+      letter-spacing: 1.2px;
+      color: color(text, light);
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: bold;
+      letter-spacing: 8px;
+
+      @include rwdmax(768) {
+        @include font-size(28);
+      }
+    }
+  }
+</style>

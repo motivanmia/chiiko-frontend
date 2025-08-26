@@ -63,11 +63,10 @@ export function getNotification() {
   });
 }
 
-export function getMyRecipe(){
+export function getMyRecipe() {
   return request({
     url: `${url.member}/get_member_recipe.php`,
-    method:'get',
-
+    method: 'get',
   });
 }
 
@@ -104,15 +103,13 @@ export function getRecipeCategory() {
   });
 }
 
-
-export function getRecipe(data){
+export function getRecipe(data) {
   return request({
     url: `${url.recipe}/get_recipe.php`,
-    method:'get',
+    method: 'get',
     data,
   });
 }
-
 
 export function getProductCategory() {
   return request({
@@ -198,4 +195,10 @@ export function patchOrder(data) {
   });
 }
 
-
+// export function getRecipe(data) {
+//   return request({
+//     url: `${url.recipe}/get_recipe.php`,
+//     method: 'get',
+//     data,
+//   });
+// }

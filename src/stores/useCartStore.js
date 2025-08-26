@@ -2,6 +2,7 @@ import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
 import {
   getCarts,
+  postCart,
   patchCart,
   deleteCart,
   deleteCarts,
@@ -126,7 +127,7 @@ export const useCartStore = defineStore('cart', () => {
   };
 
   // 移除商品
-  const removeProduct = async (productId) => {
+  const removeCart = async (productId) => {
     try {
       const { data } = await deleteCart({
         product_id: productId,
@@ -153,12 +154,48 @@ export const useCartStore = defineStore('cart', () => {
   };
 
   // 新增商品
-  const addProduct = (product) => {
-    const existingProduct = products.value.find((p) => p.id === product.id);
-    if (existingProduct) {
-      existingProduct.quantity += product.quantity || 1;
-    } else {
-      products.value.push({ ...product, quantity: product.quantity || 1 });
+  const addCart = async (product) => {
+    try {
+      // 傳 product_id 與 quantity 給後端
+      const { data } = await postCart({
+        product_id: product.id,
+        quantity: product.quantity,
+      });
+
+      if (data.status === 'success') {
+        // 成功後在前端更新 cart 狀態
+        const cartItem = data.data; // 後端回傳的購物車項目
+        const productId = Number(cartItem.product_id);
+
+        // 檢查購物車裡是否已存在該商品
+        const existingProduct = products.value.find((p) => p.product_id == productId);
+
+        if (existingProduct) {
+          // 直接更新數量（後端回傳已經是最新數量）
+          existingProduct.quantity = Number(cartItem.quantity);
+        } else {
+          // 沒有的話新增
+          products.value.push({
+            product_id: productId,
+            product_name: cartItem.product_name,
+            unit_price: Number(cartItem.unit_price),
+            preview_image: cartItem.preview_image,
+            quantity: Number(cartItem.quantity),
+          });
+        }
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '加入購物車失敗',
+          text: data.message || '',
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '系統錯誤',
+        text: error.response?.data?.message || error.message,
+      });
     }
   };
 
@@ -194,7 +231,6 @@ export const useCartStore = defineStore('cart', () => {
       if (data.status === 'success') {
         products.value = data.data.map((item) => ({
           ...item,
-          user_id: Number(item.user_id),
           product_id: Number(item.product_id),
           quantity: Number(item.quantity),
           unit_price: Number(item.unit_price),
@@ -420,12 +456,12 @@ export const useCartStore = defineStore('cart', () => {
   const validateCheckoutForm = () => {
     let valid = true;
 
-    // 驗證信用卡
-    if (paymentForm.value.paymentMethod === 'card') {
-      for (const field of ['cardNumber', 'expMonth', 'cvv', 'cardHolder']) {
-        if (!validateCreditCardField(field)) valid = false;
-      }
-    }
+    // // 驗證信用卡
+    // if (paymentForm.value.paymentMethod === 'card') {
+    //   for (const field of ['cardNumber', 'expMonth', 'cvv', 'cardHolder']) {
+    //     if (!validateCreditCardField(field)) valid = false;
+    //   }
+    // }
 
     // 驗證收件人
     for (const field of ['name', 'phone', 'city', 'district', 'postal', 'address']) {
@@ -577,21 +613,40 @@ export const useCartStore = defineStore('cart', () => {
   const createOrder = async () => {
     try {
       const { data } = await postOrder(orderPayload.value);
-      if (data.status === 'success') {
-        const orderId = data.data.order_id;
-
-        Swal.fire({
-          icon: 'success',
-          title: '訂單建立成功',
-        });
-        return orderId;
-      } else {
+      if (data.status !== 'success') {
         Swal.fire({
           icon: 'error',
           title: '建立訂單失敗',
           text: data.message,
         });
         return null;
+      }
+
+      const orderData = data.data;
+
+      if (orderData.payment_url && orderData.params) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = orderData.payment_url;
+
+        Object.keys(orderData.params).forEach((key) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = orderData.params[key];
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+
+        return;
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: '訂單建立成功',
+        });
+        return orderData.order_id;
       }
     } catch (error) {
       Swal.fire({
@@ -692,8 +747,8 @@ export const useCartStore = defineStore('cart', () => {
     productCount,
     increaseQuantity,
     decreaseQuantity,
-    removeProduct,
-    addProduct,
+    removeCart,
+    addCart,
     clearCart,
     loadCart,
 

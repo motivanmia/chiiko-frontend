@@ -23,6 +23,10 @@
     padding: var(--btn-padding, 14px 100px);
     background-color: color(button, main);
     border: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     border-radius: 20px;
     cursor: pointer;
     @include fontSet(

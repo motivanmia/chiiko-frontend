@@ -11,7 +11,7 @@
   });
 
   function handleClick(item) {
-    if (item.type === 20 || item.type === 21 || item.type === 22) {
+    if (item.type === 19 || item.type === 20 || item.type === 21 || item.type === 22) {
       // 訂單相關通知
       router.push({ name: 'order-detail', params: { id: item.order_id } });
     } else if (item.type === 30 && item.recipe_id) {
@@ -52,7 +52,7 @@
     box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
     padding: 20px 45px;
     position: relative;
-    cursor: pointer;
+
     @include fontSet(
       $font: $basic-font,
       $fw: normal,
@@ -71,6 +71,7 @@
       background-color: white;
       box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
       padding: 5px 30px;
+      cursor: pointer;
       @include rwdmax(768) {
         margin: 15px auto;
       }

@@ -17,9 +17,7 @@
   const { setCurrentStep, resetForms, loadCart, loadUserProfile } = cart;
 
   const goToProduct = () => {
-    router.push({
-      name: 'product',
-    });
+    router.push('/products');
   };
 
   onMounted(() => {

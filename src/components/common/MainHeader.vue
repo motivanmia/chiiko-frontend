@@ -10,22 +10,24 @@
   import { useNotificationStore } from '@/stores/notification';
   import { useCartStore } from '@/stores/useCartStore';
 
-  const cart = useCartStore();
-  const { productCount } = storeToRefs(cart);
-  const { loadCart } = cart;
-
   const notifyStore = useNotificationStore();
   onMounted(() => {
     notifyStore.loadNotifications();
-    if (authStore.isLoggedIn) {
-      loadCart();
-    }
   });
 
   const authStore = useAuthStore();
   const router = useRouter();
   const route = useRoute();
 
+  const cart = useCartStore();
+  const { productCount } = storeToRefs(cart);
+  const { loadCart } = cart;
+
+  onMounted(() => {
+    if (authStore.isLoggedIn) {
+      loadCart();
+    }
+  });
   // nav選單項目
   const navLinks = ref([
     { key: 'recipes', title: '靈感×食譜', path: '/recipes', isOpen: true },
