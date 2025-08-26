@@ -4,7 +4,9 @@
   import { Navigation, Thumbs } from 'swiper/modules';
   import Icon from '@/components/common/Icon.vue';
   import { useRoute } from 'vue-router';
-  // import { computed } from 'vue';
+  import { useCartStore } from '@/stores/useCartStore';
+  import { useAuthStore } from '@/stores/auth';
+  import { storeToRefs } from 'pinia';
   import ProductCards from '@/components/product/ProductCards.vue';
   import { getProduct } from '@/api/fetch';
 
@@ -13,6 +15,13 @@
   import 'swiper/css/thumbs';
 
   const route = useRoute();
+
+  const authStore = useAuthStore();
+  const { isLoggedIn } = storeToRefs(authStore);
+  const { openModal } = authStore;
+
+  const cartStore = useCartStore();
+  const { addCart } = cartStore;
 
   const thumbsSwiper = ref(null);
   const setThumbsSwiper = (swiper) => (thumbsSwiper.value = swiper);
@@ -37,7 +46,15 @@
     if (qty.value > 1) qty.value--;
   };
   const inc = () => qty.value++;
-  const addToCart = () => alert(`已加入購物車，數量：${qty.value}`);
+  const addToCart = () => {
+    if (!isLoggedIn.value) {
+      return openModal('login');
+    }
+    addCart({
+      id: route.params.id,
+      quantity: qty.value,
+    });
+  };
   const toggleWishlist = () => (inWishlist.value = !inWishlist.value);
 
   // ==========
@@ -72,6 +89,17 @@
       console.error('獲取全部推薦商品失敗:', error);
     }
   };
+
+  watch(
+    product,
+    (val) => {
+      console.log('product', val);
+    },
+    {
+      deep: true,
+      immediate: true,
+    },
+  );
 
   onMounted(() => {
     fetchAllProducts();

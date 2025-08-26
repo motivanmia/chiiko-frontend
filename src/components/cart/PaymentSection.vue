@@ -3,7 +3,7 @@
   import { useCartStore } from '@/stores/useCartStore';
   import { storeToRefs } from 'pinia';
   import PaymentOption from './PaymentOption.vue';
-  import CreditCardForm from './CreditCardForm.vue';
+  // import CreditCardForm from './CreditCardForm.vue';
 
   const cart = useCartStore();
   const { paymentForm } = storeToRefs(cart);
@@ -35,7 +35,7 @@
         name="paymentMethod"
         :options="paymentOptions"
       />
-      <CreditCardForm v-show="paymentForm.paymentMethod === 'card'" />
+      <!-- <CreditCardForm v-show="paymentForm.paymentMethod === 'card'" /> -->
     </div>
   </section>
 </template>

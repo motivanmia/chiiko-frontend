@@ -14,7 +14,7 @@
 
     const orderId = await createOrder();
     if (orderId) {
-      router.push({ path: '/order-success', query: { id: orderId } });
+      router.push({ path: '/order-success', query: { order_id: orderId } });
     }
   };
 </script>
