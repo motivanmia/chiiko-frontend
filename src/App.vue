@@ -3,6 +3,8 @@
   import MainHeader from './components/common/MainHeader.vue';
   import { useRoute } from 'vue-router';
   import { computed } from 'vue';
+  
+  
 
   const route = useRoute();
   const mainStyle = computed(() => {

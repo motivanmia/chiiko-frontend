@@ -17,7 +17,7 @@
 
       if (apiResponse.success) {
         (allRecipes.value = apiResponse.data), console.log('成功取得收藏資料', allRecipes.value);
-        } else {
+      } else {
         console.error('API錯誤:', apiResponse.error);
         allRecipes.value = [];
       }
@@ -57,14 +57,14 @@
       :key="recipe.recipe_id"
       class="member-card__box"
     >
-      <MemberCard
-        :img-src="recipe.image"
-        :img-alt="recipe.name"
-        :title-text="recipe.name"
-        icon-name="mark"
-        icon-description="已收藏"
-        @delete-click="handleDeleteRecipe(recipe.recipe_id)"
-      ></MemberCard>
+    <MemberCard
+      :imgSrc="recipe.image"
+      :titleText="recipe.name"
+      :recipeId="recipe.recipe_id"
+      :iconDescription="recipe.favorite_count"
+      @delete-click="handleDeleteRecipe(recipe.recipe_id)"
+    />
+
     </div>
   </div>
 </template>
@@ -82,5 +82,12 @@
     @include rwdmax(1200) {
       max-width: 768px;
     }
+
+    .member-card__box {
+      & > a {
+        text-decoration: none; 
+        color: inherit; 
+    }
   }
+}
 </style>

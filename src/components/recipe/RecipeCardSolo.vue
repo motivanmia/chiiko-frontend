@@ -1,7 +1,6 @@
 <script setup>
   import { useRouter } from 'vue-router';
   import Icon from '../common/Icon.vue';
-  import axios from 'axios';
 
 
   // import { popularRecipe } from '@/constants/recipes';

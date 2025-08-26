@@ -27,7 +27,7 @@
         @click="triggerFile"
         class="upload-button-override"
       >
-        選擇食譜圖片
+        {{ previewUrl ? '更換圖片' : '選擇食譜圖片' }}
       </BaseButton>
     </div>
 
@@ -44,42 +44,54 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue';
-  import BaseButton from '@/components/common/BaseButton.vue';
+import { ref, watch, computed } from 'vue';
+import BaseButton from '@/components/common/BaseButton.vue';
 
-  // ⭐️ 核心修改 1: 宣告這個元件會發出一個叫做 `update:file` 的事件
-  const emit = defineEmits(['update:file']);
+const props = defineProps({
+  initialImage: {
+    type: String,
+    default: '',
+  },
+});
 
-  const previewUrl = ref('');
-  const fileInput = ref(null);
+const emit = defineEmits(['update:file']);
 
-  // 當使用者點擊「選擇圖片」按鈕時，觸發隱藏的 input 點擊事件
-  const triggerFile = () => fileInput.value?.click();
+// 新增一個變數來儲存新上傳的檔案
+const newFile = ref(null);
+const fileInput = ref(null);
 
-  // 統一處理檔案更新的函式
-  const processFile = (file) => {
-    // 驗證是否有檔案，以及檔案是否為圖片類型
-    if (file && file.type.startsWith('image/')) {
-      // 產生一個暫時的 URL，用來在畫面上預覽圖片
-      previewUrl.value = URL.createObjectURL(file);
+// ✅ 核心修正：使用 computed 屬性來決定要顯示哪個 URL
+const previewUrl = computed(() => {
+  // 優先顯示使用者新上傳的圖片預覽
+  if (newFile.value) {
+    return URL.createObjectURL(newFile.value);
+  }
+  // 如果沒有新上傳的，就顯示從父層傳入的圖片路徑
+  return props.initialImage;
+});
 
-      // ⭐️ 核心修改 2: 【最關鍵的一步】
-      //    觸發 'update:file' 事件，並將使用者選擇的檔案物件 (file)
-      //    當作「包裹」一起發送給父層 (RecipeEditPage.vue)
-      emit('update:file', file);
+const triggerFile = () => fileInput.value?.click();
+
+// 統一處理檔案更新的函式
+const processFile = (file) => {
+  if (file && file.type.startsWith('image/')) {
+    // 儲存新檔案物件
+    newFile.value = file;
+    emit('update:file', file);
+  } else {
+    // 如果取消選擇，清空新檔案
+    newFile.value = null;
+    emit('update:file', null);
+    if (file === null) {
+      console.log('User Cancelled');
     } else {
-      // 如果選擇的不是圖片或取消選擇，就清空
-      previewUrl.value = '';
-      emit('update:file', null);
       alert('請選擇有效的圖片檔案 (jpg, png, gif)。');
     }
-  };
+  }
+};
 
-  // 當使用者透過「點擊」選擇檔案時觸發
-  const handleFileChange = (e) => processFile(e.target.files[0]);
-
-  // 當使用者透過「拖曳」放入檔案時觸發
-  const handleDrop = (e) => processFile(e.dataTransfer.files[0]);
+const handleFileChange = (e) => processFile(e.target.files[0]);
+const handleDrop = (e) => processFile(e.dataTransfer.files[0]);
 </script>
 
 <style lang="scss" scoped>
@@ -116,6 +128,7 @@
 
   .upload-button-override {
     width: 225px;
+    
   }
 
   /* 

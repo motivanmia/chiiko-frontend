@@ -14,7 +14,7 @@
       default: 'center center',
     },
     path: {
-      type: String,
+      type: [String,Object],
       default: '/',
     },
   });

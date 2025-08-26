@@ -71,6 +71,32 @@ export function getMyRecipe(){
   });
 }
 
+export function postIngredients(payload) {
+  return request({
+    url: `${url.recipe}/post_ingredients.php`,
+    method: 'post',
+    data: payload,
+  });
+}
+
+
+export function deleteRecipe(recipeId) {
+  return request({
+    method: 'delete',
+    url: `${url.member}/delete_member_recipe.php`,
+    data: {
+      recipe_id: recipeId
+    }
+  });
+}
+
+export function getRecipeById(recipeId) {
+  return request({
+    method: 'get',
+    url: `${url.member}/get_recipe_by_id.php?recipe_id=${recipeId}`,
+  });
+}
+
 export function getRecipeCategory() {
   return request({
     url: `${url.recipe}/get_recipe_category.php`,

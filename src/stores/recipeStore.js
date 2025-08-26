@@ -2,6 +2,9 @@ import { defineStore } from 'pinia';
 import { getRecipe } from '@/api/fetch';
 import { getRecipeCategory } from '@/api/fetch';
 import { getMyRecipe } from '@/api/fetch';
+import { deleteRecipe } from '@/api/fetch';
+import { getRecipeById } from '@/api/fetch';
+import { postIngredients } from '@/api/fetch';
 
 export const useRecipeStore = defineStore('recipe', {
   state: () => ({
@@ -10,6 +13,7 @@ export const useRecipeStore = defineStore('recipe', {
     draftRecipes: [],
     publishedRecipes: [],
     pendingRecipes: [],
+    currentRecipe: null,
     isLoading: false,
     error: null,
   }),
@@ -67,12 +71,10 @@ export const useRecipeStore = defineStore('recipe', {
     },
 
     async fetchMyRecipes() {
-      // ✅ 移除 userId 參數
       this.isLoading = true;
       this.error = null;
 
       try {
-        // ✅ 直接呼叫，不傳遞任何參數
         const response = await getMyRecipe();
         const apiData = response.data;
         console.log('API 回應資料:', apiData);
@@ -101,6 +103,71 @@ export const useRecipeStore = defineStore('recipe', {
         this.isLoading = false;
       }
     },
+
+    async deleteMyRecipe(recipeId) {
+      try {
+        const response = await deleteRecipe(recipeId);
+
+        if (response.data.status === 'success') {
+          this.publishedRecipes = this.publishedRecipes.filter((r) => r.recipe_id !== recipeId);
+          this.pendingRecipes = this.pendingRecipes.filter((r) => r.recipe_id !== recipeId);
+          this.draftRecipes = this.draftRecipes.filter((r) => r.recipe_id !== recipeId);
+
+          alert('食譜已成功刪除！');
+        } else {
+          alert(response.data.message);
+        }
+      } catch (error) {
+        console.error('刪除食譜失敗:', error);
+        alert('刪除失敗，請稍後再試。');
+      }
+    },
+
+    async fetchRecipeById(recipeId) {
+      this.isLoading = true;
+      this.error = null;
+      this.currentRecipe = null; 
+
+      try {
+        const response = await getRecipeById(recipeId);
+        const apiData = response.data;
+
+        if (apiData.status === 'success') {
+          // 將取得的食譜資料儲存到 currentRecipe 狀態中
+          this.currentRecipe = apiData.data;
+          console.log('Pinia: 成功取得單一食譜資料', this.currentRecipe);
+        } else {
+          this.error = apiData.message || '後端回傳未知錯誤';
+          console.error('API 錯誤:', this.error);
+        }
+      } catch (error) {
+        this.error = '取得食譜資料失敗：' + error.message;
+        console.error('取得食譜資料失敗', error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+        async postIngredientsToRecipe(payload) {
+      try {
+        const response = await postIngredients(payload);
+        console.log('食材發布成功:', response.data.message);
+        return response.data;
+      } catch (error) {
+        console.error('發布食材失敗:', error);
+        throw error;
+      }
+    },
+
+        loadUserId() {
+      // 假設你在登入成功後，會將使用者 ID 儲存到 localStorage
+      const storedUserId = localStorage.getItem('userId');
+      if (storedUserId) {
+        // 將儲存的 ID 賦值給 state
+        this.userId = parseInt(storedUserId, 10);
+      }
+    },
+
   },
 
   getters: {

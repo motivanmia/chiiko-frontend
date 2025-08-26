@@ -113,16 +113,21 @@ const router = createRouter({
       component: () => import('@/pages/SchoolPage.vue'),
     },
     {
+      path: '/recipe-edit/:id?',
+      name: 'recipe-edit',
+      component: () => import('@/pages/RecipeEditPage.vue'),
+      props: true,
+      meta: {
+        title: '編輯食譜',
+        requiresAuth: true,
+      },
+    },
+    {
       path: '/recipe-detail/:id',
       name: 'recipe-detail',
       component: () => import('@/pages/RecipeDetailPage.vue'),
     },
-    {
-      path: '/recipe-edit',
-      name: 'recipe-edit',
-      component: () => import('@/pages/RecipeEditPage.vue'),
-      meta: { requiresAuth: true },
-    },
+
     {
       path: '/recipe-overview',
       name: '/recipe-overview',

@@ -1,19 +1,20 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRecipeStore } from '@/stores/recipeStore';
-import { useAuthStore } from '@/stores/auth'; // 假設你用 Pinia 管理使用者登入狀態
+import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
 import Icon from '../common/Icon.vue';
 
+const router = useRouter();
 const recipeStore = useRecipeStore();
-const authStore = useAuthStore(); // 假設你用這個 Store 存放使用者資訊
-
+const authStore = useAuthStore();
 const isDraftExpanded = ref(true);
 const activeTab = ref('published');
 
-// ✅ 將資料來源替換為 Pinia Store 的狀態
-const draftRecipe = computed(() => recipeStore.draftRecipes[0]); // 假設草稿只有一個
+const draftRecipe = computed(() => recipeStore.draftRecipes[0]); 
 const publishedRecipes = computed(() => recipeStore.publishedRecipes);
 const pendingRecipes = computed(() => recipeStore.pendingRecipes);
+
 
 const currentRecipes = computed(() => {
   return activeTab.value === 'published' ? publishedRecipes.value : pendingRecipes.value;
@@ -43,29 +44,33 @@ onMounted(() => {
         />
       </button>
 
-      <div v-if="isDraftExpanded && draftRecipe" class="recipe-management__draft-card">
-        <div class="recipe-management__image">
-          <img
-            class="recipe-management__image-pic"
-            :src="draftRecipe.image"
-            :alt="draftRecipe.name"
-          />
-        </div>
-        <div class="recipe-management__content-draft">
-          <h3 class="recipe-management__title">{{ draftRecipe.name }}</h3>
-          <p class="recipe-management__date">上次編輯日期 {{ draftRecipe.created_at }}</p>
-        </div>
-        <div class="recipe-management__actions">
-          <Icon
-            icon-name="revise"
-            class="recipe-management__action-btn recipe-management__action-btn--edit"
-          />
-          <Icon
-            icon-name="del"
-            class="recipe-management__action-btn recipe-management__action-btn--delete"
-          />
-        </div>
-      </div>
+<div v-if="isDraftExpanded && draftRecipe" class="recipe-management__draft-card">
+  <div class="recipe-management__image">
+    <img
+      class="recipe-management__image-pic"
+      :src="draftRecipe.image"
+      :alt="draftRecipe.name"
+    />
+  </div>
+  <div class="recipe-management__content-draft">
+    <h3 class="recipe-management__title">{{ draftRecipe.name }}</h3>
+    <p class="recipe-management__date">上次編輯日期 {{ draftRecipe.created_at }}</p>
+  </div>
+  <div class="recipe-management__actions">
+    <router-link :to="{ name: 'recipe-edit', params: { id: draftRecipe.recipe_id } }">
+      <Icon
+        icon-name="revise"
+        class="recipe-management__action-btn recipe-management__action-btn--edit"
+      />
+    </router-link>
+    <Icon
+      icon-name="del"
+      class="recipe-management__action-btn recipe-management__action-btn--delete"
+      @click="recipeStore.deleteMyRecipe(draftRecipe.recipe_id)"
+    />
+  </div>
+</div>
+
       <div v-if="!draftRecipe && isDraftExpanded" class="no-draft-message">
         <p>目前沒有草稿食譜。</p>
       </div>
@@ -128,6 +133,7 @@ onMounted(() => {
           <Icon
             icon-name="del"
             class="recipe-management__delete-btn"
+            @click="recipeStore.deleteMyRecipe(recipe.recipe_id)"
           />
         </div>
       </div>

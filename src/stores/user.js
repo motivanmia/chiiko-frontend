@@ -83,6 +83,7 @@ export const useUserStore = defineStore('user', {
       // 然後清空前端的狀態
       this.clearUserInfo();
     },
+    
   },
   getters: {
     // 判斷暱稱是否存在
