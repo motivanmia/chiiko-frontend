@@ -1,5 +1,5 @@
 <script setup>
-  import { defineProps } from 'vue';
+  import { defineProps, computed } from 'vue';
   import { RouterLink } from 'vue-router';
 
   const props = defineProps({
@@ -7,6 +7,16 @@
       type: Object,
       required: true,
     },
+  });
+
+  const truncatedInfo = computed(() => {
+    if (props.product && props.product.product_info) {
+      // 使用 .split('\n') 將文字按換行符分割成陣列
+      const lines = props.product.product_info.split('\n');
+      // 只取陣列的第一個元素
+      return lines[0];
+    }
+    return '';
   });
 </script>
 
@@ -23,7 +33,7 @@
     </div>
     <div class="product-card__content">
       <p class="product-card__name">{{ props.product.name }}</p>
-      <!-- <p class="product-card__desc">{{ product.product_info }}</p> -->
+      <p class="product-card__desc">{{ truncatedInfo }}</p>
       <div class="product-card__price">${{ props.product.unit_price }}</div>
     </div>
   </div>
@@ -49,7 +59,7 @@
 
     &__pic {
       width: 100%;
-      height: 20vw;
+      // height: 20vw;
       padding-bottom: 110%;
       height: 0;
       position: relative;

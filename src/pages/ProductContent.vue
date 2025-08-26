@@ -8,6 +8,8 @@
   import { useAuthStore } from '@/stores/auth';
   import { storeToRefs } from 'pinia';
   import ProductCards from '@/components/product/ProductCards.vue';
+  import CancelButton from '@/components/button/CancelButton.vue';
+  import ConfirmButton from '@/components/button/ConfirmButton.vue';
   import { getProduct } from '@/api/fetch';
 
   import 'swiper/css';
@@ -15,6 +17,8 @@
   import 'swiper/css/thumbs';
 
   const route = useRoute();
+  const mainImages = ref([]); // 儲存主輪播圖的資料
+  const contentImages = ref([]);
 
   const authStore = useAuthStore();
   const { isLoggedIn } = storeToRefs(authStore);
@@ -23,20 +27,39 @@
   const cartStore = useCartStore();
   const { addCart } = cartStore;
 
+  const mainSwiper = ref(null);
   const thumbsSwiper = ref(null);
-  const setThumbsSwiper = (swiper) => (thumbsSwiper.value = swiper);
+  const setMainSwiper = (swiper) => {
+    mainSwiper.value = swiper;
+    // console.log('Main swiper set:', swiper);
+  };
 
-  const images = [
-    {
-      image: new URL('@/assets/image/Product/Product-buy/product-knife1.png', import.meta.url).href,
-    },
-    {
-      image: new URL('@/assets/image/Product/Product-buy/product-knife2.png', import.meta.url).href,
-    },
-    {
-      image: new URL('@/assets/image/Product/Product-buy/product-knife3.png', import.meta.url).href,
-    },
-  ];
+  const setThumbsSwiper = (swiper) => {
+    thumbsSwiper.value = swiper;
+    // console.log('Thumbs swiper set:', swiper);
+  };
+
+  // 當縮圖被點擊時同步主圖
+  const onThumbClick = (swiper) => {
+    if (mainSwiper.value && swiper.clickedIndex !== undefined) {
+      mainSwiper.value.slideTo(swiper.clickedIndex);
+    }
+  };
+
+  // 簡化版的縮圖導航控制 - 直接控制主圖
+  const goToPrevThumb = () => {
+    console.log('Prev thumb clicked');
+    if (mainSwiper.value) {
+      mainSwiper.value.slidePrev();
+    }
+  };
+
+  const goToNextThumb = () => {
+    // console.log('Next thumb clicked');
+    if (mainSwiper.value) {
+      mainSwiper.value.slideNext();
+    }
+  };
 
   const qty = ref(1);
   const inWishlist = ref(false);
@@ -57,22 +80,31 @@
   };
   const toggleWishlist = () => (inWishlist.value = !inWishlist.value);
 
-  // ==========
-
-  const swiperRef = ref(null);
-
   // 該頁商品
   const product = ref(null);
   const fetchProductId = async (id) => {
     try {
       const response = await getProduct({ product_id: id });
-      // 檢查api是否成功以及資料是否存在
-      if (response.status === 'success' && response.data) {
-        product.value = response.data;
+      if (
+        response.data.status === 'success' &&
+        response.data.data &&
+        response.data.data.length > 0
+      ) {
+        product.value = response.data.data[0];
+        mainImages.value = product.value.product_images;
+        contentImages.value = product.value.content_images;
         console.log('單一商品資料:', product.value);
+      } else {
+        console.error('獲取商品資料失敗或資料不存在');
+        product.value = null;
+        mainImages.value = [];
+        contentImages.value = [];
       }
     } catch (error) {
       console.error('獲取商品失敗:', error);
+      product.value = null;
+      mainImages.value = [];
+      contentImages.value = [];
     }
   };
 
@@ -114,195 +146,216 @@
     () => route.params.id,
     (newId) => {
       if (newId) {
-        fetchProductById(newId);
+        fetchProductId(newId);
       }
     },
   );
-
-  const onSwiper = (swiper) => {
-    swiperRef.value = swiper;
-  };
-
-  const prevSlide = () => {
-    swiperRef.value.slidePrev();
-  };
-  const nextSlide = () => {
-    swiperRef.value.slideNext();
-  };
 </script>
 
 <template>
-  <!-- 返回按鈕 -->
-  <div class="back-col">
-    <button
-      class="back-button"
-      @click="goBack"
-    >
-      <Icon
-        icon-name="leftA"
-        class="arrow-icon"
-      />
-      回前頁
-    </button>
-  </div>
-
-  <div class="product-container">
-    <div class="product-info">
-      <div class="product-info__gallery">
+  <div
+    v-if="product"
+    class="product-container"
+  >
+    <!-- 返回按鈕 -->
+    <div class="back-col">
+      <button
+        class="back-button"
+        @click="goBack"
+      >
+        <Icon
+          icon-name="leftA"
+          class="arrow-icon"
+        />
+        回前頁
+      </button>
+    </div>
+    <!-- <div class="product-info"></div> -->
+    <div class="product-gallery">
+      <!-- 主要輪播圖 -->
+      <div class="main-swiper-container">
         <Swiper
+          v-if="mainImages.length"
           class="main-swiper"
           :modules="[Navigation, Thumbs]"
-          :navigation="true"
+          :navigation="{
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          }"
           :thumbs="{ swiper: thumbsSwiper }"
           :loop="true"
+          :watch-slides-progress="true"
+          @swiper="setMainSwiper"
         >
+          <!-- 主圖導航按鈕 -->
+          <div
+            class="related-button-prev swiper-button-prev main-button-prev main-nav-button"
+          ></div>
+          <div
+            class="related-button-next swiper-button-next main-button-next main-nav-button"
+          ></div>
           <SwiperSlide
-            v-for="(img, i) in images"
+            v-for="(imgUrl, i) in mainImages"
             :key="i"
           >
             <img
-              :src="img.image"
+              :src="imgUrl"
               class="main-image"
               :alt="`商品主圖 ${i + 1}`"
             />
           </SwiperSlide>
         </Swiper>
+      </div>
 
+      <!-- 縮圖輪播 -->
+      <div class="thumbs-swiper-container">
+        <!-- 縮圖導航按鈕 - 移除 Swiper 內建導航，使用手動控制 -->
+        <div
+          class="related-button-prev swiper-button-prev thumbs-nav-button thumbs-button-prev"
+          @click="goToPrevThumb"
+        ></div>
+        <div
+          class="related-button-next swiper-button-next thumbs-nav-button thumbs-button-next"
+          @click="goToNextThumb"
+        ></div>
         <Swiper
+          v-if="mainImages.length"
           class="thumbs-swiper"
           :modules="[Navigation, Thumbs]"
+          :navigation="{
+            nextEl: '.thumbs-swiper-container .swiper-button-next',
+            prevEl: '.thumbs-swiper-container .swiper-button-prev',
+          }"
           :slides-per-view="3"
           :space-between="10"
-          :navigation="{ nextEl: '.thumbs-button-next', prevEl: '.thumbs-button-prev' }"
+          :watch-slides-progress="true"
           @swiper="setThumbsSwiper"
+          @click="onThumbClick"
         >
           <SwiperSlide
-            v-for="(img, i) in images"
+            v-for="(imgUrl, i) in mainImages"
             :key="i"
           >
             <img
-              :src="img.image"
+              :src="imgUrl"
               class="thumb-image"
               :alt="`縮圖 ${i + 1}`"
             />
           </SwiperSlide>
-
-          <!-- 縮圖箭頭 -->
-          <div class="thumbs-button-prev">
-            <span class="thumbs-arrow">&lt;</span>
-          </div>
-          <div class="thumbs-button-next">
-            <span class="thumbs-arrow">&gt;</span>
-          </div>
         </Swiper>
       </div>
-
-      <!-- 商品資訊卡 -->
-      <aside class="product-info__card">
-        <h2 class="product-info__title">不鏽鋼奶油刀</h2>
-        <ul class="product-info__features">
-          <li>-表面光滑，容易清洗。</li>
-          <li>-握感舒適，輕鬆抹塗。</li>
-          <li>-適用於抹醬、攪拌、刮取等！</li>
-        </ul>
-        <div class="product-info__price">$29</div>
-        <div class="product-info__qty">
-          <span>數量</span>
-          <div class="product-info__stepper">
-            <button @click="dec">-</button>
-            <input
-              type="product-info__text"
-              v-model.number="qty"
-            />
-            <button @click="inc">+</button>
-          </div>
-        </div>
-        <button
-          class="product-info__cart"
-          @click="addToCart"
-        >
-          <Icon
-            icon-name="order"
-            class="icon-cart"
-          />
-          加入購物車
-        </button>
-        <p class="note">
-          若商品缺貨可以先加入「願望清單」。
-          <br />
-          待恢復供貨就可以收到提醒！
-        </p>
-        <button
-          class="product-info__collect"
-          @click="toggleWishlist"
-        >
-          <template v-if="inWishlist">
-            <Icon
-              icon-name="heart"
-              class="icon-heart"
-            />
-            已加入願望清單
-          </template>
-          <template v-else>
-            <Icon
-              icon-name="heartL"
-              class="icon-heart"
-            />
-            加入願望清單
-          </template>
-        </button>
-      </aside>
     </div>
+
+    <!-- 商品資訊卡 -->
+    <aside class="product-infocard">
+      <div class="product-infocard__content">
+        <h2 class="product-infocard__title">{{ product.name }}</h2>
+        <p class="product-infocard__features">
+          {{ product.product_info }}
+        </p>
+        <div class="product-infocard__price">$ {{ product.unit_price }}</div>
+      </div>
+      <div class="product-infocard__qty">
+        <span>數量</span>
+        <div class="product-infocard__stepper">
+          <button @click="dec">
+            <Icon
+              icon-name="minus"
+              class="icon-qty"
+            />
+          </button>
+          <input
+            type="product-infocard__text"
+            v-model.number="qty"
+          />
+          <button @click="inc">
+            <Icon
+              icon-name="plus"
+              class="icon-qty"
+            />
+          </button>
+        </div>
+      </div>
+
+      <ConfirmButton
+        class="product-infocard__cart"
+        type="submit"
+        @click="addToCart"
+      >
+        <Icon
+          icon-name="order"
+          class="icon-cart"
+        />
+        加入購物車
+      </ConfirmButton>
+      <p class="note">
+        若商品缺貨可以先加入「願望清單」
+        <br />
+        待恢復供貨就可以收到提醒！
+      </p>
+
+      <CancelButton
+        type="submit"
+        class="product-infocard__collect"
+        @click="toggleWishlist"
+      >
+        <template v-if="inWishlist">
+          <Icon
+            icon-name="heart"
+            class="icon-heart__collect"
+          />
+          已加入願望清單
+        </template>
+        <template v-else>
+          <Icon
+            icon-name="heartL"
+            class="icon-heart"
+          />
+          加入願望清單
+        </template>
+      </CancelButton>
+    </aside>
+
     <!-- 額外圖片（單張展示圖） -->
     <div class="product-content">
       <div class="product-content__pic">
-        <img
-          src="/src/assets/image/Product/Product-buy/product-image.png"
-          alt="商品展示圖"
-        />
+        <div
+          class="product-content__img"
+          v-for="(image, index) in contentImages"
+          :key="index"
+        >
+          <img
+            :src="image"
+            :alt="`商品展示圖 ${index + 1}`"
+          />
+        </div>
       </div>
       <!-- 商品須知區塊 -->
       <section class="product-content__info">
         <h3>商品使用須知</h3>
         <p>為確保使用安全及延長產品壽命，請詳閱以下說明：</p>
-
-        <h4>使用方式</h4>
-        <ul>
-          <li>-本產品適用於塗抹奶油、果醬、起司等軟性食品。</li>
-          <li>-請勿用於切割堅硬食材或作為其他工具使用， 以免損壞產品或造成危險。</li>
-        </ul>
-
-        <h4>清潔與保養</h4>
-        <ul>
-          <li>-初次使用前，請以中性清潔劑清洗乾淨後擦乾。</li>
-          <li>-使用後請立即清洗並徹底擦乾，避免水漬殘留導致鏽蝕。</li>
-          <li>-建議以手洗為主，避免長期使用洗碗機清洗，以延長產品壽命。</li>
-        </ul>
-
-        <h4>注意事項</h4>
-        <ul>
-          <li>-請勿長時間浸泡於水中，亦避免放置於高溫或潮濕環境。</li>
-          <li>-請妥善存放，避免兒童誤用。</li>
-          <li>-若發現產品變形、破損或鏽蝕，請停止使用。</li>
-        </ul>
-
-        <h4>材質說明</h4>
-        <ul>
-          <li>-材質：304食品級不鏽鋼</li>
-          <li>-表面處理：鏡面拋光或霧面處理（依實際商品為準）</li>
-        </ul>
+        <br />
+        <br />
+        <p>{{ product.product_notes }}</p>
       </section>
 
       <section class="product-content__notice">
         <h3>購買前請詳閱</h3>
-        <p>為保障您的權益，請在下單前詳細閱讀以下資訊：</p>
-        <ul>
-          <li>-商品規格、尺寸、顏色請務必確認無誤。</li>
-          <li>-本商品經拆封使用後恕不接受退換，請確認需求後購買。</li>
-          <li>-若對商品有任何疑問，歡迎下單前聯繫客服詢問。</li>
-          <li>-下單即表示您已詳閱並同意本店之購買條款與規定。</li>
-        </ul>
-        <p>感謝您的理解與支持，祝您購物愉快。</p>
+        <p>
+          為保障您的權益，請在下單前詳細閱讀以下資訊
+          <br />
+          <br />
+          -商品規格、尺寸、顏色請務必確認無誤。
+          <br />
+          -本商品經拆封使用後恕不接受退換，請確認需求後購買。
+          <br />
+          -若對商品有任何疑問，歡迎下單前聯繫客服詢問。
+          <br />
+          -下單即表示您已詳閱並同意本店之購買條款與規定。
+          <br />
+          <br />
+          感謝您的理解與支持，祝您購物愉快。
+        </p>
       </section>
     </div>
   </div>
@@ -344,418 +397,508 @@
 </template>
 
 <style lang="scss" scoped>
-  .back-col {
-    position: absolute;
-    top: 12.5rem;
-    left: 50%;
-    transform: translateX(-750px);
-  }
-  .back-button {
-    background-color: color(backgroundColor, recipe);
-    color: color(text, light);
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 7px 20px;
-    border-radius: 20px;
-    letter-spacing: 0.1em;
-    transition: opacity 0.3s ease;
-    cursor: pointer;
-    &:hover {
-      opacity: 0.7;
-    }
-    @include font-size(20);
-    .arrow-icon {
-      @include font-size(40);
-    }
-  }
   .product-container {
     max-width: 1200px;
     margin: 0 auto;
     padding-bottom: 145px;
+    display: grid;
+    grid-template-columns: 700px 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas:
+      'a b '
+      'c b '
+      'c b ';
+    gap: 0 10px;
+    position: relative;
+    @include rwdmax(1200) {
+      padding-inline: 10px;
+      grid-template-columns: 650px 1fr;
+    }
+    @include rwdmax(1024) {
+      padding-inline: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .back-col {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-700px);
+      @include rwdmax(1440) {
+        left: 0;
+        transform: translateX(0);
+      }
+      @include rwdmax(1200) {
+        padding-inline: 10px;
+      }
+      @include rwdmax(1024) {
+        position: unset;
+      }
+    }
+    .back-button {
+      background-color: color(backgroundColor, recipe);
+      color: color(text, light);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 7px 20px;
+      border-radius: 20px;
+      letter-spacing: 0.1em;
+      transition: opacity 0.3s ease;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.7;
+      }
+      @include font-size(20);
+      @include rwdmax(1200) {
+        padding: 10px 15px;
+      }
+      .arrow-icon {
+        @include font-size(40);
+        @include rwdmax(1200) {
+          @include font-size(32);
+        }
+        @include rwdmax(1024) {
+          @include font-size(25);
+        }
+      }
+    }
   }
-  // .product-gallery {
-  //   position: relative; /* 新增 */
-  // }
 
-  // .notice-wrap {
-  //   max-width: 820px;
-  //   margin: 24px auto;
-  //   padding: 0 20px;
-  //   font-family: 'Noto Sans TC', sans-serif;
-  //   line-height: 1.75;
-  //   color: #333;
-  // }
+  /* 左側圖片區域 */
+  .product-gallery {
+    max-width: 600px;
+    margin: 0 auto 60px;
+    @include rwdmax(1440) {
+      margin-top: 80px;
+    }
+    @include rwdmax(1024) {
+      margin: 0 auto;
+    }
+    @include rwdmax(768) {
+      padding-inline: 35px;
+      width: 100%;
+    }
+  }
 
-  // .product-notice {
-  //   position: relative;
-  //   background: #f3f3f3;
-  //   border-radius: 12px;
-  //   padding: 18px 20px;
-  //   border: 1px solid #e3e6f3;
-  //   outline-offset: -6px;
-  //   box-shadow: 0 2px 10px rgba(18, 24, 40, 0.06);
-  //   margin-bottom: 18px;
-  // }
+  .main-swiper-container {
+    margin: 0 auto 20px;
+    max-width: 600px;
+    @include rwdmax(1024) {
+      margin: 0 auto 10px;
+    }
+  }
 
-  // .product-notice::before {
-  //   content: '';
-  //   position: absolute;
-  //   top: -10px;
-  //   left: 0;
-  //   width: 100%;
-  // }
+  .main-swiper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 5 / 6;
+    border-radius: 20px;
+    overflow: hidden;
+  }
 
-  // .product-notice h3,
-  // .purchase-info h3 {
-  //   font-size: 32px;
-  //   font-weight: 700;
-  //   margin: 0 0 10px;
-  // }
+  .main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 
-  // .product-notice h4 {
-  //   font-size: 20px;
-  //   font-weight: 700;
-  //   margin: 18px 0 6px;
-  // }
+  /* 主圖導航按鈕 */
+  .main-nav-button {
+    position: absolute;
+    top: 0;
+    transform: translateY(3%);
+    width: 80px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.42);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    @include rwdmax(768) {
+      width: 60px;
+      transform: translateY(3%);
+      height: 102%;
+    }
+    @include rwdmax(500) {
+      width: 40px;
+      height: 104%;
+    }
+  }
 
-  // .product-notice ul,
-  // .purchase-info ul {
-  //   margin: 6px 0 0 1.25em;
-  //   padding: 0;
-  // }
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: color(text, dark);
+  }
 
-  // .product-notice li,
-  // .purchase-info li {
-  //   margin: 6px 0;
-  // }
+  .main-button-prev {
+    left: 0;
+  }
 
-  // .purchase-info {
-  //   background: #f3f3f3;
-  //   border-radius: 12px;
-  //   padding: 18px 20px;
-  // }
+  .main-button-next {
+    right: 0;
+  }
 
-  // .purchase-info p {
-  //   margin: 6px 0 8px;
-  //   color: #6b7280;
-  // }
+  .main-nav-button:hover {
+    background: rgba(255, 255, 255, 0.7);
+  }
 
-  // @media (max-width: 480px) {
-  //   .product-notice h3,
-  //   .purchase-info h3 {
-  //     font-size: 18px;
-  //   }
-  //   .product-notice h4 {
-  //     font-size: 15px;
-  //   }
-  // }
+  /* 縮圖容器 */
+  .thumbs-swiper-container {
+    position: relative;
+    margin: 0 auto;
+  }
 
-  // .product-container {
-  //   max-width: 1200px;
-  //   display: flex;
-  //   flex-direction: column;
-  // }
-  // .product-info {
-  //   flex-direction: row;
-  // }
+  .thumbs-swiper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 1;
+    overflow: hidden;
+    @include rwdmax(768) {
+      // transform: translateY(45%);
+    }
+  }
 
-  // .back-col {
-  //   position: sticky;
-  //   top: 170px;
-  //   align-self: start;
-  //   z-index: 5;
-  // }
+  .thumb-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+  }
 
-  // .back-button {
-  //   display: inline-flex;
-  //   align-items: center;
-  //   gap: 6px;
-  //   padding: 6px 14px;
-  //   height: 32px;
-  //   width: 100px;
-  //   font-size: 14px;
-  //   color: #fff;
-  //   background-color: #d6b59c;
-  //   border: none;
-  //   border-radius: 16px;
-  //   cursor: pointer;
-  //   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-  // }
+  .thumb-image:hover {
+    border-color: #d4a574;
+  }
 
-  // .back-button .arrow img {
-  //   width: 16px;
-  //   height: 16px;
-  //   object-fit: contain;
-  // }
+  /* 縮圖導航按鈕 */
+  .thumbs-nav-button {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+  }
 
-  // .product-gallery {
-  //   min-width: 690px;
-  // }
+  .thumbs-button-prev {
+    left: -40px;
+    @include rwdmax(1200) {
+      left: -30px;
+    }
+  }
 
-  // .main-swiper {
-  //   position: relative;
-  //   border-radius: 12px;
-  //   overflow: hidden;
-  // }
+  .thumbs-button-next {
+    right: -40px;
+    @include rwdmax(1200) {
+      right: -30px;
+    }
+  }
 
-  // .main-image {
-  //   width: 100%;
-  //   display: block;
-  // }
+  /* Swiper 活動狀態樣式 */
+  .thumbs-swiper .swiper-slide-thumb-active .thumb-image {
+    border-color: #d4a574;
+  }
 
-  // .main-swiper::before,
-  // .main-swiper::after {
-  //   content: '';
-  //   position: absolute;
-  //   top: 0;
-  //   bottom: 0;
-  //   width: 15%;
-  //   background: rgba(255, 255, 255, 0.35);
-  //   pointer-events: none;
-  //   z-index: 2;
-  //   opacity: 0;
-  //   transition: opacity 0.3s ease;
-  // }
+  /* 右側商品資訊卡 */
+  .product-infocard {
+    width: 100%;
+    background: #ead7c4;
+    padding: 50px 60px 25px;
+    border-radius: 20px;
+    position: sticky;
+    top: 9rem;
+    height: fit-content;
+    @include rwdmax(1440) {
+      margin-top: 80px;
+    }
+    @include rwdmax(1200) {
+      padding: 40px 40px 25px;
+    }
+    @include rwdmax(1024) {
+      position: unset;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    @include rwdmax(768) {
+      padding: 35px;
+    }
 
-  // .main-swiper::before {
-  //   left: 0;
-  // }
+    &__content {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      @include rwdmax(1200) {
+        gap: 35px;
+      }
+      @include rwdmax(768) {
+        gap: 25px;
+      }
+    }
 
-  // .main-swiper::after {
-  //   right: 0;
-  // }
+    &__title {
+      letter-spacing: 0.2em;
+      font-weight: 700;
+      color: color(text, dark);
+      line-height: 1.3;
+      @include font-size(36);
+      @include rwdmax(1200) {
+        @include font-size(30);
+      }
+      @include rwdmax(768) {
+        @include font-size(24);
+      }
+    }
 
-  // .main-swiper:hover::before,
-  // .main-swiper:hover::after {
-  //   opacity: 1;
-  // }
+    &__features {
+      letter-spacing: 0.2em;
+      white-space: pre-line;
+      color: color(text, dark);
+      font-weight: normal;
+      line-height: 1.7;
+      @include font-size(20);
+      @include rwdmax(1200) {
+        @include font-size(18);
+      }
+      @include rwdmax(768) {
+        @include font-size(16);
+      }
+    }
 
-  // :deep(.main-swiper .swiper-button-prev),
-  // :deep(.main-swiper .swiper-button-next) {
-  //   z-index: 3;
-  //   color: #333;
-  //   opacity: 0;
-  //   transition: opacity 0.3s ease;
-  // }
+    &__price {
+      font-weight: normal;
+      color: color(text, dark);
+      margin-bottom: 36px;
+      letter-spacing: 0.1em;
+      @include font-size(36);
+      @include rwdmax(1200) {
+        margin-bottom: 30px;
+        @include font-size(30);
+      }
+      @include rwdmax(768) {
+        margin-bottom: 25px;
+        @include font-size(24);
+      }
+    }
 
-  // .main-swiper:hover :deep(.swiper-button-prev),
-  // .main-swiper:hover :deep(.swiper-button-next) {
-  //   opacity: 1;
-  // }
+    /* 數量選擇器 */
+    &__qty {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      margin-bottom: 46px;
+      @include rwdmax(1200) {
+        margin-bottom: 35px;
+        gap: 30px;
+      }
+      @include rwdmax(768) {
+        margin-bottom: 30px;
+      }
 
-  // .thumbs-swiper {
-  //   margin-top: 10px;
-  //   position: relative;
-  //   overflow: visible;
-  // }
+      span {
+        letter-spacing: 0.1em;
+        color: color(text, dark);
+        font-weight: normal;
+        @include font-size(24);
+        @include rwdmax(1200) {
+          @include font-size(22);
+        }
+        @include rwdmax(768) {
+          @include font-size(18);
+        }
+      }
+    }
 
-  // .thumb-image {
-  //   width: 100%;
-  //   height: auto;
-  //   border-radius: 6px;
-  //   border: 2px solid transparent;
-  //   cursor: pointer;
-  //   transition: border 0.2s ease;
-  // }
+    &__stepper {
+      display: flex;
+      align-items: center;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
 
-  // :deep(.swiper-slide-thumb-active) .thumb-image {
-  //   border-color: #d6b59c;
-  // }
+      button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-inline: 10px;
+        border: none;
+        background: white;
+        color: color(text, dark);
+        font-weight: normal;
+        cursor: pointer;
+        @include font-size(40);
+      }
 
-  // .card {
-  //   background: #ead7c4;
-  //   border-radius: 12px;
-  //   padding: 20px;
-  //   color: #2b2b2b;
-  //   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  //   font-family: 'Noto Sans TC', sans-serif;
-  //   min-width: 280px;
-  //   position: sticky;
-  //   top: 170px;
-  //   align-self: start;
-  //   max-height: calc(100vh - 48px);
-  //   overflow-y: auto;
-  // }
+      .icon-qty {
+        color: color(text, dark);
+        font-weight: 400;
+        @include font-size(30);
+        transition: all 0.3s ease;
+        @include rwdmax(1200) {
+          @include font-size(24);
+        }
+        @include rwdmax(768) {
+          @include font-size(20);
+        }
 
-  // .title {
-  //   font-size: 36px;
-  //   font-weight: 700;
-  //   margin-bottom: 8px;
-  //   letter-spacing: 0.1em;
-  // }
+        &:hover {
+          color: color(button, main);
+        }
+      }
 
-  // .features {
-  //   padding-left: 0;
-  //   list-style: none;
-  //   font-size: 20px;
-  //   margin-bottom: 10px;
-  //   line-height: 1.8;
-  //   color: #5b4b40;
-  //   margin-top: 10%;
-  // }
+      input {
+        width: 100px;
+        padding: 12px 0;
+        border: none;
+        background: white;
+        text-align: center;
+        font-weight: normal;
+        color: color(text, dark);
+        outline: none;
+        @include font-size(24);
+        @include rwdmax(1200) {
+          width: 90px;
+          @include font-size(22);
+        }
+        @include rwdmax(768) {
+          @include font-size(18);
+        }
+      }
+    }
 
-  // .price {
-  //   font-size: 36px;
-  //   font-weight: 700;
-  //   margin: 15px 0 14px;
-  // }
+    /* 加入購物車按鈕 */
+    &__cart {
+      width: 100%;
+      --btn-padding: 15px 0;
+      margin-bottom: 63px;
+      @include rwdmax(1200) {
+        margin-bottom: 50px;
+      }
+      @include rwdmax(768) {
+        margin-bottom: 30px;
+      }
+    }
 
-  // .qty {
-  //   display: flex;
-  //   justify-content: space-between;
-  //   align-items: center;
-  //   margin: 10px 0 16px;
-  //   font-size: 24px;
-  // }
+    .icon-cart {
+      padding-right: 10px;
+      @include font-size(30);
+      @include rwdmax(1200) {
+        @include font-size(25);
+      }
+    }
 
-  // .stepper {
-  //   display: flex;
-  //   gap: 6px;
-  //   background: #fff;
-  //   border: 1px solid rgba(0, 0, 0, 0.1);
-  //   border-radius: 10px;
-  //   padding: 2px;
-  // }
+    /* 提示文字 */
+    .note {
+      font-size: 13px;
+      line-height: 1.5;
+      letter-spacing: 0.1em;
+      margin-bottom: 15px;
+      text-align: start;
+      color: color(text, base);
+      @include font-size(16);
+      @include rwdmax(768) {
+        @include font-size(14);
+      }
+      @include rwdmax(768) {
+        margin-bottom: 5px;
+      }
+    }
 
-  // .stepper button {
-  //   width: 34px;
-  //   height: 32px;
-  //   border: none;
-  //   background: transparent;
-  //   border-radius: 16px;
-  //   font-size: 18px;
-  //   cursor: pointer;
-  // }
+    /* 加入願望清單按鈕 */
+    &__collect {
+      width: 100%;
+      --btn-padding: 16px 0;
+    }
 
-  // .stepper input {
-  //   width: 44px;
-  //   height: 32px;
-  //   text-align: center;
-  //   border: none;
-  //   outline: none;
-  //   font-size: 16px;
-  //   background: transparent;
-  // }
+    .icon-heart {
+      padding-right: 10px;
+      @include font-size(25);
+      @include rwdmax(1200) {
+        @include font-size(20);
+      }
 
-  // .btn {
-  //   width: 100%;
-  //   height: 60px;
-  //   border: none;
-  //   border-radius: 10px;
-  //   font-size: 32px;
-  //   margin-top: 8px;
-  //   cursor: pointer;
-  // }
+      &__collect {
+        padding-right: 10px;
+        color: color(text, error);
+      }
+    }
+  }
 
-  // .primary {
-  //   background: #e28d62;
-  //   color: #fff;
-  // }
+  /* 下方內容區域 */
+  .product-content {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    @include rwdmax(1024) {
+      max-width: 600px;
+    }
 
-  // .ghost {
-  //   background: #fff;
-  //   border: 1px solid #ccc;
-  // }
+    &__pic {
+      text-align: center;
+      overflow: hidden;
+      border-radius: 20px;
 
-  // .note {
-  //   font-size: 16px;
-  //   color: #6a5a51;
-  //   margin: 10% 0 5%;
-  //   line-height: 1.5;
-  // }
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+    }
 
-  // .icon-cart,
-  // .icon-heart {
-  //   width: 45px;
-  //   height: 45px;
-  //   object-fit: contain;
-  //   margin-right: 8px;
-  //   vertical-align: middle;
-  // }
+    /* 商品資訊區塊 */
+    &__info,
+    &__notice {
+      background: #f3f3f3;
+      padding: 30px 20px;
+      border-radius: 20px;
+      @include rwdmax(768) {
+        padding: 15px 10px;
+      }
+    }
 
-  // .thumbs-arrow {
-  //   font-size: 20px;
-  //   font-weight: bold;
-  //   user-select: none;
-  // }
+    &__info h3,
+    &__notice h3 {
+      font-weight: 700;
+      color: color(text, dark);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      letter-spacing: 0.1em;
+      display: inline-block;
+      @include font-size(32);
+      @include rwdmax(1200) {
+        @include font-size(28);
+      }
+      @include rwdmax(768) {
+        @include font-size(18);
+      }
+    }
 
-  // .responsive-img {
-  //   width: 100%;
-  //   height: auto;
-  //   display: block;
-  //   max-width: 100%;
-  // }
-
-  // .btn.primary {
-  //   background: #d97c48;
-  //   color: #fef9ec;
-  //   transition:
-  //     background-color 0.3s ease,
-  //     box-shadow 0.3s ease;
-  // }
-
-  // .btn.primary:hover {
-  //   background-color: #fef9ec;
-  //   color: #d97c48;
-  // }
-  // @media (min-width: 881px) {
-  //   .responsive-img {
-  //     grid-column: 2 / 3;
-  //   }
-
-  //   .notice-wrap {
-  //     grid-column: 2 / 3;
-  //   }
-  // }
-  // @media (max-width: 880px) {
-  //   .product-container {
-  //     display: grid;
-  //     grid-template-columns: 1fr;
-  //     grid-template-areas:
-  //       'back'
-  //       'gallery'
-  //       'card'
-  //       'responsive-img'
-  //       'notice-wrap';
-  //     gap: 12px;
-  //     width: 90%;
-  //     margin: 0 auto;
-  //   }
-
-  //   .back-col {
-  //     grid-area: back;
-  //     position: static;
-  //   }
-
-  //   .product-gallery {
-  //     grid-area: gallery;
-  //   }
-
-  //   .card {
-  //     grid-area: card;
-  //     position: static;
-  //     width: 100%;
-  //     max-width: 420px;
-  //     margin: 0 auto;
-  //     max-height: 100%;
-  //   }
-
-  //   .responsive-img {
-  //     grid-area: responsive-img;
-  //     width: 100%;
-  //     display: block;
-  //     max-width: 100%;
-  //     height: auto;
-  //   }
-
-  //   .notice-wrap {
-  //     grid-area: notice-wrap;
-  //     display: block;
-  //   }
-  // }
+    &__info p,
+    &__notice p {
+      color: color(text, dark);
+      white-space: pre-line;
+      line-height: 1.5;
+      letter-spacing: 0.1em;
+      @include font-size(20);
+      @include rwdmax(1200) {
+        @include font-size(18);
+      }
+      @include rwdmax(768) {
+        @include font-size(14);
+      }
+    }
+  }
 
   // 搭配好物
   .related-section {
@@ -766,13 +909,20 @@
       padding-inline: 10px;
       width: 100%;
     }
-  }
-  .swiper-button-next,
-  .swiper-button-prev {
-    color: color(button, main);
-    top: 50%;
-    @include rwdmax(768) {
-      transform: translateY(45%);
+    .swiper-button-next,
+    .swiper-button-prev {
+      color: color(button, main);
+      top: 50%;
+      transform: translateY(-48%);
+      @include rwdmax(1400) {
+        transform: translateY(-45%);
+      }
+      @include rwdmax(1200) {
+        transform: translateY(-40%);
+      }
+      @include rwdmax(768) {
+        transform: translateY(-10%);
+      }
     }
   }
   .product-card {

@@ -30,6 +30,10 @@
     background-color: #fff;
     border: 1px solid color(backgroundColor, panel);
     border-radius: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     @include fontSet(
       $font: $basic-font,
