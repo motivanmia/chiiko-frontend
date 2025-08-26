@@ -63,12 +63,30 @@ export function getNotification() {
   });
 }
 
+export function getMyRecipe(){
+  return request({
+    url: `${url.member}/get_member_recipe.php`,
+    method:'get',
+
+  });
+}
+
 export function getRecipeCategory() {
   return request({
     url: `${url.recipe}/get_recipe_category.php`,
     method: 'get',
   });
 }
+
+
+export function getRecipe(data){
+  return request({
+    url: `${url.recipe}/get_recipe.php`,
+    method:'get',
+    data,
+  });
+}
+
 
 export function getProductCategory() {
   return request({
@@ -154,12 +172,4 @@ export function patchOrder(data) {
   });
 }
 
-//食譜
 
-export function getRecipe(data){
-  return request({
-    url: `${url.recipe}/get_recipe.php`,
-    method:'get',
-    data,
-  });
-}

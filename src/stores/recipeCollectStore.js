@@ -1,16 +1,31 @@
-// stores/recipeCollectStore.js
-
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8888/front/recipe';
 
-export const useRecipeStore = defineStore('recipe', {
+// 定義一個輔助函式，用於在陣列中更新食譜的收藏數
+// 將此函式放在 defineStore 的 actions 區塊之外，以便在 actions 中呼叫
+function updateRecipeCountInArray(array, recipeId, action) {
+  if (!array) return;
+  const recipeToUpdate = array.find(
+    (recipe) => Number(recipe.recipe_id) === Number(recipeId),
+  );
+  if (recipeToUpdate) {
+    if (action === 'add') {
+      recipeToUpdate.favorite_count = (Number(recipeToUpdate.favorite_count) || 0) + 1;
+    } else {
+      recipeToUpdate.favorite_count = (Number(recipeToUpdate.favorite_count) || 0) - 1;
+    }
+  }
+}
+
+export const useRecipeCollectStore = defineStore('collect-recipe', {
   state: () => ({
     favoriteRecipesStatus: {},
     hotRecipes: [],
     mostFavoritedRecipes: [],
     latestRecipes: [],
+    searchResults: [], 
   }),
   actions: {
     async checkRecipeStatus(recipeId) {
@@ -30,29 +45,45 @@ export const useRecipeStore = defineStore('recipe', {
       }
     },
 
-    async toggleCollect(recipeId) {
-      const isCollected = this.favoriteRecipesStatus[recipeId];
-      const action = isCollected ? 'remove' : 'add';
+async toggleCollect(recipeId, currentRecipe) {
+  const isCollected = this.favoriteRecipesStatus[recipeId];
+  const action = isCollected ? 'remove' : 'add';
 
-      try {
-        const response = await axios.post(`${API_BASE_URL}/toggle_favorite_recipe.php`, {
-          recipe_id: recipeId,
-          action: action,
-        });
-        if (response.data.success) {
-          this.favoriteRecipesStatus[recipeId] = !isCollected;
-          console.log(response.data.message);
+  try {
+    const response = await axios.post(`${API_BASE_URL}/toggle_favorite_recipe.php`, {
+      recipe_id: recipeId,
+      action: action,
+    });
+
+    if (response.data.success) {
+      this.favoriteRecipesStatus[recipeId] = !isCollected;
+      console.log(response.data.message);
+
+      // ✅ 你的這段程式碼會更新 Pinia Store 裡的陣列，保持不變
+      updateRecipeCountInArray(this.hotRecipes, recipeId, action);
+      updateRecipeCountInArray(this.mostFavoritedRecipes, recipeId, action);
+      updateRecipeCountInArray(this.latestRecipes, recipeId, action);
+      updateRecipeCountInArray(this.searchResults, recipeId, action);
+
+      // ✅ 這裡才是關鍵！直接更新傳入的食譜物件的收藏數
+      if (currentRecipe) {
+        if (action === 'add') {
+          currentRecipe.favorites_count = (parseInt(currentRecipe.favorites_count, 10) || 0) + 1;
         } else {
-          if (response.data.message === '食譜已被您收藏囉!') {
-            this.favoriteRecipesStatus[recipeId] = true;
-          }
-          alert(response.data.message || '操作失敗');
+          currentRecipe.favorites_count = (parseInt(currentRecipe.favorites_count, 10) || 0) - 1;
         }
-      } catch (error) {
-        console.error('API request failed:', error);
-        alert('網路連線失敗，請檢查網路');
       }
-    },
+    } else {
+      if (response.data.message === '食譜已被您收藏囉!') {
+        this.favoriteRecipesStatus[recipeId] = true;
+      }
+      alert(response.data.message || '操作失敗');
+    }
+  } catch (error) {
+    console.error('API request failed:', error);
+    alert('網路連線失敗，請檢查網路');
+  }
+},
 
     async fetchHotRecipes() {
       try {
@@ -79,15 +110,6 @@ export const useRecipeStore = defineStore('recipe', {
         console.error('API請求失敗', error);
       }
     },
-    
-    // 這個 action 應該被刪除，因為元件可以自己處理
-    // async setActiveRecipes(type) {
-    //   if (type === '當季熱門') {
-    //     await this.fetchHotRecipes();
-    //   } else if (type === '最多收藏') {
-    //     await this.fetchMostFavoritedRecipes();
-    //   }
-    // },
 
     async fetchLatestRecipes() {
       try {
@@ -99,6 +121,29 @@ export const useRecipeStore = defineStore('recipe', {
         }
       } catch (error) {
         console.error('API請求失敗', error);
+      }
+    },
+    
+    // 新增：用於執行搜尋的 action
+    async fetchSearchResults(query) {
+      const trimmedQuery = query.trim();
+      if (!trimmedQuery) {
+        this.searchResults = [];
+        return;
+      }
+      try {
+        const response = await axios.get(`${API_BASE_URL}/search_recipe.php`, {
+          params: { q: trimmedQuery },
+        });
+
+        if (response.data.success) {
+          this.searchResults = response.data.data;
+        } else {
+          this.searchResults = [];
+        }
+      } catch (error) {
+        console.error('搜尋失敗', error);
+        this.searchResults = [];
       }
     },
   },

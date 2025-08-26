@@ -170,18 +170,19 @@
   import { ref, watch, computed } from 'vue';
   import { useRoute } from 'vue-router';
   import { useAuthStore } from '@/stores/auth';
-  import { useRecipeStore } from '@/stores/recipeCollectStore';
+  import { useRecipeCollectStore } from '@/stores/recipeCollectStore'; // <-- 這裡修正了
   import Icon from '@/components/common/Icon.vue';
   import CommentSection from '@/components/CommentSection.vue';
   import ProductCard from '@/components/ProductCard.vue';
   import avatarImage from '@/assets/image/NewRecipes/Mask_group.png';
+  
 
   // ----------------------------------------------------
   // 響應式狀態與 Store 初始化
   // ----------------------------------------------------
   const route = useRoute();
   const memberStore = useAuthStore();
-  const recipeStore = useRecipeStore();
+  const recipeStore = useRecipeCollectStore();
 
   const recipeData = ref(null);
   // 新增一個 isLoading 狀態，預設為 true，用於控制載入中提示的顯示
@@ -189,6 +190,8 @@
 
   const recipeId = computed(() => route.params.id);
   const isCollected = computed(() => recipeStore.favoriteRecipesStatus[recipeId.value] || false);
+
+  const API_BASE_URL = import.meta.env.VITE_API_BASE; //環境變數的儲存
 
   // ----------------------------------------------------
   // 主要資料獲取邏輯
@@ -210,7 +213,8 @@
     recipeData.value = null;
 
     try {
-      const apiUrl = `http://localhost:8888/front/recipe/get_recipe_detail.php?recipe_id=${id}`;
+      const apiUrl = `${API_BASE_URL}/recipe/get_recipe_detail.php?recipe_id=${id}`;
+
       const response = await fetch(apiUrl);
 
       if (!response.ok) {
@@ -220,14 +224,10 @@
       const result = await response.json();
 
       if (result.status === 'success' && result.data) {
-        // ✅ 【核心修正】
-        // 將嚴格相等 (===) 改為寬鬆相等 (==)，以正確處理從後端來的字串 "1"
         if (result.data.status == 1) {
           recipeData.value = result.data;
           console.log('食譜已發佈，成功載入:', recipeData.value);
         } else {
-          // 如果 status 不是 1，我們就在 console 中記錄原因，
-          // 但不賦值給 recipeData，這樣頁面就會顯示「找不到食譜」。
           console.warn(
             `食譜 (ID: ${id}) 存在但未發佈，狀態為: ${result.data.status}，不會在前台顯示。`,
           );
@@ -278,13 +278,15 @@
   // 使用者互動函式 (收藏、分享、複製)
   // ----------------------------------------------------
 
-  async function toggleCollect() {
-    if (!memberStore.isLoggedIn) {
-      alert('請先登入才能收藏!');
-      return;
-    }
-    await recipeStore.toggleCollect(recipeId.value);
+async function toggleCollect() {
+  if (!memberStore.isLoggedIn) {
+    alert('請先登入才能收藏!');
+    return;
   }
+  
+  // ✅ 傳入 recipeData 這個變數
+  await recipeStore.toggleCollect(recipeId.value, recipeData.value);
+}
 
   function shareRecipe() {
     const recipeUrl = window.location.href;
@@ -352,6 +354,7 @@
   }
 
   const currentUserAvatar = ref(avatarImage);
+  
 </script>
 
 <style lang="scss" scoped>

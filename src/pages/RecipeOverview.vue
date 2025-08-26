@@ -1,7 +1,7 @@
 <script setup>
   import { ref, computed, watch, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import axios from 'axios';
+  import { useRecipeStore } from '@/stores/recipeStore';
 
   import Banner from '@/components/recipe/Banner.vue';
   import Category from '@/components/recipe/Category.vue';
@@ -18,36 +18,11 @@
   // 搜尋邏輯的狀態管理
   const currentSearchQuery = ref(route.query.q || '');
 
-  const apiUrl = 'http://localhost:8888/front/recipe/get_recipe.php';
-
-  const allRecipes = ref([]);
-
-  //用axios串接recipe_get.php
-  const fetchRecipe = async () => {
-    try {
-      const response = await axios.get(apiUrl);
-      const apiResponse = response.data;
-
-      if (apiResponse.success) {
-        const apiData = apiResponse.data; 
-        allRecipes.value = {
-          mostFavorite: apiData.mostBookmarked, 
-          hot: apiData.seasonalHot, 
-          newest: apiData.latest, 
-        };
-        console.log('成功取得後端食譜資料', allRecipes.value);
-      } else {
-        console.error('API 錯誤：', apiResponse.error);
-        allRecipes.value = {};
-      }
-    } catch (error) {
-      console.error('取得食譜資料失敗', error);
-      allRecipes.value = {};
-    }
-  };
+  // 使用piana
+  const recipeStore = useRecipeStore();
 
   onMounted(() => {
-    fetchRecipe();
+    recipeStore.fetchRecipes();
   });
 
   // 搜尋功能
@@ -71,18 +46,6 @@
     { immediate: true },
   );
 
-  // 模擬資料 每個區塊9張
-  const hotRecipes = computed(() => {
-    return allRecipes.value.hot ? allRecipes.value.hot.slice(0, 9) : [];
-  });
-
-  const mostBookmarkedRecipes = computed(() => {
-    return allRecipes.value.mostFavorite ? allRecipes.value.mostFavorite.slice(0, 9) : [];
-  });
-
-  const latestRecipes = computed(() => {
-    return allRecipes.value.newest ? allRecipes.value.newest.slice(0, 9) : [];
-  });
 
 </script>
 
@@ -100,19 +63,19 @@
     title="/當季熱門\"
     class="section"
   ></SectionTitle>
-  <RecipeCards :recipes="hotRecipes" />
+  <RecipeCards :recipes="recipeStore.hotRecipes" />
 
   <SectionTitle
     title="/最多收藏\"
     class="section"
   ></SectionTitle>
-  <RecipeCards :recipes="mostBookmarkedRecipes" />
+  <RecipeCards :recipes="recipeStore.mostBookmarkedRecipes" />
 
   <SectionTitle
     title="/最新投稿\"
     class="section"
   ></SectionTitle>
-  <RecipeCards :recipes="latestRecipes" />
+  <RecipeCards :recipes="recipeStore.latestRecipes" />
 
 </template>
 

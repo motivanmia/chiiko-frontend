@@ -1,7 +1,8 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import { useRecipeCollectStore } from '@/stores/recipeCollectStore'; // 匯入你的 Store
+
 import Banner from '@/components/recipe/Banner.vue';
 import Category from '@/components/recipe/Category.vue';
 import SectionTitle from '@/components/SectionTitle.vue';
@@ -12,37 +13,11 @@ import RecipeCardSolo from '@/components/recipe/RecipeCardSolo.vue';
 
 const route = useRoute();
 const router = useRouter();
+const recipeStore = useRecipeCollectStore(); 
 
 const currentSearchQuery = ref('');
-const searchResults = ref([]); 
 
-const apiUrl = 'http://localhost:8888/front/recipe/search_recipe.php';
 
-const performSearch = async (query) => {
-  const trimmedQuery = query.trim();
-  if (!trimmedQuery) {
-    searchResults.value = [];
-    return;
-  }
-  
-  try {
-    const response = await axios.get(apiUrl, {
-      params: { q: trimmedQuery },
-    });
-    
-    if (response.data.success) {
-      console.log(response);
-      
-      searchResults.value = response.data.data;
-    } else {
-      searchResults.value = [];
-    }
-  } catch (error) {
-    console.error('搜尋失敗', error);
-    searchResults.value = [];
-  }
-  
-};
 
 // 導航
 const handleSearch = (query) => {
@@ -54,12 +29,12 @@ const handleSearch = (query) => {
   }
 };
 
-// 監聽路由,觸發performSearch
+// 監聽路由，觸發 Store 的搜尋動作
 watch(
   () => route.query.q,
   (newQuery) => {
     currentSearchQuery.value = newQuery || '';
-    performSearch(currentSearchQuery.value);
+    recipeStore.fetchSearchResults(currentSearchQuery.value);
   },
   { immediate: true }
 );
@@ -75,10 +50,12 @@ const pageTitle = computed(() => {
 // 麵包屑導航項目 
 const breadcrumbItems = computed(() => {
   return [
-    { text: '靈感食譜', to: '/recipe-overview' }, 
+    { text: '靈感食譜', to: '/recipe-overview' },
     { text: `搜尋結果: ${currentSearchQuery.value}`, to: `/recipes/search?q=${currentSearchQuery.value}` },
   ];
 });
+
+
 
 </script>
 
@@ -106,14 +83,14 @@ const breadcrumbItems = computed(() => {
       :items="breadcrumbItems"
     />
 
-    <RecipeCardSolo
-      class="solo"
-      :recipes="searchResults"
-      :key="currentSearchQuery"
-    />
+  <RecipeCardSolo
+    class="solo"
+    :recipes="recipeStore.searchResults"
+    :key="currentSearchQuery"
+  />
     
     <div
-      v-if="currentSearchQuery && searchResults.length === 0"
+      v-if="currentSearchQuery && recipeStore.searchResults.length === 0"
       class="no-results"
     >
       <p>沒有找到符合「{{ currentSearchQuery }}」的食譜</p>

@@ -1,41 +1,15 @@
 <script setup>
-import {ref,onMounted} from 'vue';
-import axios from 'axios';
-// import { categoryName } from '@/constants/recipeCategory';
+import { ref, onMounted } from 'vue';
 import SectionTitle from '../SectionTitle.vue';
-import { RouterLink } from 'vue-router'; 
+import { RouterLink } from 'vue-router';
+import { useRecipeStore } from '@/stores/recipeStore';
 
-// const card = categoryName;
+const recipeStore = useRecipeStore();
 
-
-  //使用axios串接資料
-  const apiUrl = 'http://localhost:8888/front/recipe/get_recipe_category.php';
-
-  const allCategory = ref([]);
-
-  //用axios串接category_get.api
-  const fetchCategory = async () => {
-    try {
-      const response = await axios.get(apiUrl);
-      const apiData = response.data;
-
-      allCategory.value = apiData;
-
-      console.log('成功取得後端分類資料', allCategory.value);
-    } catch (error) {
-      console.error('取得食譜資料失敗', error);
-      if (error.response) {
-        console.error('伺服器回傳錯誤:', error.response.status, error.response.data);
-      }
-    }
-  };
-
-  onMounted(() => {
-    fetchCategory();
-  });
-
+onMounted(() => {
+  recipeStore.fetchCategories();
+});
 </script>
-
 
 <template>
   <div class="recipe-all">
@@ -45,18 +19,18 @@ import { RouterLink } from 'vue-router';
       </div>
 
       <div class="recipe-category__box">
-        <RouterLink 
-          v-for="category in allCategory"
+        <RouterLink
+          v-for="category in recipeStore.categories"
           :key="category.recipe_category_id"
           :to="{
             name: 'recipes',
-    params: { category: category.name }
+            params: { category: category.name },
           }"
           class="recipe-category__card"
         >
           <img
             :src="category.image"
-            :alt="category.title"
+            :alt="category.name"
           />
           <button class="recipe-category__button">{{ category.name }}</button>
         </RouterLink>
@@ -64,7 +38,6 @@ import { RouterLink } from 'vue-router';
     </div>
   </div>
 </template>
-
 
 <style lang="scss" scoped>
   .recipe-category__section {

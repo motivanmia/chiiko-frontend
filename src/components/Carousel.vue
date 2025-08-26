@@ -85,7 +85,9 @@
   // 我們將沿用最穩定的 handleResize 函式。
   import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
   import SeeMoreButton from '@/components/button/SeeMoreButton.vue';
-  import { useRecipeStore } from '@/stores/recipeCollectStore';
+  import { useRecipeCollectStore } from '@/stores/recipeCollectStore';
+
+
   // import avatarImage1 from '@/assets/image/NewRecipes/braised_chicken_thigh.png';
   // import avatarImage2 from '@/assets/image/NewRecipes/creamy_white_sauce_shell_pasta.png';
   // import avatarImage3 from '@/assets/image/NewRecipes/yuzu_pepper_chicken_soba.png';
@@ -95,7 +97,7 @@
   // import avatarImage7 from '@/assets/image/NewRecipes/recipe051-min.png';
   // import avatarImage8 from '@/assets/image/NewRecipes/recipe056-min.png';
   const VISIBLE_ITEMS = 5;
-  const recipeStore = useRecipeStore();
+  const recipeStore = useRecipeCollectStore(); // <-- 修正這裡的實例化
   const CLONE_COUNT = VISIBLE_ITEMS;
   const TRANSITION_DURATION = 500;
   const MOBILE_BREAKPOINT = 768;

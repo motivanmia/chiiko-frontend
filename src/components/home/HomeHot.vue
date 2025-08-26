@@ -1,36 +1,38 @@
 <script setup>
-  import { onMounted, computed, ref } from 'vue';
-  import { useRecipeStore } from '@/stores/recipeCollectStore';
+import { onMounted, computed, ref } from 'vue';
+import { useRecipeCollectStore } from '@/stores/recipeCollectStore'; // <-- 這裡修正了
 
-  import sectionTitle from '@/components/SectionTitle.vue';
-  import hot_img from '@/components/home/HomeHotImg.vue';
-  import DropdownMenu from '../button/DropdownMenu.vue';
-  import SeeMoreButton from '../button/SeeMoreButton.vue';
+import sectionTitle from '@/components/SectionTitle.vue';
+import hot_img from '@/components/home/HomeHotImg.vue';
+import DropdownMenu from '../button/DropdownMenu.vue';
+import SeeMoreButton from '../button/SeeMoreButton.vue';
 
-  const recipeStore = useRecipeStore();
-  const activeTab = ref('當季熱門'); // 管理當前顯示的分頁狀態
+const recipeStore = useRecipeCollectStore(); // <-- 這裡修正了
+const activeTab = ref('當季熱門'); // 管理當前顯示的分頁狀態
 
-  // 在元件掛載時，一次性載入所有需要的資料
-  onMounted(() => {
-    recipeStore.fetchHotRecipes();
-    recipeStore.fetchMostFavoritedRecipes();
-  });
+// 在元件掛載時，一次性載入所有需要的資料
+onMounted(() => {
+  recipeStore.fetchHotRecipes();
+  recipeStore.fetchMostFavoritedRecipes();
+});
 
-  // 根據 activeTab 的值，動態切換要顯示的食譜資料
-  const displayedRecipes = computed(() => {
-    if (activeTab.value === '當季熱門') {
-      return recipeStore.hotRecipes;
-    } else if (activeTab.value === '最多收藏') {
-      return recipeStore.mostFavoritedRecipes;
-    }
-    return []; // 預設回傳空陣列以避免錯誤
-  });
+// 根據 activeTab 的值，動態切換要顯示的食譜資料
+const displayedRecipes = computed(() => {
+  if (activeTab.value === '當季熱門') {
+    // 這裡你需要確認你的 store 裡面的 hotRecipes 是正確的狀態屬性
+    return recipeStore.hotRecipes; 
+  } else if (activeTab.value === '最多收藏') {
+    // 這裡你需要確認你的 store 裡面的 mostFavoritedRecipes 是正確的狀態屬性
+    return recipeStore.mostFavoritedRecipes;
+  }
+  return []; // 預設回傳空陣列以避免錯誤
+});
 
-  const dropdownOptions = ['當季熱門', '最多收藏'];
+const dropdownOptions = ['當季熱門', '最多收藏'];
 
-  const onDropdownChange = (value) => {
-    activeTab.value = value;
-  };
+const onDropdownChange = (value) => {
+  activeTab.value = value;
+};
 </script>
 
 <template>
