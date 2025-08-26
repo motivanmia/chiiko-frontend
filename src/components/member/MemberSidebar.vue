@@ -1,9 +1,15 @@
 <script setup>
   import Icon from '@/components/common/Icon.vue';
-  import { ref, Transition } from 'vue';
+  import { ref, Transition, onMounted } from 'vue';
   import { useUserStore } from '@/stores/user';
 
   const userStore = useUserStore();
+
+  // 在元件掛載後（即頁面載入後）執行
+  onMounted(() => {
+    // 呼叫 action 去取得會員資料
+    userStore.fetchUserInfo();
+  });
 
   // 儲存選中的檔案
   const avatarFile = ref(null);

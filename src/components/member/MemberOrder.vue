@@ -70,7 +70,7 @@
     </div>
 
     <!-- 手機版選單 -->
-    <!-- <div class="filter__select">
+    <div class="filter__select">
       <select v-model="filter">
         <option
           v-for="option in filterOptions"
@@ -80,7 +80,11 @@
           {{ option }}
         </option>
       </select>
-    </div> -->
+      <Icon
+        icon-name="downA"
+        class="arrow__icon"
+      />
+    </div>
 
     <div class="orders">
       <router-link
@@ -186,6 +190,9 @@
   .filter__btn {
     display: flex;
     gap: 15px;
+    @include rwdmax(768) {
+      display: none;
+    }
     button {
       width: 100%;
       padding: 10px 0;
@@ -202,6 +209,37 @@
       }
     }
   }
+  .filter__select {
+    display: none; // 預設在桌面版隱藏
+    @include rwdmax(768) {
+      display: block; // 在手機版顯示
+      position: relative;
+    }
+    select {
+      width: 170px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: none;
+      background: color(button, main);
+      color: color(text, light);
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      @include font-size(20);
+      cursor: pointer;
+      &:focus {
+        outline: none;
+      }
+    }
+    .arrow__icon {
+      position: absolute;
+      top: 8%;
+      left: 140px;
+      pointer-events: none;
+      color: color(text, light);
+      @include font-size(35);
+    }
+  }
   .orders {
     display: flex;
     flex-direction: column;
@@ -216,16 +254,29 @@
       border-radius: 15px;
       padding: 15px 20px;
       box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
+      @include rwdmax(768) {
+        padding: 15px;
+      }
     }
     .order__header {
       display: flex;
       align-items: center;
       gap: 50px;
+      @include rwdmax(768) {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+        position: relative;
+      }
+
       span {
         color: color(text, base);
         display: flex;
         gap: 0.5em;
         @include font-size(20);
+        @include rwdmax(768) {
+          @include font-size(18);
+        }
       }
       p {
         color: color(text, dark);
@@ -247,12 +298,22 @@
         $color: color(text, light),
         $ls: 3px
       );
+      @include rwdmax(768) {
+        position: absolute;
+        top: -8%;
+        right: 0;
+        padding: 4px 20px;
+        @include font-size(18);
+      }
     }
     .tracking__number {
       margin-left: auto;
       display: flex;
       align-items: center;
       gap: 5px;
+      @include rwdmax(768) {
+        margin-left: 0;
+      }
     }
     .copy__btn {
       background: none;
@@ -262,6 +323,9 @@
       align-items: center;
       .copy__icon {
         @include font-size(25);
+        @include rwdmax(768) {
+          @include font-size(20);
+        }
       }
     }
   }
@@ -274,10 +338,13 @@
     padding-bottom: 20px;
     .product__img {
       width: 160px;
-      height: 125px;
+      aspect-ratio: 4 / 3;
       border-radius: 20px;
       object-fit: cover;
       color: color(text, dark);
+      @include rwdmax(500) {
+        width: 120px;
+      }
     }
     .product__details {
       flex-grow: 1;
@@ -286,16 +353,31 @@
       justify-content: space-around;
       color: color(text, dark);
       @include font-size(20);
+      @include rwdmax(768) {
+        flex-direction: column;
+        gap: 10px;
+        @include font-size(18);
+      }
     }
   }
   .order__footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    @include rwdmax(768) {
+      flex-direction: column-reverse;
+      align-items: normal;
+      gap: 25px;
+    }
     .status {
       display: flex;
       align-items: center;
       gap: 50px;
+      @include rwdmax(768) {
+        flex-direction: column;
+        align-items: normal;
+        gap: 10px;
+      }
     }
     .status__section,
     .payment__section {
@@ -304,6 +386,9 @@
       align-items: center;
       gap: 10px;
       color: color(text, dark);
+      @include rwdmax(768) {
+        @include font-size(18);
+      }
     }
     .label {
       color: color(text, base);
@@ -313,9 +398,16 @@
       border-radius: 20px;
       background: color(text, base);
       color: color(text, light);
+      @include rwdmax(768) {
+        padding: 4px 20px;
+        @include font-size(18);
+      }
     }
     .order__info {
       @include font-size(24);
+      @include rwdmax(768) {
+        text-align: right;
+      }
     }
     .order__total {
       color: color(text, dark);
