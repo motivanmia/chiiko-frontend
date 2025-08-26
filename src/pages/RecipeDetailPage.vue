@@ -784,9 +784,10 @@
   }
   .clickable {
     cursor: pointer;
+    // color: color(text, base);
   }
 
   .underline-dashed {
-    text-decoration: underline dashed;
+    text-decoration: underline;
   }
 </style>
