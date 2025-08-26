@@ -3,6 +3,7 @@
   import { ref, computed, onMounted } from 'vue';
   import { useCartStore } from '@/stores/useCartStore';
   import { storeToRefs } from 'pinia';
+  import PageEmpty from './PageEmpty.vue';
 
   const cart = useCartStore();
   const { orders } = storeToRefs(cart);
@@ -12,6 +13,9 @@
   const filterOptions = ref(['所有訂單', '待確認', '已出貨', '已完成', '取消/退貨']);
 
   const filteredOrder = computed(() => {
+    if (!orders.value) {
+      return [];
+    }
     if (filter.value === '所有訂單') {
       return orders.value;
     }
@@ -54,6 +58,10 @@
   onMounted(() => {
     loadOrders();
   });
+
+  const goToProduct = () => {
+    router.push('/products');
+  };
 </script>
 
 <template>
@@ -86,7 +94,10 @@
       />
     </div>
 
-    <div class="orders">
+    <div
+      v-if="filteredOrder.length > 0"
+      class="orders"
+    >
       <router-link
         :to="`/account/order-detail/${order.order_id}`"
         class="order__card"
@@ -158,6 +169,16 @@
         </div>
       </router-link>
     </div>
+    <div
+      v-else
+      class="empty"
+    >
+      <PageEmpty
+        title-text="目前尚未有訂單"
+        button-text="去好物精選逛逛"
+        @confirm-click="goToProduct"
+      ></PageEmpty>
+    </div>
   </div>
 
   <transition name="fade">
@@ -171,13 +192,20 @@
 </template>
 
 <style lang="scss" scoped>
+  // .empty {
+  //   width: 100%;
+  //   background: color(backgroundColor, panel);
+  //   border-radius: 15px;
+  //   box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);
+  //   padding: 30px 25px;
+  // }
+
   a {
     text-decoration: none;
   }
 
   .order__container {
     width: 100%;
-    min-height: 600px;
     background: color(backgroundColor, panel);
     border-radius: 15px;
     box-shadow: 0 0 11.4px 0 rgba(0, 0, 0, 0.21);

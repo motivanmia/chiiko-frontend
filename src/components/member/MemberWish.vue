@@ -1,5 +1,6 @@
 <script setup>
   import { useRouter } from 'vue-router';
+  import PageEmpty from './PageEmpty.vue';
 
   const router = useRouter();
 
@@ -11,14 +12,17 @@
 
   //上面後續要更改先用一張圖片示意
 
-  import MemberSidebar from './MemberSidebar.vue';
   import MemberCard from './MemberCard.vue';
-  import MemberDashboard from './MemberDashboard.vue';
+
+  const goToProduct = () => {
+    router.push('/products');
+  };
 </script>
 
 <template>
   <div class="member-collect">
-    <div
+    <!-- <div
+      v-if="imageUrl.length > 0"
       v-for="card in 9"
       class="member-card__box"
     >
@@ -30,7 +34,14 @@
         icon-name="heart"
         icon-description="已加入願望清單"
       ></MemberCard>
-    </div>
+    </div> -->
+    <!-- <div v-else> -->
+    <PageEmpty
+      title-text="目前沒有任何收藏商品"
+      button-text="去好物精選逛逛"
+      @confirm-click="goToProduct"
+    ></PageEmpty>
+    <!-- </div> -->
   </div>
 </template>
 

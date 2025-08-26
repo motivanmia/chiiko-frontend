@@ -1,29 +1,28 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRecipeStore } from '@/stores/recipeStore';
-import { useAuthStore } from '@/stores/auth';
-import { useRouter } from 'vue-router';
-import Icon from '../common/Icon.vue';
+  import { ref, computed, onMounted } from 'vue';
+  import { useRecipeStore } from '@/stores/recipeStore';
+  import { useAuthStore } from '@/stores/auth';
+  import { useRouter } from 'vue-router';
+  import Icon from '../common/Icon.vue';
+  import PageEmpty from './PageEmpty.vue';
 
-const router = useRouter();
-const recipeStore = useRecipeStore();
-const authStore = useAuthStore();
-const isDraftExpanded = ref(true);
-const activeTab = ref('published');
+  const router = useRouter();
+  const recipeStore = useRecipeStore();
+  const authStore = useAuthStore();
+  const isDraftExpanded = ref(true);
+  const activeTab = ref('published');
 
-const draftRecipe = computed(() => recipeStore.draftRecipes[0]); 
-const publishedRecipes = computed(() => recipeStore.publishedRecipes);
-const pendingRecipes = computed(() => recipeStore.pendingRecipes);
+  const draftRecipe = computed(() => recipeStore.draftRecipes[0]);
+  const publishedRecipes = computed(() => recipeStore.publishedRecipes);
+  const pendingRecipes = computed(() => recipeStore.pendingRecipes);
 
+  const currentRecipes = computed(() => {
+    return activeTab.value === 'published' ? publishedRecipes.value : pendingRecipes.value;
+  });
 
-const currentRecipes = computed(() => {
-  return activeTab.value === 'published' ? publishedRecipes.value : pendingRecipes.value;
-});
-
-onMounted(() => {
-  recipeStore.fetchMyRecipes();
-});
-
+  onMounted(() => {
+    recipeStore.fetchMyRecipes();
+  });
 </script>
 
 <template>
@@ -44,55 +43,67 @@ onMounted(() => {
         />
       </button>
 
-<div v-if="isDraftExpanded && draftRecipe" class="recipe-management__draft-card">
-  <div class="recipe-management__image">
-    <img
-      class="recipe-management__image-pic"
-      :src="draftRecipe.image"
-      :alt="draftRecipe.name"
-    />
-  </div>
-  <div class="recipe-management__content-draft">
-    <h3 class="recipe-management__title">{{ draftRecipe.name }}</h3>
-    <p class="recipe-management__date">上次編輯日期 {{ draftRecipe.created_at }}</p>
-  </div>
-  <div class="recipe-management__actions">
-    <router-link :to="{ name: 'recipe-edit', params: { id: draftRecipe.recipe_id } }">
-      <Icon
-        icon-name="revise"
-        class="recipe-management__action-btn recipe-management__action-btn--edit"
-      />
-    </router-link>
-    <Icon
-      icon-name="del"
-      class="recipe-management__action-btn recipe-management__action-btn--delete"
-      @click="recipeStore.deleteMyRecipe(draftRecipe.recipe_id)"
-    />
-  </div>
-</div>
+      <div
+        v-if="isDraftExpanded && draftRecipe"
+        class="recipe-management__draft-card"
+      >
+        <div class="recipe-management__image">
+          <img
+            class="recipe-management__image-pic"
+            :src="draftRecipe.image"
+            :alt="draftRecipe.name"
+          />
+        </div>
+        <div class="recipe-management__content-draft">
+          <h3 class="recipe-management__title">{{ draftRecipe.name }}</h3>
+          <p class="recipe-management__date">上次編輯日期 {{ draftRecipe.created_at }}</p>
+        </div>
+        <div class="recipe-management__actions">
+          <router-link :to="{ name: 'recipe-edit', params: { id: draftRecipe.recipe_id } }">
+            <Icon
+              icon-name="revise"
+              class="recipe-management__action-btn recipe-management__action-btn--edit"
+            />
+          </router-link>
+          <Icon
+            icon-name="del"
+            class="recipe-management__action-btn recipe-management__action-btn--delete"
+            @click="recipeStore.deleteMyRecipe(draftRecipe.recipe_id)"
+          />
+        </div>
+      </div>
 
-      <div v-if="!draftRecipe && isDraftExpanded" class="no-draft-message">
-        <p>目前沒有草稿食譜。</p>
+      <div v-if="!draftRecipe && isDraftExpanded">
+        <PageEmpty title-text="目前沒有草稿食譜"></PageEmpty>
       </div>
     </div>
 
     <div class="recipe-management__section">
       <div class="recipe-management__tabs">
         <button
-          :class="['recipe-management__tab', { 'recipe-management__tab--active': activeTab === 'published' }]"
+          :class="[
+            'recipe-management__tab',
+            { 'recipe-management__tab--active': activeTab === 'published' },
+          ]"
           @click="activeTab = 'published'"
         >
           <span class="recipe-management__tab-text">已發布</span>
         </button>
         <button
-          :class="['recipe-management__tab', { 'recipe-management__tab--active': activeTab === 'pending' }]"
+          :class="[
+            'recipe-management__tab',
+            { 'recipe-management__tab--active': activeTab === 'pending' },
+          ]"
           @click="activeTab = 'pending'"
         >
           <span class="recipe-management__tab-text">待審核</span>
         </button>
       </div>
 
-      <div class="recipe-management__list">
+      <div
+        v-if="currentRecipes.length > 0"
+        class="recipe-management__list"
+      >
         <div
           v-for="recipe in currentRecipes"
           :key="recipe.recipe_id"
@@ -136,6 +147,9 @@ onMounted(() => {
             @click="recipeStore.deleteMyRecipe(recipe.recipe_id)"
           />
         </div>
+      </div>
+      <div v-else>
+        <PageEmpty title-text="目前沒有發布的食譜"></PageEmpty>
       </div>
     </div>
   </div>

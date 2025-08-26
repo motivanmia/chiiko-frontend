@@ -2,6 +2,7 @@
   import { onMounted } from 'vue';
   import { useNotificationStore } from '@/stores/notification';
   import { useRouter } from 'vue-router';
+  import PageEmpty from './PageEmpty.vue';
 
   const notifyStore = useNotificationStore();
   const router = useRouter();
@@ -31,6 +32,7 @@
 <template>
   <div class="Inform">
     <div
+      v-if="notifyStore.list.length > 0"
       class="Inform__card"
       v-for="item in notifyStore.list"
       :key="item.notification_id"
@@ -40,6 +42,9 @@
       <h1 class="Inform__content">{{ item.content_title }}</h1>
       <p class="Inform__source">{{ item.content_text }}</p>
       {{ item.created_date }}
+    </div>
+    <div v-else>
+      <PageEmpty title-text="目前沒有任何通知"></PageEmpty>
     </div>
   </div>
 </template>

@@ -352,8 +352,15 @@
                 v-else
                 :to="item.path"
                 class="member__item"
+                :class="{
+                  'has-unread-dot': item.title === '消息通知' && notifyStore.unreadCount > 0,
+                }"
               >
                 {{ item.title }}
+                <span
+                  v-if="item.title === '消息通知' && notifyStore.unreadCount > 0"
+                  class="member__notify-dot"
+                ></span>
                 <Icon
                   v-if="item.icon"
                   :icon-name="item.icon"
@@ -387,6 +394,12 @@
           class="actions__member"
           @click="handleClick('member')"
         >
+          <div
+            v-if="notifyStore.unreadCount > 0"
+            class="actions__member--unread"
+          >
+            {{ notifyStore.unreadCount }}
+          </div>
           <span class="actions__item">
             <Icon
               icon-name="member"
@@ -419,8 +432,15 @@
                 v-else
                 :to="item.path"
                 class="member__item"
+                :class="{
+                  'has-unread-dot': item.title === '消息通知' && notifyStore.unreadCount > 0,
+                }"
               >
                 {{ item.title }}
+                <span
+                  v-if="item.title === '消息通知' && notifyStore.unreadCount > 0"
+                  class="member__notify-dot"
+                ></span>
                 <Icon
                   v-if="item.icon"
                   :icon-name="item.icon"
@@ -910,12 +930,15 @@
         align-items: center;
         position: absolute;
         border-radius: 50%;
-        right: 0;
-        top: 1;
-        margin-left: auto;
+        right: 5%;
+        top: 28%;
         width: 20px;
         height: 20px;
         background-color: color(button, main);
+        @include font-size(14);
+        @include rwdmax(1440) {
+          top: 32%;
+        }
       }
     }
     .actions__item {
@@ -993,16 +1016,30 @@
       text-decoration: none;
       color: color(text, dark);
       cursor: pointer;
+      position: relative;
       @include rwdmax(1440) {
         padding: 5px 20px;
         letter-spacing: 4px;
         @include font-size(16);
+      }
+      .member__notify-dot {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 10px;
+        height: 10px;
+        background-color: color(button, main);
+        border-radius: 50%;
       }
     }
     .member__item:hover {
       background-color: color(button, main);
       border-radius: 20px;
       color: color(text, light);
+      .member__notify-dot {
+        background-color: color(text, light);
+      }
     }
     .member__icon {
       @include font-size(24);
@@ -1022,6 +1059,25 @@
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
+    }
+    .actions__member {
+      position: relative;
+      &--unread {
+        @include rwdmax(1200) {
+          color: color(text, light);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          position: absolute;
+          border-radius: 50%;
+          right: -58%;
+          top: -48%;
+          width: 20px;
+          height: 20px;
+          background-color: color(button, main);
+          @include font-size(14);
+        }
+      }
     }
     .actions__icon {
       @include font-size(25);

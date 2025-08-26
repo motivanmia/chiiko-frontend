@@ -1,9 +1,12 @@
 <script setup>
   import Icon from '@/components/common/Icon.vue';
-  import { ref, Transition, onMounted } from 'vue';
+  import { ref, Transition, onMounted, computed } from 'vue';
   import { useUserStore } from '@/stores/user';
+  import { useRoute, useRouter } from 'vue-router';
 
   const userStore = useUserStore();
+  const route = useRoute();
+  const router = useRouter();
 
   // 在元件掛載後（即頁面載入後）執行
   onMounted(() => {
@@ -62,7 +65,7 @@
   ]);
 
   const activeItemId = ref('user-info'); // 預設頁面為會員資料
-  const subMenuOpen = ref(true); // 子選單預設打開(預設在會員資料)
+  const subMenuOpen = ref(route.name === 'profile' || route.name === 'password');
 
   const itemClick = (clickitem) => {
     activeItemId.value = clickitem.id;
@@ -70,6 +73,8 @@
     if (clickitem.children) {
       // 點擊的項目有子選單
       subMenuOpen.value = !subMenuOpen.value;
+      // 進行頁面導航
+      router.push({ name: clickitem.routeName });
     } else {
       // 沒有子選單
 
@@ -82,6 +87,8 @@
         // 點擊非子項目時強制關閉
         subMenuOpen.value = false;
       }
+      // 進行頁面導航
+      router.push({ name: clickitem.routeName });
     }
   };
 

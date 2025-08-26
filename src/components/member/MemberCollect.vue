@@ -3,6 +3,8 @@
   import axios from 'axios';
   import MemberCard from './MemberCard.vue';
   import { ref, onMounted } from 'vue';
+  import PageEmpty from './PageEmpty.vue';
+
   const router = useRouter();
   const allRecipes = ref([]);
   const deleteApiUrl = 'http://localhost:8888/front/member/delete_favorite_recipes.php';
@@ -45,6 +47,10 @@
     }
   };
 
+  const goToProduct = () => {
+    router.push('/recipes');
+  };
+
   onMounted(() => {
     fetchRecipe();
   });
@@ -53,6 +59,7 @@
 <template>
   <div class="member-collect">
     <div
+      v-if="allRecipes.length > 0"
       v-for="recipe in allRecipes"
       :key="recipe.recipe_id"
       class="member-card__box"
@@ -65,6 +72,13 @@
       @delete-click="handleDeleteRecipe(recipe.recipe_id)"
     />
 
+    </div>
+    <div v-else>
+      <PageEmpty
+        title-text="目前沒有任何食譜收藏"
+        button-text="去好靈感×食譜逛逛"
+        @confirm-click="goToProduct"
+      ></PageEmpty>
     </div>
   </div>
 </template>
