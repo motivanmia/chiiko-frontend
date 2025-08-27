@@ -67,7 +67,15 @@
             <div class="order-detail__date">
               訂購日期 {{ orderDetail.order.created_at.split(' ')[0] }}
             </div>
-            <div class="order-detail__number">物流單號 {{ orderDetail.order.tracking_number }}</div>
+            <div
+              v-if="
+                orderDetail.order.order_status_text !== '待確認' &&
+                orderDetail.order.order_status_text !== '取消/退貨'
+              "
+              class="order-detail__number"
+            >
+              物流單號 {{ orderDetail.order.tracking_number }}
+            </div>
 
             <button
               v-if="orderDetail.order.order_status_text === '已完成'"
