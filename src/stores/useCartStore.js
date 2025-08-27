@@ -487,39 +487,182 @@ export const useCartStore = defineStore('cart', () => {
 
   // 解析地址
   function parseTaiwanAddress(address) {
-    let cityName = '';
-    let districtName = '';
-    let postal = '';
-    let detail = '';
-
     if (!address) return { city: '', district: '', postal: '', detail: '' };
 
-    let rawAddress = address.trim();
+    // escape regex helper
+    function escapeRegex(s) {
+      return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
 
-    // 如果前面有郵遞區號 (3 碼)
-    const postalMatch = rawAddress.match(/^(\d{3})\s?/);
+    let rawOriginal = address.trim();
+    let postal = '';
+    let raw = rawOriginal;
+
+    // 1) 郵遞區號
+    const postalMatch = raw.match(/^(\d{3})\s*/);
     if (postalMatch) {
       postal = postalMatch[1];
-      rawAddress = rawAddress.replace(postalMatch[0], ''); // 把郵遞區號移除
+      raw = raw.slice(postalMatch[0].length);
     }
 
-    const city = twZipcodes.find((c) => rawAddress.startsWith(c.name));
-    if (city) {
-      cityName = city.name;
-      const district = city.districts.find((d) => rawAddress.includes(d.name));
-      if (district) {
-        districtName = district.name;
-        postal = district.zip;
-        detail = rawAddress.replace(cityName, '').replace(districtName, '');
-      } else {
-        detail = rawAddress.replace(cityName, '');
+    let foundCity = null;
+    let foundDistrict = null;
+
+    // 2) 用郵遞區號優先鎖定 city + district
+    if (postal) {
+      for (const c of twZipcodes) {
+        const d = c.districts.find((dd) => dd.zip === postal);
+        if (d) {
+          foundCity = c;
+          foundDistrict = d;
+          break;
+        }
       }
-    } else {
-      detail = rawAddress;
     }
 
-    return { city: cityName, district: districtName, postal, detail };
+    // 3) 如果沒郵遞區號，再用市名比對（台/臺 通用）
+    if (!foundCity) {
+      for (const c of twZipcodes) {
+        const cityPattern = new RegExp('^' + escapeRegex(c.name).replace(/臺/g, '[台臺]'));
+        if (cityPattern.test(raw)) {
+          foundCity = c;
+          break;
+        }
+      }
+    }
+
+    // 4) 如果有 city，嘗試找 district
+    if (foundCity && !foundDistrict) {
+      for (const d of foundCity.districts) {
+        const districtPattern = new RegExp(escapeRegex(d.name).replace(/臺/g, '[台臺]'));
+        if (districtPattern.test(raw)) {
+          foundDistrict = d;
+          break;
+        }
+      }
+    }
+
+    // 5) detail：從原始地址刪掉 cityName & districtName（台/臺 regex）
+    let detail = rawOriginal;
+    if (foundCity) {
+      const cityPattern = new RegExp(escapeRegex(foundCity.name).replace(/臺/g, '[台臺]'), 'g');
+      detail = detail.replace(cityPattern, '');
+    }
+    if (foundDistrict) {
+      const districtPattern = new RegExp(
+        escapeRegex(foundDistrict.name).replace(/臺/g, '[台臺]'),
+        'g',
+      );
+      detail = detail.replace(districtPattern, '');
+    }
+    if (postal) {
+      detail = detail.replace(new RegExp('^' + postal), '');
+    }
+
+    detail = detail.trim();
+
+    return {
+      city: foundCity ? foundCity.name : '',
+      district: foundDistrict ? foundDistrict.name : '',
+      postal: foundDistrict ? foundDistrict.zip : postal,
+      detail,
+    };
   }
+  // function parseTaiwanAddress(address) {
+  //   let cityName = '';
+  //   let districtName = '';
+  //   let postal = '';
+  //   let detail = '';
+
+  //   if (!address) return { city: '', district: '', postal: '', detail: '' };
+
+  //   let rawAddress = address.trim();
+
+  //   // 先抓郵遞區號 (3 碼)
+  //   const postalMatch = rawAddress.match(/^(\d{3})\s?/);
+  //   if (postalMatch) {
+  //     postal = postalMatch[1];
+  //     rawAddress = rawAddress.replace(postalMatch[0], '');
+  //   }
+
+  //   // 優先用郵遞區號比對
+  //   let city, district;
+  //   if (postal) {
+  //     for (const c of twZipcodes) {
+  //       district = c.districts.find((d) => d.zip === postal);
+  //       if (district) {
+  //         city = c;
+  //         break;
+  //       }
+  //     }
+  //   }
+
+  //   // 沒有郵遞區號，就用縣市名 + 區名判斷
+  //   if (!city) {
+  //     city = twZipcodes.find((c) => rawAddress.startsWith(c.name));
+  //     if (city) {
+  //       district = city.districts.find((d) => rawAddress.includes(d.name));
+  //     }
+  //   }
+
+  //   if (city) {
+  //     cityName = city.name;
+  //     if (district) {
+  //       districtName = district.name;
+  //       postal = district.zip || postal;
+  //       detail = rawAddress.replace(cityName, '').replace(districtName, '').trim();
+  //     } else {
+  //       detail = rawAddress.replace(cityName, '').trim();
+  //     }
+  //   } else {
+  //     detail = rawAddress;
+  //   }
+
+  //   return { city: cityName, district: districtName, postal, detail };
+  // }
+
+  // function parseTaiwanAddress(address) {
+  //   let cityName = '';
+  //   let districtName = '';
+  //   let postal = '';
+  //   let detail = '';
+
+  //   if (!address) return { city: '', district: '', postal: '', detail: '' };
+
+  //   let rawAddress = address.trim();
+
+  //   // 如果前面有郵遞區號 (3 碼)
+  //   const postalMatch = rawAddress.match(/^(\d{3})\s?/);
+  //   if (postalMatch) {
+  //     postal = postalMatch[1];
+  //     rawAddress = rawAddress.replace(postalMatch[0], ''); // 把郵遞區號移除
+  //   }
+
+  //   const city = twZipcodes.find((c) => rawAddress.startsWith(c.name));
+  //   if (city) {
+  //     cityName = city.name;
+  //     const district = city.districts.find((d) => rawAddress.includes(d.name));
+  //     if (district) {
+  //       districtName = district.name;
+  //       postal = district.zip;
+  //       detail = rawAddress.replace(cityName, '').replace(districtName, '');
+  //     } else {
+  //       detail = rawAddress.replace(cityName, '');
+  //     }
+  //   } else {
+  //     detail = rawAddress;
+  //   }
+
+  //   return { city: cityName, district: districtName, postal, detail };
+  // }
+
+  watch(
+    recipientForm,
+    (val) => {
+      console.log('recipientForm', val);
+    },
+    { deep: true, immediate: true },
+  );
 
   // 將購買人寫入
   function setRecipientForm(profile) {

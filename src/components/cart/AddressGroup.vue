@@ -103,6 +103,12 @@
     const zip = postalMapping.value[districtLocal.value];
     return zip ? [{ value: zip, label: zip }] : [];
   });
+  // const postalOptions = computed(() => {
+  //   const zip = postalMapping.value[districtLocal.value];
+  //   if (zip) return [{ value: zip, label: zip }];
+  //   if (props.postal) return [{ value: props.postal, label: props.postal }];
+  //   return [];
+  // });
 
   watch(cityLocal, (newCity, oldCity) => {
     if (newCity !== oldCity) {
@@ -142,14 +148,21 @@
         :error="errorDistrict"
         @blur="$emit('blur-district')"
       />
-      <BaseSelect
+      <BaseInput
+        v-model="postalLocal"
+        placeholder="郵遞區號"
+        :readonly="true"
+        :error="errorPostal"
+        @blur="$emit('blur-postal')"
+      />
+      <!-- <BaseSelect
         v-model="postalLocal"
         :options="postalOptions"
         placeholder="郵遞區號"
         :disabled="disabled || !districtLocal"
         :error="errorPostal"
         @blur="$emit('blur-postal')"
-      />
+      /> -->
     </div>
     <BaseInput
       v-model="addressLocal"
