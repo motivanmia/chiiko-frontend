@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import Swal from 'sweetalert2';
 import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8888/front/recipe';
@@ -7,9 +8,7 @@ const API_BASE_URL = 'http://localhost:8888/front/recipe';
 // 將此函式放在 defineStore 的 actions 區塊之外，以便在 actions 中呼叫
 function updateRecipeCountInArray(array, recipeId, action) {
   if (!array) return;
-  const recipeToUpdate = array.find(
-    (recipe) => Number(recipe.recipe_id) === Number(recipeId),
-  );
+  const recipeToUpdate = array.find((recipe) => Number(recipe.recipe_id) === Number(recipeId));
   if (recipeToUpdate) {
     if (action === 'add') {
       recipeToUpdate.favorite_count = (Number(recipeToUpdate.favorite_count) || 0) + 1;
@@ -25,7 +24,7 @@ export const useRecipeCollectStore = defineStore('collect-recipe', {
     hotRecipes: [],
     mostFavoritedRecipes: [],
     latestRecipes: [],
-    searchResults: [], 
+    searchResults: [],
   }),
   actions: {
     async checkRecipeStatus(recipeId) {
@@ -45,45 +44,60 @@ export const useRecipeCollectStore = defineStore('collect-recipe', {
       }
     },
 
-async toggleCollect(recipeId, currentRecipe) {
-  const isCollected = this.favoriteRecipesStatus[recipeId];
-  const action = isCollected ? 'remove' : 'add';
+    async toggleCollect(recipeId, currentRecipe) {
+      const isCollected = this.favoriteRecipesStatus[recipeId];
+      const action = isCollected ? 'remove' : 'add';
 
-  try {
-    const response = await axios.post(`${API_BASE_URL}/toggle_favorite_recipe.php`, {
-      recipe_id: recipeId,
-      action: action,
-    });
+      try {
+        const response = await axios.post(`${API_BASE_URL}/toggle_favorite_recipe.php`, {
+          recipe_id: recipeId,
+          action: action,
+        });
 
-    if (response.data.success) {
-      this.favoriteRecipesStatus[recipeId] = !isCollected;
-      console.log(response.data.message);
+        if (response.data.success) {
+          this.favoriteRecipesStatus[recipeId] = !isCollected;
+          console.log(response.data.message);
 
-      // 更新 Pinia Store 裡的陣列，保持不變
-      updateRecipeCountInArray(this.hotRecipes, recipeId, action);
-      updateRecipeCountInArray(this.mostFavoritedRecipes, recipeId, action);
-      updateRecipeCountInArray(this.latestRecipes, recipeId, action);
-      updateRecipeCountInArray(this.searchResults, recipeId, action);
+          // 更新 Pinia Store 裡的陣列，保持不變
+          updateRecipeCountInArray(this.hotRecipes, recipeId, action);
+          updateRecipeCountInArray(this.mostFavoritedRecipes, recipeId, action);
+          updateRecipeCountInArray(this.latestRecipes, recipeId, action);
+          updateRecipeCountInArray(this.searchResults, recipeId, action);
 
-      // 直接更新傳入的食譜物件的收藏數
-      if (currentRecipe) {
-        if (action === 'add') {
-          currentRecipe.favorites_count = (parseInt(currentRecipe.favorites_count, 10) || 0) + 1;
+          // 直接更新傳入的食譜物件的收藏數
+          if (currentRecipe) {
+            if (action === 'add') {
+              Swal.fire({
+                icon: 'success',
+                title: '收藏成功！',
+                showConfirmButton: false,
+                timer: 1500,
+              });
+              currentRecipe.favorites_count =
+                (parseInt(currentRecipe.favorites_count, 10) || 0) + 1;
+            } else {
+              Swal.fire({
+                icon: 'warning',
+                title: '取消收藏成功！',
+                showConfirmButton: false,
+                timer: 1500,
+              });
+
+              currentRecipe.favorites_count =
+                (parseInt(currentRecipe.favorites_count, 10) || 0) - 1;
+            }
+          }
         } else {
-          currentRecipe.favorites_count = (parseInt(currentRecipe.favorites_count, 10) || 0) - 1;
+          if (response.data.message === '食譜已被您收藏囉!') {
+            this.favoriteRecipesStatus[recipeId] = true;
+          }
+          alert(response.data.message || '操作失敗');
         }
+      } catch (error) {
+        console.error('API request failed:', error);
+        alert('網路連線失敗，請檢查網路');
       }
-    } else {
-      if (response.data.message === '食譜已被您收藏囉!') {
-        this.favoriteRecipesStatus[recipeId] = true;
-      }
-      alert(response.data.message || '操作失敗');
-    }
-  } catch (error) {
-    console.error('API request failed:', error);
-    alert('網路連線失敗，請檢查網路');
-  }
-},
+    },
 
     async fetchHotRecipes() {
       try {
@@ -123,7 +137,7 @@ async toggleCollect(recipeId, currentRecipe) {
         console.error('API請求失敗', error);
       }
     },
-    
+
     // 新增：用於執行搜尋的 action
     async fetchSearchResults(query) {
       const trimmedQuery = query.trim();

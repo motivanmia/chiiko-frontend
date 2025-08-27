@@ -205,7 +205,8 @@
   import { ref, watch, computed } from 'vue';
   import { useRoute } from 'vue-router';
   import { useAuthStore } from '@/stores/auth';
-  import { useRecipeCollectStore } from '@/stores/recipeCollectStore'; // <-- 這裡修正了
+  import { useRecipeCollectStore } from '@/stores/recipeCollectStore';
+  import Swal from 'sweetalert2';
   import Icon from '@/components/common/Icon.vue';
   import CommentSection from '@/components/CommentSection.vue';
   import ProductCard from '@/components/ProductCard.vue';
@@ -360,7 +361,12 @@
     navigator.clipboard
       .writeText(recipeUrl)
       .then(() => {
-        alert('食譜連結已複製！');
+        Swal.fire({
+                icon: 'success',
+                title: '分享鏈結複製成功！',
+                showConfirmButton: false,
+                timer: 1500,
+              });
       })
       .catch((err) => {
         console.error('複製失敗:', err);

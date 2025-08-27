@@ -5,6 +5,7 @@ import { getMyRecipe } from '@/api/fetch';
 import { deleteRecipe } from '@/api/fetch';
 import { getRecipeById } from '@/api/fetch';
 import { postIngredients } from '@/api/fetch';
+import Swal from 'sweetalert2';
 
 export const useRecipeStore = defineStore('recipe', {
   state: () => ({
@@ -105,28 +106,78 @@ export const useRecipeStore = defineStore('recipe', {
     },
 
     async deleteMyRecipe(recipeId) {
+      // 1. 顯示確認提示，並等待使用者回應
+      const result = await Swal.fire({
+        title: '確定要刪除這份食譜嗎？',
+        text: '此操作無法復原！',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: '確定刪除',
+        cancelButtonText: '取消',
+      });
+
+      // 2. 如果使用者點擊「取消」，則停止執行
+      if (!result.isConfirmed) {
+        return; // 直接返回，不執行後續程式碼
+      }
+
+      // 3. 如果使用者點擊「確定」，開始執行刪除邏輯
       try {
+        // 顯示一個處理中的提示
+        Swal.fire({
+          title: '刪除中...',
+          text: '請稍後...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        // 呼叫你的後端 API 進行刪除
         const response = await deleteRecipe(recipeId);
+        Swal.close(); // 關閉處理中提示
 
         if (response.data.status === 'success') {
+          // 成功後，從各個陣列中移除該食譜
           this.publishedRecipes = this.publishedRecipes.filter((r) => r.recipe_id !== recipeId);
           this.pendingRecipes = this.pendingRecipes.filter((r) => r.recipe_id !== recipeId);
           this.draftRecipes = this.draftRecipes.filter((r) => r.recipe_id !== recipeId);
 
-          alert('食譜已成功刪除！');
+          // 顯示成功訊息
+          Swal.fire({
+            title: '確定要刪除這份食譜嗎？',
+            text: '此操作無法復原！',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '確定刪除',
+            cancelButtonText: '取消',
+          });
         } else {
-          alert(response.data.message);
+          // 後端回傳失敗訊息
+          Swal.fire({
+            icon: 'error',
+            title: '刪除失敗',
+            text: response.data.message,
+          });
         }
       } catch (error) {
+        // 網路請求失敗
         console.error('刪除食譜失敗:', error);
-        alert('刪除失敗，請稍後再試。');
+        Swal.fire({
+          icon: 'error',
+          title: '連線失敗',
+          text: '無法連線到伺服器，請稍後再試。',
+        });
       }
     },
-
     async fetchRecipeById(recipeId) {
       this.isLoading = true;
       this.error = null;
-      this.currentRecipe = null; 
+      this.currentRecipe = null;
 
       try {
         const response = await getRecipeById(recipeId);
@@ -148,7 +199,7 @@ export const useRecipeStore = defineStore('recipe', {
       }
     },
 
-        async postIngredientsToRecipe(payload) {
+    async postIngredientsToRecipe(payload) {
       try {
         const response = await postIngredients(payload);
         console.log('食材發布成功:', response.data.message);
@@ -159,7 +210,7 @@ export const useRecipeStore = defineStore('recipe', {
       }
     },
 
-        loadUserId() {
+    loadUserId() {
       // 假設你在登入成功後，會將使用者 ID 儲存到 localStorage
       const storedUserId = localStorage.getItem('userId');
       if (storedUserId) {
@@ -167,7 +218,6 @@ export const useRecipeStore = defineStore('recipe', {
         this.userId = parseInt(storedUserId, 10);
       }
     },
-
   },
 
   getters: {

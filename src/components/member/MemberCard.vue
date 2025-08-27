@@ -2,6 +2,8 @@
   import Icon from '../common/Icon.vue';
   import { defineProps, defineEmits, ref } from 'vue';
   import { useRouter } from 'vue-router'; // 引入 useRouter
+  import Swal from 'sweetalert2';
+
 
   // 宣告 props
   const props = defineProps({
@@ -36,11 +38,29 @@
 
   const emit = defineEmits(['delete-click']);
 
-  const handleDelete = () => {
-    if (confirm('確定要刪除這筆收藏?')) {
-      emit('delete-click');
-    }
-  };
+const handleDelete = async () => {
+  // 使用 Swal.fire() 顯示確認對話框
+  const result = await Swal.fire({
+    title: '確定要刪除這筆收藏嗎？',
+    text: '此操作無法復原。',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '確定刪除',
+    cancelButtonText: '取消'
+  });
+  // 檢查使用者的選擇
+  if (result.isConfirmed) {
+    emit('delete-click');
+    Swal.fire({
+      title: '刪除中...',
+      text: '請稍後...',
+      showConfirmButton: false,
+      timer: 1000,
+    });
+  }
+};
 </script>
 
 <template>

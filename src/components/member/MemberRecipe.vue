@@ -220,8 +220,6 @@
 
     // Element: image
     &__image {
-      // width: ;
-      // height: a;
       margin-right: 30px;
       flex-shrink: 0;
     }
