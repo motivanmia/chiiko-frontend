@@ -18,9 +18,12 @@
     } else if (item.type === 30 && item.recipe_id) {
       //  食譜留言通知
       router.push({ name: 'recipe-detail', params: { id: item.recipe_id } });
-    } else if ((item.type === 10 || item.type === 11) && item.recipe_id) {
-      //  食譜上架/審核通知
+    } else if (item.type === 10 && item.recipe_id) {
+      //  食譜上架通知
       router.push({ name: 'recipe-detail', params: { id: item.recipe_id } });
+    } else if (item.type === 11 && item.recipe_id) {
+      //  食譜未通過通知
+      router.push({ name: 'recipe-edit', params: { id: item.recipe_id } });
     } else {
       console.log('暫無對應頁面，通知內容：', item);
     }
