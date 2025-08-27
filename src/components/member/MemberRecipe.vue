@@ -211,7 +211,7 @@
     &__draft-card {
       background: white;
       border-radius: 20px;
-      padding: 30px;
+      padding: 15px;
       display: flex;
       align-items: center;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -220,13 +220,15 @@
 
     // Element: image
     &__image {
+      width: 25%;
+      height: 100%;
       margin-right: 30px;
       flex-shrink: 0;
     }
 
     &__image-pic {
       width: 100%;
-      height: 100%;
+      aspect-ratio: 1 / 0.8;
       object-fit: cover;
       border-radius: 15px;
     }
@@ -339,7 +341,7 @@
     &__card {
       background: white;
       border-radius: 20px;
-      padding: 30px;
+      padding: 15px;
       display: flex;
       align-items: center;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -409,7 +411,7 @@
 
       &__draft-card,
       &__card {
-        padding: 20px;
+        padding: 15px;
         display: flex;
         align-items: flex-start;
       }
