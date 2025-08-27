@@ -359,12 +359,12 @@
                 :to="item.path"
                 class="member__item"
                 :class="{
-                  'has-unread-dot': item.title === '消息通知' && notifyStore.unreadCount > 0,
+                  'has-unread-dot': item.title === '消息通知' && unreadCount > 0,
                 }"
               >
                 {{ item.title }}
                 <span
-                  v-if="item.title === '消息通知' && notifyStore.unreadCount > 0"
+                  v-if="item.title === '消息通知' && unreadCount > 0"
                   class="member__notify-dot"
                 ></span>
                 <Icon
@@ -401,10 +401,10 @@
           @click="handleClick('member')"
         >
           <div
-            v-if="notifyStore.unreadCount > 0"
+            v-if="unreadCount > 0"
             class="actions__member--unread"
           >
-            {{ notifyStore.unreadCount }}
+            {{ unreadCount }}
           </div>
           <span class="actions__item">
             <Icon
@@ -439,12 +439,12 @@
                 :to="item.path"
                 class="member__item"
                 :class="{
-                  'has-unread-dot': item.title === '消息通知' && notifyStore.unreadCount > 0,
+                  'has-unread-dot': item.title === '消息通知' && unreadCount > 0,
                 }"
               >
                 {{ item.title }}
                 <span
-                  v-if="item.title === '消息通知' && notifyStore.unreadCount > 0"
+                  v-if="item.title === '消息通知' && unreadCount > 0"
                   class="member__notify-dot"
                 ></span>
                 <Icon
