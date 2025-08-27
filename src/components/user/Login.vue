@@ -1,7 +1,7 @@
 <script setup>
   import InputField from '@/components/user/InputField.vue';
   import Icon from '@/components/common/Icon.vue';
-  import { ref } from 'vue';
+  import { computed, ref } from 'vue';
   import { useAuthStore } from '@/stores/auth';
   import { useRouter } from 'vue-router';
   import { login } from '@/api/fetch';
@@ -19,6 +19,36 @@
   const formError = ref('');
 
   const router = useRouter();
+
+  //LINE第三方登入設置
+  const LINE_CHANNEL_ID = '2008003983';
+  const LINE_CALLBACK_URL = 'http://localhost:5173/callback';
+
+  //安全性考量設置隨機state
+  const generateState = () => {
+    const S_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 32; i++) {
+      result += S_CHARS.charAt(Math.floor(Math.random() * S_CHARS.length));
+    }
+    return result;
+  };
+
+  //用computed動態生成LINE登入的URL
+  const lineLoginUrl = computed(() => {
+    const state = generateState();
+    //將state存入localStorage或SessionStorage讓他後續可以比對
+    localStorage.setItem('line_login_state', state);
+
+    const url = new URL('https://access.line.me/oauth2/v2.1/authorize');
+    url.searchParams.append('response_type', 'code');
+    url.searchParams.append('client_id', LINE_CHANNEL_ID);
+    url.searchParams.append('redirect_uri', LINE_CALLBACK_URL);
+    url.searchParams.append('state', state);
+    url.searchParams.append('scope', 'profile openid');
+
+    return url.toString();
+  });
 
   // 控制 toast 顯示
   // const showSuccess = ref(false);

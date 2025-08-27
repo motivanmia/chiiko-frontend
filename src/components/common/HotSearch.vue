@@ -6,6 +6,9 @@
 
   const hotSearches = ref([]);
 
+  const API_BASE_URL = `${import.meta.env.VITE_API_BASE}/recipe`;
+
+
   const handleHotSearchClick = (keyword) => {
     console.log('HotSearch: 點擊熱搜關鍵字', keyword);
     emits('search', keyword);
@@ -13,7 +16,7 @@
 
   onMounted(async () => {
     try {
-      const response = await axios.get('http://localhost:8888/front/recipe/get_hot_searches.php');
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE}/recipe/get_hot_searches.php`);
       if (response.data.success) {
         hotSearches.value = response.data.data;
       } else {

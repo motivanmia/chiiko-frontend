@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8888/front/recipe';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE}/recipe`;
 
 // 定義一個輔助函式，用於在陣列中更新食譜的收藏數
 // 將此函式放在 defineStore 的 actions 區塊之外，以便在 actions 中呼叫
