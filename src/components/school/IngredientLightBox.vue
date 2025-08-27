@@ -127,8 +127,8 @@
     border-radius: 20px;
 
     @include rwdmax(1200) {
-      width: 80%;
-      height: 80%;
+      width: 93%;
+      height: 93%;
       top: 50%;
       left: 50%;
     }
