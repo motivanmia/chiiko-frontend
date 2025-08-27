@@ -18,9 +18,7 @@
       const apiResponse = response.data;
 
       if (apiResponse.success) {
-        (allRecipes.value = apiResponse.data),
-        console.log('成功取得收藏資料', allRecipes.value);
-        
+        (allRecipes.value = apiResponse.data), console.log('成功取得收藏資料', allRecipes.value);
       } else {
         console.error('API錯誤:', apiResponse.error);
         allRecipes.value = [];
@@ -66,19 +64,18 @@
       :key="recipe.recipe_id"
       class="member-card__box"
     >
-    <MemberCard
-      :imgSrc="recipe.image"
-      :titleText="recipe.name"
-      :recipeId="recipe.recipe_id"
-      :iconDescription="recipe.favorite_count"
-      @delete-click="handleDeleteRecipe(recipe.recipe_id)"
-    />
-
+      <MemberCard
+        :imgSrc="recipe.image"
+        :titleText="recipe.name"
+        :recipeId="recipe.recipe_id"
+        :iconDescription="recipe.favorite_count"
+        @delete-click="handleDeleteRecipe(recipe.recipe_id)"
+      />
     </div>
     <div v-else>
       <PageEmpty
         title-text="目前沒有任何食譜收藏"
-        button-text="去好靈感×食譜逛逛"
+        button-text="去靈感×食譜逛逛"
         @confirm-click="goToProduct"
       ></PageEmpty>
     </div>
@@ -101,9 +98,9 @@
 
     .member-card__box {
       & > a {
-        text-decoration: none; 
-        color: inherit; 
+        text-decoration: none;
+        color: inherit;
+      }
     }
   }
-}
 </style>
