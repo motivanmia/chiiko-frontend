@@ -170,6 +170,12 @@ const router = createRouter({
       name: 'none',
       component: () => import('@/pages/RecipeSearchNone.vue'),
     },
+    {
+      path: '/callback',
+      name: 'callback',
+      component: () => import('@/components/user/Callback.vue'),
+    },
+
   ],
 });
 

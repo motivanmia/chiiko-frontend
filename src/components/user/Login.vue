@@ -9,11 +9,6 @@
   const authStore = useAuthStore();
   const emit = defineEmits(['close', 'login-success', 'switch-to-signin', 'switch-to-forgetpsw']);
 
-  // 假帳號密碼
-  // const FAKE_ACCOUNT = ref('');
-  // const FAKE_PASSWORD = ref('');
-  // const noSuccess = ref(false);
-
   const account = ref('');
   const password = ref('');
   const formError = ref('');
@@ -22,7 +17,7 @@
 
   //LINE第三方登入設置
   const LINE_CHANNEL_ID = '2008003983';
-  const LINE_CALLBACK_URL = 'http://localhost:5173/callback';
+  const LINE_CALLBACK_URL = import.meta.env.VITE_API_BASE + '/callback';
 
   //安全性考量設置隨機state
   const generateState = () => {
@@ -140,7 +135,7 @@
           <Icon icon-name="fb" />
         </a>
         <a
-          href="#"
+          :href="lineLoginUrl"
           id="line"
         >
           <Icon icon-name="line" />
