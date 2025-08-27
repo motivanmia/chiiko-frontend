@@ -130,7 +130,7 @@ const router = createRouter({
 
     {
       path: '/recipe-overview',
-      name: '/recipe-overview',
+      name: 'recipe-overview',
       component: () => import('@/pages/RecipeOverview.vue'),
     },
     {
