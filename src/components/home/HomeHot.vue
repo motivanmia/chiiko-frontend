@@ -64,7 +64,7 @@ const onDropdownChange = (value) => {
     </div>
     <SeeMoreButton
       id="SeeMoreButton"
-      path="/recipes"
+      path="/recipe-overview"
     />
   </div>
 </template>

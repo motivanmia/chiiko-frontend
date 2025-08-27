@@ -23,7 +23,7 @@
     // 麵包屑
     const breadcrumbs = computed(() => {
       return [
-        { text: '靈感食譜', to: { name: 'recipes' } },
+        { text: '靈感食譜', to: { name: 'recipe-overview' } },
         {
           text: categoryName.value,
           to: { name: 'recipes', params: { category: categoryName.value } },
