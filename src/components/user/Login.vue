@@ -17,7 +17,7 @@
 
   //LINE第三方登入設置
   const LINE_CHANNEL_ID = '2008003983';
-  const LINE_CALLBACK_URL = import.meta.env.VITE_API_BASE + '/callback';
+  const LINE_CALLBACK_URL = `https://tibamef2e.com/cjd101/g4/front/callback`;
 
   //安全性考量設置隨機state
   const generateState = () => {
