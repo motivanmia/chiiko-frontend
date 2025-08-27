@@ -116,7 +116,7 @@
       background-color: white;
       border: px(1) solid color(text, base);
       border-radius: 50%;
-      margin-right: px(35);
+      margin-right: px(10);
       transition: all 0.2s ease;
     }
 

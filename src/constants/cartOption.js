@@ -27,4 +27,8 @@ export const paymentOptions = [
     value: 'card',
     label: '信用卡',
   },
+  {
+    value: 'linepay',
+    label: 'linepay',
+  },
 ];

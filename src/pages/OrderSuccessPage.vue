@@ -1,6 +1,7 @@
 <script setup>
   import { onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import { storeToRefs } from 'pinia';
   import { useCartStore } from '@/stores/useCartStore';
   import CartStep from '@/components/cart/CartStep.vue';
   import OrderList from '@/components/cart/OrderList.vue';
@@ -10,7 +11,8 @@
   const router = useRouter();
 
   const cart = useCartStore();
-  const { setCurrentStep, loadOrderItem } = cart;
+  const { setCurrentStep, loadOrderItem, clearCart } = cart;
+  const { orderDetail, products } = storeToRefs(cart);
 
   onMounted(async () => {
     const orderId = route.query.order_id;
@@ -22,7 +24,13 @@
     if (!result) {
       return router.replace('/cart');
     }
+
     setCurrentStep(3);
+
+    // 只有付款完成才清空購物車
+    if (orderDetail?.order?.payment_status === 1) {
+      products.value = [];
+    }
   });
 </script>
 

@@ -624,6 +624,7 @@ export const useCartStore = defineStore('cart', () => {
 
       const orderData = data.data;
 
+      // 串接綠界
       if (orderData.payment_url && orderData.params) {
         const form = document.createElement('form');
         form.method = 'POST';
@@ -641,11 +642,16 @@ export const useCartStore = defineStore('cart', () => {
         form.submit();
 
         return;
+      } else if (orderData.redirect_url) {
+        // Line Pay
+        window.location.href = orderData.redirect_url;
+        return;
       } else {
         Swal.fire({
           icon: 'success',
           title: '訂單建立成功',
         });
+        clearCart();
         return orderData.order_id;
       }
     } catch (error) {
