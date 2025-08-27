@@ -865,6 +865,7 @@ export const useCartStore = defineStore('cart', () => {
         });
         // 更新訂單列表（確保畫面同步）
         await loadOrders();
+        await loadOrderItem(payload.order_id);
       } else {
         Swal.fire({
           icon: 'error',

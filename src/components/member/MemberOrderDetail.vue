@@ -11,40 +11,7 @@
 
   const cart = useCartStore();
   const { orderDetail } = storeToRefs(cart);
-  const { loadOrderItem } = cart;
-
-  // const filter = ref('所有訂單');
-
-  // const orders = ref([
-  //   {
-  //     id: '12345',
-  //     date: '2025-07-01',
-  //     number: 'SS123456889',
-  //     status: '已完成',
-  //     payment: '已付款',
-  //     products: [
-  //       {
-  //         name: '不鏽鋼奶油刀',
-  //         image: new URL('@/assets/image/Product/product-knife.png', import.meta.url).href,
-  //         quantity: 1,
-  //         price: 29,
-  //       },
-  //       {
-  //         name: '魚鱗刨刀',
-  //         image: new URL('@/assets/image/Product/product-knife.png', import.meta.url).href,
-  //         quantity: 1,
-  //         price: 29,
-  //       },
-  //       {
-  //         name: '日式和風筷架',
-  //         image: new URL('@/assets/image/Product/product-knife.png', import.meta.url).href,
-  //         quantity: 1,
-  //         price: 29,
-  //       },
-  //     ],
-  //     shippingCost: 100,
-  //   },
-  // ]);
+  const { loadOrderItem, changeOrder } = cart;
 
   const total = computed(() => {
     const order = orders.value[0]; // 取第一筆
@@ -53,26 +20,6 @@
     }, 0);
     return productsTotal + order.shippingCost;
   });
-
-  // const filteredOrder = computed(() => {
-  //   if (filter.value === '所有訂單') {
-  //     return orders.value;
-  //   }
-  //   return orders.value.filter((order) => order.status === filter.value);
-  // });
-
-  // const getStatusClass = (status) => {
-  //   switch (status) {
-  //     case '待確認':
-  //       return 'status-pending';
-  //     case '已出貨':
-  //       return 'status-sipped';
-  //     case '已完成':
-  //       return 'status-completed';
-  //     default:
-  //       return '';
-  //   }
-  // };
 
   const copyTrackingNumber = async (trackingNumber) => {
     try {
@@ -86,6 +33,13 @@
     }
   };
   const showToast = ref(false); // 顯示複製成功提示
+
+  const cancelOrder = (orderId) => {
+    changeOrder({
+      order_id: orderId,
+      order_status: '取消/退貨',
+    });
+  };
 
   onMounted(async () => {
     const orderId = route.params.id;
@@ -115,7 +69,13 @@
             </div>
             <div class="order-detail__number">物流單號 {{ orderDetail.order.tracking_number }}</div>
 
-            <button class="order-detail__cancel__btn">退貨</button>
+            <button
+              v-if="orderDetail.order.order_status_text === '已完成'"
+              class="order-detail__cancel__btn"
+              @click.prevent.stop="cancelOrder(orderDetail.order.order_id)"
+            >
+              退貨
+            </button>
           </div>
 
           <div class="order-detail__header-bottom">
@@ -252,6 +212,7 @@
       background: color(search, placeholder);
       box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
       @include fontSet($size: px(20), $color: color(text, light), $ls: 3px);
+      cursor: pointer;
     }
 
     &__status {
