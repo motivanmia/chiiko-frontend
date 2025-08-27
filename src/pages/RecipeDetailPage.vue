@@ -336,7 +336,12 @@
     if (ingredients.value && ingredients.value.length > 0) {
       const text = ingredients.value.map((it) => `${it.name} / ${it.amount || ''}`).join('\n');
       navigator.clipboard.writeText(text).then(() => {
-        alert('食材清單已複製！');
+        Swal.fire({
+          icon: 'success',
+          title: '分享鏈結複製成功！',
+          showConfirmButton: false,
+          timer: 1500,
+        });
       });
     } else {
       alert('目前沒有可複製的食材清單。');
@@ -362,11 +367,11 @@
       .writeText(recipeUrl)
       .then(() => {
         Swal.fire({
-                icon: 'success',
-                title: '分享鏈結複製成功！',
-                showConfirmButton: false,
-                timer: 1500,
-              });
+          icon: 'success',
+          title: '分享鏈結複製成功！',
+          showConfirmButton: false,
+          timer: 1500,
+        });
       })
       .catch((err) => {
         console.error('複製失敗:', err);
