@@ -7,9 +7,9 @@
 
   const router = useRouter();
   const allRecipes = ref([]);
-  const deleteApiUrl = 'http://localhost:8888/front/member/delete_favorite_recipes.php';
+  const deleteApiUrl = `${import.meta.env.VITE_API_BASE}/member/delete_favorite_recipes.php`;
   //下面是抓取會員收藏的食譜
-  const apiUrl = 'http://localhost:8888/front/member/get_favorite_recipes.php';
+  const apiUrl = `${import.meta.env.VITE_API_BASE}/member/get_favorite_recipes.php`;
 
   //用axios串接favorite_recipes.php
   const fetchRecipe = async () => {

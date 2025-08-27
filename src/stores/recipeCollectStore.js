@@ -59,13 +59,13 @@ async toggleCollect(recipeId, currentRecipe) {
       this.favoriteRecipesStatus[recipeId] = !isCollected;
       console.log(response.data.message);
 
-      // ✅ 你的這段程式碼會更新 Pinia Store 裡的陣列，保持不變
+      // 更新 Pinia Store 裡的陣列，保持不變
       updateRecipeCountInArray(this.hotRecipes, recipeId, action);
       updateRecipeCountInArray(this.mostFavoritedRecipes, recipeId, action);
       updateRecipeCountInArray(this.latestRecipes, recipeId, action);
       updateRecipeCountInArray(this.searchResults, recipeId, action);
 
-      // ✅ 這裡才是關鍵！直接更新傳入的食譜物件的收藏數
+      // 直接更新傳入的食譜物件的收藏數
       if (currentRecipe) {
         if (action === 'add') {
           currentRecipe.favorites_count = (parseInt(currentRecipe.favorites_count, 10) || 0) + 1;

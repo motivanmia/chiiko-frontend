@@ -11,7 +11,7 @@
 
   const productStore = useProductStore();
 
-  // 在元件掛載時，呼叫 Pinia action 載入資料
+  // 在元件掛載時，呼叫Pinia
   onMounted(() => {
     productStore.fetchProducts();
   });

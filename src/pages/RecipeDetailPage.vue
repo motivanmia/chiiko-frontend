@@ -311,7 +311,7 @@
     { immediate: true }, // 立即執行一次以載入初始頁面
   );
 
-  // ✅ 食材資料
+  // 食材資料
   const ingredients = ref([]);
 
   // 可選：loading 狀態（沿用 store 的 rLoading）
@@ -351,7 +351,7 @@
       return;
     }
 
-    // ✅ 傳入 recipeData 這個變數
+    //傳入 recipeData 這個變數
     await recipeStore.toggleCollect(recipeId.value, recipeData.value);
   }
 

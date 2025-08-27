@@ -8,6 +8,8 @@ import SeeMoreButton from '../button/SeeMoreButton.vue';
 
 const recipeStore = useRecipeCollectStore();
 const activeTab = ref('當季熱門'); 
+
+//呼叫pinia
 onMounted(() => {
   recipeStore.fetchHotRecipes();
   recipeStore.fetchMostFavoritedRecipes();
@@ -40,7 +42,7 @@ const onDropdownChange = (value) => {
           :path="`/recipe-detail/${recipe.recipe_id}`"
           class="hot_img"
           :img="recipe.image"
-          :text="recipe.recipe_name"
+          :text="recipe.name"
         />
       </span>
       <span id="right">

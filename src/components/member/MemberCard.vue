@@ -27,7 +27,7 @@
       type: String,
       default: '已收藏',
     },
-    // 新增：用於導航的食譜 ID
+    // 用於導航的食譜 ID
     recipeId: {
       type: [String, Number],
       required: true,
