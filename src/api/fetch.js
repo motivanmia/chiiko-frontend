@@ -195,10 +195,10 @@ export function patchOrder(data) {
   });
 }
 
-// export function getRecipe(data) {
-//   return request({
-//     url: `${url.recipe}/get_recipe.php`,
-//     method: 'get',
-//     data,
-//   });
-// }
+export function postLineLogin(data){
+  return request({
+    url:`${url.member}/line_login_callback.php`,
+    method:'post',
+    data,
+  })
+}

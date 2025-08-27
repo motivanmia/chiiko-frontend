@@ -57,6 +57,7 @@
 <style lang="scss" scoped>
   .base-input__container {
     position: relative;
+    width: 100%;
   }
 
   .base-input {

@@ -11,6 +11,7 @@
   import CancelButton from '@/components/button/CancelButton.vue';
   import ConfirmButton from '@/components/button/ConfirmButton.vue';
   import { getProduct } from '@/api/fetch';
+  import axios from 'axios';
 
   import 'swiper/css';
   import 'swiper/css/navigation';
@@ -78,7 +79,40 @@
       quantity: qty.value,
     });
   };
-  const toggleWishlist = () => (inWishlist.value = !inWishlist.value);
+
+  const API_BASE = import.meta.env.VITE_API_BASE;
+
+  const userId = 1;
+  const productId = 1;
+  // const toggleWishlist = () => (inWishlist.value = !inWishlist.value);
+  // ========== 修改 toggleWishlist ==========
+  const toggleWishlist = async () => {
+    const url = `${API_BASE}/member/get_prouct_wish.php`;
+
+    try {
+      const payload = {
+        product_id: productId,
+        user_id: userId,
+        action: inWishlist.value ? 'delete' : 'add',
+      };
+
+      const res = await axios.post(url, payload, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true, // 如果需要 cookie
+      });
+
+      const data = res.data;
+      console.log('願望清單操作結果：', data);
+
+      if (data.success) {
+        inWishlist.value = !inWishlist.value; // 切換狀態
+      } else {
+        console.error('操作失敗:', data.message || '');
+      }
+    } catch (error) {
+      console.error('願望清單操作失敗', error);
+    }
+  };
 
   // 該頁商品
   const product = ref(null);
