@@ -11,9 +11,8 @@
   import { useCartStore } from '@/stores/useCartStore';
 
   const notifyStore = useNotificationStore();
-  onMounted(() => {
-    notifyStore.loadNotifications();
-  });
+  const { unreadCount } = storeToRefs(notifyStore);
+  const { loadNotifications } = notifyStore;
 
   const authStore = useAuthStore();
   const router = useRouter();
@@ -23,9 +22,10 @@
   const { productCount } = storeToRefs(cart);
   const { loadCart } = cart;
 
-  onMounted(() => {
+  onMounted(async () => {
+    await authStore.init();
     if (authStore.isLoggedIn) {
-      loadCart();
+      await Promise.all([loadNotifications(), loadCart()]);
     }
   });
   // nav選單項目
@@ -61,6 +61,9 @@
 
     // 執行登出 action
     await authStore.logout();
+
+    notifyStore.$reset();
+    cart.$reset();
 
     // 從受保護的頁面登出時，才需要跳轉到首頁
     if (wasOnProtectedPage) {
@@ -184,6 +187,9 @@
     setTimeout(() => {
       showToast.value = false;
     }, 3000);
+
+    notifyStore.loadNotifications();
+    cart.loadCart();
 
     // 2. 仍然使用 setTimeout 等待動畫結束再跳轉
     setTimeout(() => {
@@ -314,10 +320,10 @@
           @mouseleave="handleMouseLeave()"
         >
           <div
-            v-if="notifyStore.unreadCount > 0"
+            v-if="unreadCount > 0"
             class="actions__member--unread"
           >
-            {{ notifyStore.unreadCount }}
+            {{ unreadCount }}
           </div>
           <span class="actions__item">
             <Icon
