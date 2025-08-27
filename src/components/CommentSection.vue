@@ -96,16 +96,15 @@
   const isLoading = ref(true);
   const isReportModalVisible = ref(false);
   const commentToReport = ref(null);
+  const apiBase = import.meta.env.VITE_API_BASE;
 
   // --- 3. 自動獲取資料 (保持不變) ---
   onMounted(async () => {
     isLoading.value = true;
     try {
       const [userRes, commentsRes] = await Promise.all([
-        axios.get('http://localhost:8888/front/member/get_current_user.php'),
-        axios.get(
-          `http://localhost:8888/front/recipe/get_recipe_comments.php?recipe_id=${props.recipeId}`,
-        ),
+        axios.get(`${apiBase}/member/get_current_user.php`),
+        axios.get(`${apiBase}/recipe/get_recipe_comments.php?recipe_id=${props.recipeId}`),
       ]);
 
       if (userRes.data && userRes.data.isLoggedIn) {
@@ -145,10 +144,7 @@
     if (image) formData.append('image', image);
 
     try {
-      const response = await axios.post(
-        'http://localhost:8888/front/recipe/post_recipe_comment.php',
-        formData,
-      );
+      const response = await axios.post(`${apiBase}/recipe/post_recipe_comment.php`, formData);
       if (response.data.status === 'success' && response.data.data) {
         comments.value.unshift(addStateToComments([response.data.data])[0]);
       } else {
@@ -173,10 +169,7 @@
     if (image) formData.append('image', image);
 
     try {
-      const response = await axios.post(
-        'http://localhost:8888/front/recipe/post_recipe_comment.php',
-        formData,
-      );
+      const response = await axios.post(`${apiBase}/recipe/post_recipe_comment.php`, formData);
       if (response.data.status === 'success' && response.data.data) {
         const parentComment = findCommentById(targetId);
         if (parentComment) {
@@ -295,7 +288,7 @@
 
     try {
       const response = await axios.post(
-        'http://localhost:8888/front/recipe/post_comment_report.php',
+        `${apiBase}/recipe/post_comment_report.php`,
         {
           comment_id: reportTarget.id, // 使用本地變數
           type: reportType,

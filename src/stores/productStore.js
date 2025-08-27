@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia';
 import { getProduct } from '@/api/fetch';
-
-// const API_BASE_URL = 'http://localhost:8888/front/product';
 export const useProductStore = defineStore('product', {
   state: () => ({
     products: [],

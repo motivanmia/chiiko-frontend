@@ -12,10 +12,8 @@
 
     <div class="recipe-editor">
       <div class="form-content-wrapper">
-        <!-- A. 標題動態化 -->
         <h1 class="recipe-editor__title">{{ pageTitle }}</h1>
 
-        <!-- B. 傳入現有圖片 URL 給圖片上傳器 -->
         <ImageUploader
           @update:file="file = $event"
           :initial-image="existingImageUrl"
@@ -172,19 +170,20 @@
   const createOrUpdateRecipe = async (imagePath, statusCode) => {
     const apiBase = import.meta.env.VITE_API_BASE;
     const selectedCategory = categories.find((cat) => cat.value === form.category);
+
+    // 🚩 核心修正：處理空值，確保所有欄位都有值
     const recipePayload = {
       ...(isEditMode.value && { recipe_id: recipeId.value }),
       manager_id: null,
       recipe_category_id: selectedCategory ? selectedCategory.id : null,
-      name: form.title,
-      content: form.description,
-      serving: form.servings,
-      image: imagePath,
-      cooked_time: form.time,
+      name: form.title || '',
+      content: form.description || '',
+      serving: form.servings || '',
+      image: imagePath || '',
+      cooked_time: form.time || '',
       status: statusCode,
-      tag: form.tags.map((tag) => `#${tag}`).join(''),
+      tag: form.tags.length > 0 ? form.tags.map((tag) => `#${tag}`).join('') : '',
       views: 0,
-      ingredients: form.ingredients,
     };
 
     const recipeApiEndpoint = isEditMode.value
@@ -207,6 +206,7 @@
       await axios.post(`${apiBase}/recipe/post_ingredients.php`, {
         recipe_id: targetRecipeId,
         ingredients: validIngredients,
+        mode: isEditMode.value ? 'replace' : 'append',
       });
     }
 
@@ -215,121 +215,140 @@
       await axios.post(`${apiBase}/recipe/post_steps.php`, {
         recipe_id: targetRecipeId,
         steps: validSteps,
+        mode: isEditMode.value ? 'replace' : 'append',
       });
     }
   };
 
-const submitRecipe = async (statusCode) => {
-  // 顯示「正在處理」的提示
-  Swal.fire({
-    title: '處理中...',
-    text: '請稍後，正在上傳您的食譜...',
-    allowOutsideClick: false,
-    didOpen: () => {
-      Swal.showLoading();
-    },
-  });
+  const submitRecipe = async (statusCode) => {
+    // 顯示「正在處理」的提示
+    Swal.fire({
+      title: '處理中...',
+      text: '請稍後，正在上傳您的食譜...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
 
-  try {
-    const imagePath = await uploadImage();
-    const targetRecipeId = await createOrUpdateRecipe(imagePath, statusCode);
-    await updateRelatedData(targetRecipeId);
+    try {
+      const apiBase = import.meta.env.VITE_API_BASE;
+      const selectedCategory = categories.find((cat) => cat.value === form.category);
 
-    // 成功後關閉「處理中」的提示
-    Swal.close();
+      // 🚩 核心修正：將所有資料打包在 FormData 中
+      const formData = new FormData();
+      if (isEditMode.value) {
+        formData.append('recipe_id', recipeId.value);
+      }
+      // 從 userStore 取得 user_id，如果沒有則不傳送
+      if (userStore.user?.user_id) {
+        formData.append('user_id', userStore.user.user_id);
+      }
+      formData.append('manager_id', '');
+      formData.append('recipe_category_id', selectedCategory ? selectedCategory.id : '');
+      formData.append('name', form.title || '');
+      formData.append('content', form.description || '');
+      formData.append('serving', form.servings || '');
+      formData.append('cooked_time', form.time || '');
+      formData.append('status', statusCode);
+      formData.append(
+        'tag',
+        form.tags.length > 0 ? form.tags.map((tag) => `#${tag}`).join('') : '',
+      );
+      formData.append('views', 0);
 
-    if (statusCode === 3) {
-      // 草稿儲存成功
-      Swal.fire({
-        icon: 'success',
-        title: '草稿已儲存！',
-        showConfirmButton: false,
-        timer: 1500,
+      // 處理圖片：如果有新檔案則上傳，否則傳送現有圖片路徑
+      if (file.value) {
+        formData.append('image', file.value);
+      } else if (existingImageUrl.value) {
+        formData.append('image', existingImageUrl.value);
+      } else {
+        formData.append('image', '');
+      }
+
+      // 將食材和步驟陣列 JSON 序列化後再傳送
+      formData.append('ingredients', JSON.stringify(form.ingredients));
+      formData.append('steps', JSON.stringify(form.steps));
+
+      const recipeApiEndpoint = isEditMode.value
+        ? `${apiBase}/admin/recipe/update_recipe.php`
+        : `${apiBase}/admin/recipe/post_recipe.php`;
+
+      // 只發送一個請求
+      const response = await axios.post(recipeApiEndpoint, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
-    } else {
-      // 發布或更新成功
-      const successTitle = isEditMode.value
-        ? '食譜已成功更新！'
-        : '食譜已成功發布！';
-      const successText = '待管理員審核後，即可在網站上看到您的作品。';
+
+      Swal.close();
+
+      const result = response.data;
+      if (result.status === 'success') {
+        const successTitle = isEditMode.value ? '食譜已成功更新！' : '食譜已成功發布！';
+        Swal.fire({
+          icon: 'success',
+          title: successTitle,
+          text: '您的食譜已成功送出！',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        router.push({ name: 'my-recipe' });
+      } else {
+        throw new Error(result.message || '後端回傳了錯誤');
+      }
+    } catch (error) {
+      console.error('操作食譜時發生錯誤:', error);
+      const errorMessage =
+        error.response?.data?.message || error.message || '操作失敗，請檢查網路連線或稍後再試。';
+      Swal.close();
       Swal.fire({
-        icon: 'success',
-        title: successTitle,
-        text: successText,
-        showConfirmButton: false,
-        timer: 3000,
+        icon: 'error',
+        title: '操作失敗',
+        text: errorMessage,
       });
     }
-    router.push({ name: 'my-recipe' });
-  } catch (error) {
-    // 處理失敗情況，並顯示錯誤提示
-    console.error('操作食譜時發生錯誤:', error);
-    const errorMessage =
-      error.response?.data?.message || error.message || '操作失敗，請檢查網路連線或稍後再試。';
+  };
 
-    // 關閉任何正在顯示的提示
-    Swal.close();
+  const saveDraft = () => {
+    if (!form.title.trim()) {
+      Swal.fire({
+        icon: 'warning',
+        title: '請至少輸入食譜名稱，才能儲存草稿喔！',
+        showConfirmButton: false,
+        timer: 2000,
+      });
+      return;
+    }
+    submitRecipe(3);
+  };
 
-    Swal.fire({
-      icon: 'error',
-      title: '操作失敗',
-      text: errorMessage,
-    });
-  }
-};
+  const publishRecipe = () => {
+    const errors = [];
+    if (!form.title.trim()) errors.push('請輸入食譜名稱。');
+    if (!form.description.trim()) errors.push('請輸入簡介。');
+    if (!isEditMode.value && !file.value && !existingImageUrl.value) {
+      errors.push('請上傳一張食譜圖片。');
+    }
+    if (form.tags.length === 0) errors.push('請至少新增一個食譜標籤。');
+    if (form.ingredients.some((item) => !item.name.trim() || !item.amount.trim())) {
+      errors.push('所有「所需食材」和「份量」的欄位都必須填寫。');
+    }
+    if (form.steps.some((step) => !step.trim())) {
+      errors.push('所有「料理步驟」都必須填寫內容。');
+    }
 
-const saveDraft = () => {
-  if (!form.title.trim()) {
-    Swal.fire({
-      icon: 'warning',
-      title: '請至少輸入食譜名稱，才能儲存草稿喔！',
-      showConfirmButton: false,
-      timer: 2000,
-    });
-    return;
-  }
-  submitRecipe(3);
-};
-
-  // ✅ 修正：現在 publishRecipe 也是一個 async 函式了
-const publishRecipe = async () => {
-  const errors = [];
-  if (!form.title.trim()) errors.push('請輸入食譜名稱。');
-  if (!form.description.trim()) errors.push('請輸入簡介。');
-  if (!isEditMode.value && !file.value) {
-    errors.push('請上傳一張食譜圖片。');
-  }
-  if (form.tags.length === 0) errors.push('請至少新增一個食譜標籤。');
-  if (form.ingredients.some((item) => !item.name.trim() || !item.amount.trim())) {
-    errors.push('所有「所需食材」和「份量」的欄位都必須填寫。');
-  }
-  if (form.steps.some((step) => !step.trim())) {
-    errors.push('所有「料理步驟」都必須填寫內容。');
-  }
-
-  if (errors.length > 0) {
-    Swal.fire({
-      icon: 'warning',
-      title: '發布前請修正以下問題：',
-      html: `<ul>${errors.map(err => `<li>${err}</li>`).join('')}</ul>`,
-      confirmButtonText: '確定',
-    });
-    return;
-  }
-
-  try {
-    await submitRecipe(0);
-  } catch (error) {
-    console.error('從 publishRecipe 捕捉到的錯誤：', error);
-    // 使用 Swal.fire 顯示發布失敗訊息
-    Swal.fire({
-      icon: 'error',
-      title: '發布失敗',
-      text: '發布食譜時發生了未預期錯誤，請稍後再試。',
-    });
-  }
-};
-
+    if (errors.length > 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: '發布前請修正以下問題：',
+        html: `<ul>${errors.map((err) => `<li>${err}</li>`).join('')}</ul>`,
+        confirmButtonText: '確定',
+      });
+      return;
+    }
+    submitRecipe(0);
+  };
 </script>
 
 <style lang="scss" scoped>
