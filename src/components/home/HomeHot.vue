@@ -1,34 +1,34 @@
 <script setup>
-import { onMounted, computed, ref } from 'vue';
-import { useRecipeCollectStore } from '@/stores/recipeCollectStore';
-import sectionTitle from '@/components/SectionTitle.vue';
-import hot_img from '@/components/home/HomeHotImg.vue';
-import DropdownMenu from '../button/DropdownMenu.vue';
-import SeeMoreButton from '../button/SeeMoreButton.vue';
+  import { onMounted, computed, ref } from 'vue';
+  import { useRecipeCollectStore } from '@/stores/recipeCollectStore';
+  import sectionTitle from '@/components/SectionTitle.vue';
+  import hot_img from '@/components/home/HomeHotImg.vue';
+  import DropdownMenu from '../button/DropdownMenu.vue';
+  import SeeMoreButton from '../button/SeeMoreButton.vue';
 
-const recipeStore = useRecipeCollectStore();
-const activeTab = ref('當季熱門'); 
+  const recipeStore = useRecipeCollectStore();
+  const activeTab = ref('當季熱門');
 
-//呼叫pinia
-onMounted(() => {
-  recipeStore.fetchHotRecipes();
-  recipeStore.fetchMostFavoritedRecipes();
-});
+  //呼叫pinia
+  onMounted(() => {
+    recipeStore.fetchHotRecipes();
+    recipeStore.fetchMostFavoritedRecipes();
+  });
 
-const displayedRecipes = computed(() => {
-  if (activeTab.value === '當季熱門') {
-    return recipeStore.hotRecipes; 
-  } else if (activeTab.value === '最多收藏') {
-    return recipeStore.mostFavoritedRecipes;
-  }
-  return []; 
-});
+  const displayedRecipes = computed(() => {
+    if (activeTab.value === '當季熱門') {
+      return recipeStore.hotRecipes;
+    } else if (activeTab.value === '最多收藏') {
+      return recipeStore.mostFavoritedRecipes;
+    }
+    return [];
+  });
 
-const dropdownOptions = ['當季熱門', '最多收藏'];
+  const dropdownOptions = ['當季熱門', '最多收藏'];
 
-const onDropdownChange = (value) => {
-  activeTab.value = value;
-};
+  const onDropdownChange = (value) => {
+    activeTab.value = value;
+  };
 </script>
 
 <template>
@@ -58,7 +58,7 @@ const onDropdownChange = (value) => {
           :path="`/recipe-detail/${recipe.recipe_id}`"
           class="hot_img"
           :img="recipe.image"
-          :text="recipe.recipe_name"
+          :text="recipe.name"
         />
       </span>
     </div>
