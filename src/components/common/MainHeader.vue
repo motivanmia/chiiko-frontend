@@ -30,7 +30,7 @@
   });
   // nav選單項目
   const navLinks = ref([
-    { key: 'recipes', title: '靈感×食譜', path: '/recipes', isOpen: true },
+    { key: 'recipes', title: '靈感×食譜', path: '/recipe-overview', isOpen: true },
     { key: 'school', title: '食材學堂', path: '/school', isOpen: true },
     { key: 'prodouts', title: '好物精選', isOpen: false, path: '/products' },
   ]);
@@ -270,7 +270,7 @@
               :class="{ 'is-active': activeSubMenu === 'recipes' }"
             >
               <div class="submenu__title">
-                <RouterLink to="/recipes">靈感×食譜</RouterLink>
+                <RouterLink to="/recipe-overview">靈感×食譜</RouterLink>
               </div>
               <div class="submenu__content recipes__grid">
                 <RouterLink
