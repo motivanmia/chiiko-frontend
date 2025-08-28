@@ -465,12 +465,13 @@ export const useCartStore = defineStore('cart', () => {
 
     // 驗證收件人
     for (const field of ['name', 'phone', 'city', 'district', 'postal', 'address']) {
-      if (!validateRecipientField(field)) valid = false;
-
-      Swal.fire({
-        icon: 'error',
-        title: '資訊未填寫完整',
-      });
+      if (!validateRecipientField(field)) {
+        valid = false;
+        Swal.fire({
+          icon: 'error',
+          title: '資訊未填寫完整',
+        });
+      }
     }
 
     return valid;
