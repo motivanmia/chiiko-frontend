@@ -235,50 +235,47 @@
       const apiBase = import.meta.env.VITE_API_BASE;
       const selectedCategory = categories.find((cat) => cat.value === form.category);
 
-      // 🚩 核心修正：將所有資料打包在 FormData 中
-      const formData = new FormData();
-      if (isEditMode.value) {
-        formData.append('recipe_id', recipeId.value);
-      }
-      // 從 userStore 取得 user_id，如果沒有則不傳送
-      if (userStore.user?.user_id) {
-        formData.append('user_id', userStore.user.user_id);
-      }
-      formData.append('manager_id', '');
-      formData.append('recipe_category_id', selectedCategory ? selectedCategory.id : '');
-      formData.append('name', form.title || '');
-      formData.append('content', form.description || '');
-      formData.append('serving', form.servings || '');
-      formData.append('cooked_time', form.time || '');
-      formData.append('status', statusCode);
-      formData.append(
-        'tag',
-        form.tags.length > 0 ? form.tags.map((tag) => `#${tag}`).join('') : '',
-      );
-      formData.append('views', 0);
+      // 🚩 先處理圖片
+      const imagePath = await uploadImage(); // ← 用你上面已經寫好的函式
 
-      // 處理圖片：如果有新檔案則上傳，否則傳送現有圖片路徑
-      if (file.value) {
-        formData.append('image', file.value);
-      } else if (existingImageUrl.value) {
-        formData.append('image', existingImageUrl.value);
-      } else {
-        formData.append('image', '');
-      }
+      // 處理食材與步驟
+      const validIngredients = form.ingredients
+        .filter((i) => i.name?.trim() && i.amount?.trim())
+        .map((i) => ({ name: i.name.trim(), amount: i.amount.trim() }));
 
-      // 將食材和步驟陣列 JSON 序列化後再傳送
-      formData.append('ingredients', JSON.stringify(form.ingredients));
-      formData.append('steps', JSON.stringify(form.steps));
+      const normalizedSteps = form.steps
+        .filter((s) => String(s).trim())
+        .map((s, i) => ({ order: i + 1, content: String(s).trim() }));
+
+      // 🚩 JSON payload
+      const payload = {
+        ...(isEditMode.value && { recipe_id: String(recipeId.value) }),
+        ...(userStore.user?.user_id ? { user_id: String(userStore.user.user_id) } : {}),
+
+        manager_id: null,
+        recipe_category_id: selectedCategory ? String(selectedCategory.id) : null,
+        name: form.title || '',
+        content: form.description || '',
+        serving: form.servings || '',
+        cooked_time: form.time || '',
+        status: statusCode,
+        tag: form.tags.length ? form.tags.map((t) => `#${t}`).join('') : '',
+        views: 0,
+        image: imagePath || '', // ← 這裡放上傳 API 回來的路徑
+        ingredients: validIngredients,
+        steps: normalizedSteps,
+      };
+
+      console.log(payload);
 
       const recipeApiEndpoint = isEditMode.value
-        ? `${apiBase}/admin/recipe/update_recipe.php`
-        : `${apiBase}/admin/recipe/post_recipe.php`;
+        ? `${apiBase}/recipe/update_recipe.php`
+        : `${apiBase}/recipe/post_recipe.php`;
 
-      // 只發送一個請求
-      const response = await axios.post(recipeApiEndpoint, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      // 送出 JSON
+      const response = await axios.post(recipeApiEndpoint, payload, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
       });
 
       Swal.close();
