@@ -254,7 +254,7 @@
     }
 
     &__options {
-      max-height: 100px;
+      max-height: 300px;
       overflow-y: auto;
     }
 

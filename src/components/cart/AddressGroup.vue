@@ -155,14 +155,6 @@
         :error="errorPostal"
         @blur="$emit('blur-postal')"
       />
-      <!-- <BaseSelect
-        v-model="postalLocal"
-        :options="postalOptions"
-        placeholder="郵遞區號"
-        :disabled="disabled || !districtLocal"
-        :error="errorPostal"
-        @blur="$emit('blur-postal')"
-      /> -->
     </div>
     <BaseInput
       v-model="addressLocal"
