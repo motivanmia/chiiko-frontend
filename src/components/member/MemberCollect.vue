@@ -48,7 +48,7 @@
   };
 
   const goToProduct = () => {
-    router.push('/recipes');
+    router.push('/recipe-overview');
   };
 
   onMounted(() => {
